@@ -76,7 +76,7 @@
           '';
         };
 
-      in flake // rec {
+      in flake // {
         apps = {
           default = flake-utils.lib.mkApp {
             drv = hakyll-site;
