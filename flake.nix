@@ -1,5 +1,5 @@
 {
-  description = "hakyll-nix-template";
+  description = "codgician.github.io";
 
   nixConfig = {
     allow-import-from-derivation = "true";
@@ -76,7 +76,7 @@
           '';
         };
 
-      in flake // rec {
+      in flake // {
         apps = {
           default = flake-utils.lib.mkApp {
             drv = hakyll-site;
