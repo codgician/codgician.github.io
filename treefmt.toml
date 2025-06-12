@@ -1,0 +1,20 @@
+on-unmatched = "debug"
+
+[formatter.haskell]
+command = "ormolu"
+includes = ["*.hs"]
+
+[formatter.nix]
+command = "nixfmt"
+options = []
+includes = [ "*.nix" ]
+excludes = []
+
+[formatter.md]
+command = "mdformat"
+includes = [ "*.md" ]
+excludes = [ "LICENSE.md" ]
+
+[formatter.yaml]
+command = "yamlfmt"
+includes = [ "*.yaml", "*.yml" ]
