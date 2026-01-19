@@ -2,70 +2,28 @@
 <html lang="$lang$" data-theme="dark">
 <head>
   $partial("templates/partials/head.html")$
-  <style>
-    .home {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 80vh;
-      text-align: center;
-    }
-    .home-title {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-    }
-    .home-subtitle {
-      color: var(--color-secondary);
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-    }
-    .home-social {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .home-social a {
-      color: var(--color-secondary);
-      text-decoration: none;
-      font-size: 1.5rem;
-    }
-    .home-social a:hover {
-      color: var(--color-primary);
-    }
-    .home-nav {
-      display: flex;
-      gap: 1.5rem;
-    }
-    .home-nav a {
-      color: var(--color-text);
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--color-border);
-      border-radius: 4px;
-    }
-    .home-nav a:hover {
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-  </style>
 </head>
 <body>
+  $partial("templates/partials/toolbar.html")$
   <main class="home">
     <h1 class="home-title">$siteTitle$</h1>
     <p class="home-subtitle">$siteSubtitle$</p>
     <div class="home-social">
       $for(social)$
-      <a href="$url$" title="$name$">$icon$</a>
+      <a href="$url$" title="$name$" target="_blank" rel="noopener"><i class="icon-$icon$"></i></a>
       $endfor$
     </div>
     <nav class="home-nav">
       $for(navigation)$
-      <a href="/$lang$$url$">$name$</a>
+      <a href="/$lang$/$url$">$name$</a>
       $endfor$
-      <a href="$langSwitchUrl$">$langSwitchLabel$</a>
     </nav>
   </main>
+  <footer class="home-footer">
+    <p>
+      $copyright$ · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · <a href="/$lang$/feed.xml" title="RSS"><i class="icon-rss"></i></a>
+    </p>
+  </footer>
   <script src="/js/theme.js"></script>
 </body>
 </html>

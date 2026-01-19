@@ -1,0 +1,13 @@
+$if(hasMultipleLangs)$
+<div class="lang-dropdown">
+  <button class="lang-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+    <i class="icon-globe"></i>
+    <i class="icon-chevron-down"></i>
+  </button>
+  <div class="lang-dropdown-menu">
+    $for(availableLangs)$
+    <a href="$url$"$if(active)$ class="active" aria-current="true"$endif$>$label$</a>
+    $endfor$
+  </div>
+</div>
+$endif$

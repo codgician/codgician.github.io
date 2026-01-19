@@ -25,8 +25,13 @@ source-repository head
 
 library
   exposed-modules:
+      Compiler.Cache
+      Compiler.KaTeX
+      Compiler.Mermaid
+      Compiler.Pandoc
       Config
       Context
+      Feed
       Site
   other-modules:
       Paths_builder
@@ -48,6 +53,7 @@ library
     , pandoc >=3.0
     , pandoc-types >=1.23
     , process
+    , temporary
     , text
     , time
     , yaml
@@ -76,6 +82,7 @@ executable site
     , pandoc >=3.0
     , pandoc-types >=1.23
     , process
+    , temporary
     , text
     , time
     , yaml
@@ -106,6 +113,7 @@ test-suite builder-test
     , pandoc >=3.0
     , pandoc-types >=1.23
     , process
+    , temporary
     , text
     , time
     , yaml

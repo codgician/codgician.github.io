@@ -1,10 +1,8 @@
 cradle:
-  stack:
+  cabal:
     - path: "./src"
-      component: "builder:lib"
-
+      component: "lib:builder"
     - path: "./app/Main.hs"
-      component: "builder:exe:site"
-
+      component: "exe:site"
     - path: "./test"
-      component: "builder:test:builder-test"
+      component: "test:builder-test"

@@ -1,0 +1,17 @@
+<div class="toolbar">
+  <button id="theme-toggle" class="toolbar-btn" aria-label="Toggle theme">
+    <i class="icon-sun"></i>
+  </button>
+  $if(hasMultipleLangs)$
+  <div class="toolbar-lang">
+    <button class="toolbar-btn toolbar-lang-toggle" aria-haspopup="true" aria-expanded="false">
+      <i class="icon-globe"></i>
+    </button>
+    <div class="toolbar-lang-menu">
+      $for(availableLangs)$
+      <a href="$url$"$if(active)$ class="active" aria-current="true"$endif$>$label$</a>
+      $endfor$
+    </div>
+  </div>
+  $endif$
+</div>

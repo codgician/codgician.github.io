@@ -1,9 +1,9 @@
 ______________________________________________________________________
 
-title: "Hello World... Again!"
+title: "你好，世界！"
 date: 2025-01-19
-language: en
-canonical: true
+language: zh
+canonical: false
 translationKey: hello-world
 tags:
 
@@ -15,23 +15,23 @@ tags:
 
 ______________________________________________________________________
 
-Hello World... Again!
+你好，世界！
 
-After migrating to Hakyll, I now enjoy:
+迁移到 Hakyll 后，我现在可以享受：
 
-- Server-side KaTeX rendering
-- Mermaid diagrams
-- Bilingual support
-- Clean, minimalist design
+- 服务端 KaTeX 渲染
+- Mermaid 图表
+- 双语支持
+- 简洁的设计
 
-## Some Code
+## 代码示例
 
 ```haskell
 main :: IO ()
 main = putStrLn "Hello, Hakyll!"
 ```
 
-## Some Math
+## 数学公式
 
 $$
 E = mc^2

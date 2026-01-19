@@ -6,8 +6,8 @@ module Feed
   )
 where
 
-import Config (FeedConfig (..), SiteConfig (..))
 import qualified Config
+import Config (SiteConfig (..))
 import qualified Data.Text as T
 import Hakyll
 
@@ -15,11 +15,11 @@ import Hakyll
 feedConfiguration :: SiteConfig -> String -> FeedConfiguration
 feedConfiguration cfg lang =
   FeedConfiguration
-    { feedTitle = T.unpack $ feedTitle $ feed cfg,
-      feedDescription = T.unpack $ feedDescription $ feed cfg,
+    { feedTitle = T.unpack $ Config.getTrans lang $ Config.feedTitle $ feed cfg,
+      feedDescription = T.unpack $ Config.getTrans lang $ Config.feedDescription $ feed cfg,
       feedAuthorName = T.unpack $ Config.name $ author cfg,
       feedAuthorEmail = T.unpack $ Config.email $ author cfg,
-      feedRoot = T.unpack (baseUrl $ site cfg) <> "/" <> lang
+      feedRoot = T.unpack (Config.baseUrl $ site cfg)
     }
 
 -- | Feed context
