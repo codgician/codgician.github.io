@@ -5,6 +5,7 @@ module Site
   )
 where
 
+import Compiler.Pandoc (customPandocCompiler)
 import Config (loadConfig)
 import Context (langCtx, postCtx, siteCtx)
 import Hakyll
@@ -62,7 +63,10 @@ hakyllMain = do
          in lang </> "posts" </> slug </> "index.html"
       compile $ do
         lang <- getLang
-        pandocCompiler
+        metadata <- getMetadata =<< getUnderlying
+        let enableMath = maybe False (== "true") $ lookupString "math" metadata
+            enableMermaid = maybe False (== "true") $ lookupString "mermaid" metadata
+        customPandocCompiler enableMath enableMermaid
           >>= loadAndApplyTemplate "templates/post.html" (postCtx cfg lang)
           >>= loadAndApplyTemplate "templates/default.html" (postCtx cfg lang)
           >>= relativizeUrls
