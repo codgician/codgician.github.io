@@ -96,6 +96,11 @@ hakyllMain = do
           >>= loadAndApplyTemplate "templates/default.html" ctx
           >>= relativizeUrls
 
+    -- 404 page
+    match "content/404.html" $ do
+      route $ constRoute "404.html"
+      compile copyFileCompiler
+
 getLang :: Compiler String
 getLang = do
   ident <- getUnderlying
