@@ -114,6 +114,19 @@ hakyllMain = do
         posts <- fmap (take 20) . recentFirst =<< loadAll "content/posts/*/index.zh.md"
         renderAtom (feedConfiguration cfg "zh") feedCtx posts
 
+    -- Sitemap
+    create ["sitemap.xml"] $ do
+      route idRoute
+      compile $ do
+        enPosts <- loadAll "content/posts/*/index.en.md"
+        zhPosts <- loadAll "content/posts/*/index.zh.md"
+        let allPages = enPosts ++ zhPosts
+            sitemapCtx =
+              listField "pages" (dateField "lastmod" "%Y-%m-%d" <> defaultContext) (pure allPages)
+                <> constField "root" (baseUrl $ site cfg)
+        makeItem ""
+          >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
+
     -- 404 page
     match "content/404.html" $ do
       route $ constRoute "404.html"
