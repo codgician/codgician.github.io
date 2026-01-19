@@ -1,0 +1,12 @@
+<nav class="nav">
+  <a href="/$lang$/" class="nav-logo">$siteTitle$</a>
+  <ul class="nav-links">
+    $for(navigation)$
+    <li><a href="/$lang$$url$">$name$</a></li>
+    $endfor$
+  </ul>
+  <div class="nav-actions">
+    <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <a href="$langSwitchUrl$" class="lang-switch">$langSwitchLabel$</a>
+  </div>
+</nav>
