@@ -8,6 +8,7 @@ where
 import Compiler.Pandoc (customPandocCompiler)
 import Config (loadConfig)
 import Context (langCtx, postCtx, siteCtx)
+import Feed (feedConfiguration, feedCtx)
 import Hakyll
 import System.FilePath (splitDirectories, takeFileName, (</>))
 
@@ -99,6 +100,19 @@ hakyllMain = do
           >>= loadAndApplyTemplate "templates/post-list.html" ctx
           >>= loadAndApplyTemplate "templates/default.html" ctx
           >>= relativizeUrls
+
+    -- RSS feeds
+    create ["en/feed.xml"] $ do
+      route idRoute
+      compile $ do
+        posts <- fmap (take 20) . recentFirst =<< loadAll "content/posts/*/index.en.md"
+        renderAtom (feedConfiguration cfg "en") feedCtx posts
+
+    create ["zh/feed.xml"] $ do
+      route idRoute
+      compile $ do
+        posts <- fmap (take 20) . recentFirst =<< loadAll "content/posts/*/index.zh.md"
+        renderAtom (feedConfiguration cfg "zh") feedCtx posts
 
     -- 404 page
     match "content/404.html" $ do
