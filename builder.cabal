@@ -6,12 +6,12 @@ cabal-version: 2.2
 
 name:           builder
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/generator#readme>
+description:    Static site generator for codgician.me
 homepage:       https://github.com/codgician/codgician.github.io#readme
 bug-reports:    https://github.com/codgician/codgician.github.io/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2025 Author name here
+author:         codgician
+maintainer:     codgician@outlook.com
+copyright:      2025 codgician
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -25,7 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Config
+      Site
   other-modules:
       Paths_builder
   autogen-modules:
@@ -34,11 +35,24 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
-    , optparse-applicative
+      aeson
+    , base >=4.7 && <5
+    , base16-bytestring
+    , bytestring
+    , containers
+    , cryptohash-sha256
+    , directory
+    , filepath
+    , hakyll >=4.16
+    , pandoc >=3.0
+    , pandoc-types >=1.23
+    , process
+    , text
+    , time
+    , yaml
   default-language: Haskell2010
 
-executable builder-exe
+executable site
   main-is: Main.hs
   other-modules:
       Paths_builder
@@ -48,9 +62,22 @@ executable builder-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , base16-bytestring
     , builder
-    , optparse-applicative
+    , bytestring
+    , containers
+    , cryptohash-sha256
+    , directory
+    , filepath
+    , hakyll >=4.16
+    , pandoc >=3.0
+    , pandoc-types >=1.23
+    , process
+    , text
+    , time
+    , yaml
   default-language: Haskell2010
 
 test-suite builder-test
@@ -64,7 +91,21 @@ test-suite builder-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , base16-bytestring
     , builder
-    , optparse-applicative
+    , bytestring
+    , containers
+    , cryptohash-sha256
+    , directory
+    , filepath
+    , hakyll >=4.16
+    , hspec
+    , pandoc >=3.0
+    , pandoc-types >=1.23
+    , process
+    , text
+    , time
+    , yaml
   default-language: Haskell2010
