@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Not Found</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      // Check if already has language prefix
+      if (!/^\/(en|zh)(\/|$)/.test(path)) {
+        var browserLangs = navigator.languages || [navigator.language || 'en'];
+        var lang = 'en';
+        for (var i = 0; i < browserLangs.length; i++) {
+          if (browserLangs[i].startsWith('zh')) {
+            lang = 'zh';
+            break;
+          }
+        }
+        window.location.replace('/' + lang + path);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <main class="main" style="text-align: center; padding-top: 20vh;">
+    <h1>404</h1>
+    <p>Page not found</p>
+    <p>
+      <a href="/en/">English</a> |
+      <a href="/zh/">中文</a>
+    </p>
+  </main>
+</body>
+</html>
