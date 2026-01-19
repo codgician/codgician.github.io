@@ -1,0 +1,27 @@
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">$title$</h1>
+    <div class="post-meta">
+      <time datetime="$date$">$date$</time>
+      <span class="post-reading-time">· $readingTime$</span>
+    </div>
+    $if(tags)$
+    <div class="post-tags">
+      $for(tags)$
+      <a href="/$lang$/tags/$tag$/" class="tag">$tag$</a>
+      $endfor$
+    </div>
+    $endif$
+  </header>
+  <div class="post-content">
+    $body$
+  </div>
+  <footer class="post-footer">
+    $if(prev)$
+    <a href="$prev.url$" class="post-nav post-nav-prev">← $prev.title$</a>
+    $endif$
+    $if(next)$
+    <a href="$next.url$" class="post-nav post-nav-next">$next.title$ →</a>
+    $endif$
+  </footer>
+</article>
