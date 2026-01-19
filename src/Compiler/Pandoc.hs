@@ -9,11 +9,11 @@ import Compiler.KaTeX (cachedKaTeX)
 import Compiler.Mermaid (cachedMermaid)
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Version as V
 import Hakyll
+import qualified Paths_builder as Meta
 import Text.Pandoc
 import Text.Pandoc.Walk (walkM)
-import qualified Data.Version as V
-import qualified Paths_builder as Meta
 
 -- | Get filter version from Cabal
 filterVersion :: Text
@@ -39,15 +39,15 @@ transformMath (Math mathType content) = do
   let displayMode = case mathType of
         DisplayMath -> True
         InlineMath -> False
-  rendered <- cachedKaTeX filterVersion displayMode (T.pack content)
-  pure $ RawInline (Format "html") (T.unpack rendered)
+  rendered <- cachedKaTeX filterVersion displayMode content
+  pure $ RawInline (Format "html") rendered
 transformMath x = pure x
 
 -- | Transform Mermaid code blocks to SVG
 transformMermaid :: Block -> IO Block
-transformMermaid (CodeBlock (ident, classes, attrs) content)
+transformMermaid (CodeBlock (_, classes, _) content)
   | "mermaid" `elem` classes = do
-      svg <- cachedMermaid filterVersion (T.pack content)
-      pure $ RawBlock (Format "html") $ T.unpack $
+      svg <- cachedMermaid filterVersion content
+      pure $ RawBlock (Format "html") $
         "<div class=\"mermaid\">" <> svg <> "</div>"
 transformMermaid x = pure x

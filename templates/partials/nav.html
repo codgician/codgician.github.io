@@ -2,11 +2,24 @@
   <a href="/$lang$/" class="nav-logo">$siteTitle$</a>
   <ul class="nav-links">
     $for(navigation)$
-    <li><a href="/$lang$$url$">$name$</a></li>
+    <li><a href="/$lang$/$url$">$name$</a></li>
     $endfor$
   </ul>
   <div class="nav-actions">
-    <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
-    <a href="$langSwitchUrl$" class="lang-switch">$langSwitchLabel$</a>
+    <button id="theme-toggle" class="nav-btn" aria-label="Toggle theme">
+      <i class="icon-sun"></i>
+    </button>
+    $if(hasMultipleLangs)$
+    <div class="nav-lang">
+      <button class="nav-btn nav-lang-toggle" aria-haspopup="true" aria-expanded="false">
+        <i class="icon-globe"></i>
+      </button>
+      <div class="nav-lang-menu">
+        $for(availableLangs)$
+        <a href="$url$"$if(active)$ class="active" aria-current="true"$endif$>$label$</a>
+        $endfor$
+      </div>
+    </div>
+    $endif$
   </div>
 </nav>

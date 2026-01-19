@@ -1,12 +1,13 @@
 <div class="post-list">
   <h1>$title$</h1>
-  $for(posts)$
-  <article class="post-item">
-    <time datetime="$date$">$date$</time>
-    <h2><a href="$url$">$title$</a></h2>
-    $if(description)$
-    <p>$description$</p>
-    $endif$
-  </article>
-  $endfor$
+  <ul class="post-list-items">
+    $for(posts)$
+    <li class="post-list-item">
+      <a href="$url$">
+        <span class="post-list-title">$title$</span>
+        <span class="post-list-date">$dateShort$</span>
+      </a>
+    </li>
+    $endfor$
+  </ul>
 </div>
