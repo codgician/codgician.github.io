@@ -35,6 +35,9 @@
           hPkgs.retrie
           stack-wrapped
           pkgs.zlib
+          pkgs.dart-sass
+          pkgs.nodePackages.katex
+          pkgs.mermaid-cli
         ];
 
         # Wrap Stack to work with our Nix integration. We don't want to modify

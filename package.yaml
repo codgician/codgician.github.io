@@ -2,23 +2,33 @@ name: builder
 version: 0.1.0.0
 github: "codgician/codgician.github.io"
 license: BSD-3-Clause
-author: "Author name here"
-maintainer: "example@example.com"
-copyright: "2025 Author name here"
+author: "codgician"
+maintainer: "codgician@outlook.com"
+copyright: "2025 codgician"
+
 extra-source-files:
   - README.md
   - CHANGELOG.md
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
 
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description: Please see the README on GitHub at <https://github.com/githubuser/generator#readme>
+description: Static site generator for codgician.me
+
 dependencies:
   - base >= 4.7 && < 5
-  - optparse-applicative
+  - hakyll >= 4.16
+  - pandoc >= 3.0
+  - pandoc-types >= 1.23
+  - text
+  - bytestring
+  - filepath
+  - directory
+  - process
+  - yaml
+  - aeson
+  - time
+  - containers
+  - cryptohash-sha256
+  - base16-bytestring
+
 ghc-options:
   - -Wall
   - -Wcompat
@@ -29,10 +39,12 @@ ghc-options:
   - -Wmissing-home-modules
   - -Wpartial-fields
   - -Wredundant-constraints
+
 library:
   source-dirs: src
+
 executables:
-  builder-exe:
+  site:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -41,7 +53,7 @@ executables:
       - -with-rtsopts=-N
     dependencies:
       - builder
-      - optparse-applicative
+
 tests:
   builder-test:
     main: Spec.hs
@@ -52,3 +64,4 @@ tests:
       - -with-rtsopts=-N
     dependencies:
       - builder
+      - hspec
