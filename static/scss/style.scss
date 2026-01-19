@@ -1,0 +1,59 @@
+@use "variables" as *;
+@use "components";
+@use "syntax";
+
+// Base styles
+:root {
+  @include theme-colors(dark);
+}
+
+:root[data-theme="light"] {
+  @include theme-colors(light);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    @include theme-colors(light);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: $font-sans;
+  line-height: 1.6;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+code {
+  font-family: $font-mono;
+  background: var(--color-surface);
+  padding: $space-xs $space-sm;
+  border-radius: 4px;
+}
+
+pre {
+  background: var(--color-surface);
+  padding: $space-md;
+  border-radius: 8px;
+  overflow-x: auto;
+
+  code {
+    background: none;
+    padding: 0;
+  }
+}

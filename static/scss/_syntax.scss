@@ -1,0 +1,40 @@
+// Pandoc Skylighting syntax highlighting
+// Using theme-aware colors
+
+.sourceCode {
+  background: var(--color-surface);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+code.sourceCode {
+  background: none;
+  padding: 0;
+}
+
+// Token colors
+.kw { color: #c678dd; } // Keyword
+.dt { color: #e5c07b; } // DataType
+.dv { color: #d19a66; } // DecVal
+.bn { color: #d19a66; } // BaseN
+.fl { color: #d19a66; } // Float
+.ch { color: #98c379; } // Char
+.st { color: #98c379; } // String
+.co { color: #5c6370; font-style: italic; } // Comment
+.ot { color: #56b6c2; } // Other
+.fu { color: #61afef; } // Function
+.cf { color: #c678dd; } // ControlFlow
+.op { color: #abb2bf; } // Operator
+.cn { color: #d19a66; } // Constant
+.sc { color: #98c379; } // SpecialChar
+.vs { color: #98c379; } // VerbatimString
+.ss { color: #98c379; } // SpecialString
+.im { color: #e06c75; } // Import
+.va { color: #e06c75; } // Variable
+.at { color: #d19a66; } // Attribute
+.do { color: #5c6370; font-style: italic; } // Documentation
+.an { color: #5c6370; font-style: italic; } // Annotation
+.cv { color: #5c6370; font-style: italic; } // CommentVar
+.wa { color: #e06c75; font-weight: bold; } // Warning
+.er { color: #e06c75; font-weight: bold; } // Error
