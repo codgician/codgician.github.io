@@ -1,0 +1,32 @@
+site:
+  title: "codgician"
+  subtitle: "Coding Magic"
+  baseUrl: "https://codgician.me"
+  copyright: "© 2025 codgician"
+  defaultLanguage: "en"
+  supportedLanguages:
+    - "en"
+    - "zh"
+
+author:
+  name: "codgician"
+  email: "codgician@outlook.com"
+
+navigation:
+  - name: Blog
+    url: /posts/
+  - name: About
+    url: /about/
+
+social:
+  - name: GitHub
+    url: "https://github.com/codgician"
+    icon: github
+  - name: Email
+    url: "mailto:codgician@outlook.com"
+    icon: email
+
+feed:
+  title: "codgician's Blog"
+  description: "Coding Magic"
+  itemsCount: 20
