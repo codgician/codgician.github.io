@@ -328,6 +328,39 @@
 }
 
 // =============================================================================
+// Friends list (about page)
+// =============================================================================
+.friends-list {
+  list-style: none;
+  padding: 0;
+  margin: $space-lg 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    display: inline-block;
+    padding: $space-xs $space-sm;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+// =============================================================================
 // Post-specific styles
 // =============================================================================
 .post {
