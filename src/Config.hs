@@ -7,6 +7,7 @@ module Config
     AuthorConfig (..),
     NavItem (..),
     SocialLink (..),
+    FriendLink (..),
     FeedConfig (..),
     Language (..),
     Translated (..),
@@ -82,6 +83,7 @@ data SiteConfig = SiteConfig
     author :: AuthorConfig,
     navigation :: [NavItem],
     social :: [SocialLink],
+    friends :: [FriendLink],
     feed :: FeedConfig
   }
   deriving (Show, Generic)
@@ -131,6 +133,16 @@ data SocialLink = SocialLink
 instance FromJSON SocialLink where
   parseJSON = withObject "SocialLink" $ \v ->
     SocialLink <$> v .: "label" <*> v .: "url" <*> v .: "icon"
+
+data FriendLink = FriendLink
+  { friendName :: Text,
+    friendUrl :: Text
+  }
+  deriving (Show, Generic)
+
+instance FromJSON FriendLink where
+  parseJSON = withObject "FriendLink" $ \v ->
+    FriendLink <$> v .: "name" <*> v .: "url"
 
 data FeedConfig = FeedConfig
   { feedTitle :: Translated,
