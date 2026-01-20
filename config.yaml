@@ -65,8 +65,6 @@ friends:
     url: "https://nota.moe/"
   - name: "cxhscst2"
     url: "https://www.cnblogs.com/cxhscst2/"
-  - name: "Doragd"
-    url: "http://blog.doragd.cn/"
   - name: "Hanano"
     url: "https://hanano-yuuki.github.io/"
   - name: "Reminiscent"
@@ -75,10 +73,6 @@ friends:
     url: "https://www.cnblogs.com/changer-qyz/"
   - name: "Li4n0"
     url: "https://0n0.fun/"
-  - name: "Critizero"
-    url: "https://critizero.github.io/"
-  - name: "Foesa"
-    url: "http://fenguyu.github.io/"
   - name: "K0u1e"
     url: "https://blog.nowcoder.net/wcyctmd"
   - name: "syh0313"
@@ -89,10 +83,6 @@ friends:
     url: "https://blog.csdn.net/BinGoo0o0o/"
   - name: "whdsunny"
     url: "https://www.cnblogs.com/whdsunny/"
-  - name: "Edwiv"
-    url: "https://edwiv.com/"
-  - name: "HelloVass"
-    url: "https://hellovass.info"
 feed:
   itemsCount: 20
   title:
