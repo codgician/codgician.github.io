@@ -9,6 +9,7 @@ import Compiler.Pandoc (customPandocCompiler, slideCompiler)
 import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, loadConfig)
 import Context
 import Control.Monad (filterM, forM_)
+import Data.Char (toLower)
 import Data.List (groupBy, nub, sortBy)
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.Ord (Down (..), comparing)
@@ -208,6 +209,8 @@ createFallbackPost cfg targetLang slug =
           let ctx =
                 constField "date" (metaString "date" srcMeta)
                   <> constField "title" (metaString "title" srcMeta)
+                  <> boolCtx "math" srcMeta
+                  <> boolCtx "mermaid" srcMeta
                   <> allLangsCtx cfg targetLang ("/posts/" <> slug <> "/")
                   <> postCtx cfg targetLang
           makeItem (itemBody srcItem)
@@ -489,7 +492,16 @@ metaString :: String -> Metadata -> String
 metaString key = fromMaybe "" . lookupString key
 
 metaBool :: String -> Metadata -> Bool
-metaBool key = maybe False (== "true") . lookupString key
+metaBool key meta = case lookupString key meta of
+  Just s  -> map toLower s == "true"
+  Nothing -> False
+
+-- | Create context field only when metadata boolean is true
+--   Used for feature flags like math/mermaid in fallback posts
+boolCtx :: String -> Metadata -> Context String
+boolCtx key meta
+  | metaBool key meta = constField key "true"
+  | otherwise         = mempty
 
 -- | Convert to Item (for list fields)
 toItem :: a -> Item a
