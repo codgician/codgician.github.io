@@ -61,11 +61,12 @@ data YearGroup = YearGroup
 -- ============================================================================
 
 -- | Minimal base context with essential site-wide fields.
--- Includes: siteTitle, copyright, authorName, lang, navigation, defaultContext
+-- Includes: siteTitle, copyright, license, authorName, lang, navigation, defaultContext
 baseCtx :: SiteConfig -> String -> Context String
 baseCtx cfg lang =
   constField "siteTitle" (trans $ title $ site cfg)
     <> constField "copyright" (trans $ Config.copyright $ site cfg)
+    <> licenseCtx (license $ site cfg)
     <> constField "authorName" (T.unpack $ Config.name $ author cfg)
     <> langCtx lang
     <> navCtx cfg lang
@@ -89,6 +90,7 @@ homeCtx cfg lang =
     <> constField "siteSubtitle" (trans $ subtitle $ site cfg)
     <> constField "typewriterPhrases" (phrasesStr $ typewriterPhrases $ site cfg)
     <> constField "copyright" (trans $ Config.copyright $ site cfg)
+    <> licenseCtx (license $ site cfg)
     <> langCtx lang
     <> navCtx cfg lang
     <> socialCtx cfg lang
@@ -97,6 +99,13 @@ homeCtx cfg lang =
     trans = T.unpack . getTrans langs lang
     langs = languages cfg
     phrasesStr = intercalate "|" . map T.unpack . getTransList langs lang
+
+-- | License context (optional)
+licenseCtx :: Maybe LicenseConfig -> Context String
+licenseCtx Nothing = mempty
+licenseCtx (Just lic) =
+  constField "licenseName" (T.unpack $ licenseName lic)
+    <> constField "licenseUrl" (T.unpack $ licenseUrl lic)
 
 -- | Post metadata context (date fields, reading time)
 -- Compose with baseCtx: baseCtx cfg lang <> postMetaCtx
