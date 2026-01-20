@@ -255,15 +255,77 @@ rssFeeds cfg = do
         renderAtom (feedConfiguration cfg lang) feedCtx posts
 
 sitemap :: SiteConfig -> Rules ()
-sitemap cfg =
-  create ["sitemap.xml"] $ do
-    route idRoute
-    compile $ do
-      allPosts <- loadAllSnapshots "content/posts/*/index.*.md" "content"
-      let rootUrl = T.unpack $ baseUrl $ site cfg
-          pageCtx' = constField "root" rootUrl <> dateField "lastmod" "%Y-%m-%d" <> defaultContext
-          sitemapCtx = listField "pages" pageCtx' (pure allPosts)
-      makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
+sitemap cfg = do
+  -- Create dependencies on all content that should appear in sitemap
+  postDep <- makePatternDependency "content/posts/*/index.*.md"
+  slideDep <- makePatternDependency "content/slides/*/slides.md"
+  rulesExtraDependencies [postDep, slideDep] $
+    create ["sitemap.xml"] $ do
+      route idRoute
+      compile $ do
+        -- Load all posts (native language only, not fallbacks)
+        allPosts <- loadAllSnapshots "content/posts/*/index.*.md" "content" :: Compiler [Item String]
+
+        -- Load slides (just one version to get the slugs, we'll generate entries for all langs)
+        let defaultLang = T.unpack $ langCode $ head $ languages cfg
+        allSlides <- loadAllSnapshots ("content/slides/*/slides.md" .&&. hasVersion defaultLang) "content" :: Compiler [Item String]
+
+        let rootUrl = T.unpack $ baseUrl $ site cfg
+            langs = map (T.unpack . langCode) $ languages cfg
+
+            -- Static pages (homepage, list pages, about) for each language
+            staticPages = concatMap (staticPagesForLang rootUrl) langs
+
+            -- Post entries with clean URLs
+            postEntries = map (toPostEntry rootUrl) allPosts
+
+            -- Slide entries with clean URLs (one per slide per language)
+            slideEntries = concatMap (toSlideEntries rootUrl langs) allSlides
+
+            allEntries = staticPages ++ postEntries ++ slideEntries
+            sitemapCtx = listField "entries" sitemapEntryCtx (mapM makeItem allEntries)
+
+        makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
+  where
+    -- Static pages for a language
+    staticPagesForLang root lang =
+      [ SitemapEntry (root <> "/" <> lang <> "/") "1.0"           -- homepage
+      , SitemapEntry (root <> "/" <> lang <> "/posts/") "0.8"     -- blog list
+      , SitemapEntry (root <> "/" <> lang <> "/slides/") "0.8"    -- slides list
+      , SitemapEntry (root <> "/" <> lang <> "/about/") "0.7"     -- about
+      ]
+
+    -- Create sitemap entry from post item
+    toPostEntry root item =
+      let path = toFilePath $ itemIdentifier item
+          parts = splitDirectories path
+          -- content/posts/{slug}/index.{lang}.md -> parts = ["content", "posts", slug, "index.{lang}.md"]
+          slug = parts !! 2
+          filename = parts !! 3
+          lang = takeWhile (/= '.') $ drop 6 filename  -- "index.{lang}.md" -> lang
+          url = root <> "/" <> lang <> "/posts/" <> slug <> "/"
+       in SitemapEntry url "0.6"
+
+    -- Slide entries for all language versions
+    toSlideEntries root langs item =
+      let path = toFilePath $ itemIdentifier item
+          parts = splitDirectories path
+          slug = parts !! 2
+       in [ SitemapEntry (root <> "/" <> lang <> "/slides/" <> slug <> "/") "0.6"
+          | lang <- langs
+          ]
+
+-- | Sitemap entry data
+data SitemapEntry = SitemapEntry
+  { sitemapLoc :: String
+  , sitemapPriority :: String
+  }
+
+-- | Context for sitemap entries
+sitemapEntryCtx :: Context SitemapEntry
+sitemapEntryCtx =
+  field "loc" (pure . sitemapLoc . itemBody)
+    <> field "priority" (pure . sitemapPriority . itemBody)
 
 -- ============================================================================
 -- Slide Compilation

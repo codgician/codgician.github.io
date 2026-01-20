@@ -101,12 +101,12 @@
 .toolbar {
   position: fixed;
   top: $space-md;
-  right: $space-md;
+  right: $content-padding;
   z-index: 1000;
 
   @include mobile {
     top: $space-sm;
-    right: $space-sm;
+    right: $space-md;
   }
 }
 
@@ -190,7 +190,31 @@
   }
 
   a {
-    color: var(--color-primary);
+    color: var(--color-secondary);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  [class^="icon-"] {
+    vertical-align: -0.125em;
+  }
+
+  // Home page footer positioning
+  .home + & {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: $space-lg;
+    border-top: none;
+
+    @include mobile {
+      position: relative;
+      padding: $space-md;
+    }
   }
 }
 
@@ -661,32 +685,6 @@
       font-size: 1.25rem;
       font-weight: 500;
       transition: color 0.2s ease;
-
-      &:hover {
-        color: var(--color-primary);
-      }
-    }
-  }
-
-  &-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: $space-lg;
-    text-align: center;
-    color: var(--color-secondary);
-    font-size: 0.875rem;
-
-    @include mobile {
-      position: relative;
-      margin-top: auto;
-      padding: $space-md;
-    }
-
-    a {
-      color: var(--color-secondary);
-      text-decoration: none;
 
       &:hover {
         color: var(--color-primary);

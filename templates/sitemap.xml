@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-$for(pages)$
+$for(entries)$
   <url>
-    <loc>$root$$url$</loc>
-    $if(lastmod)$
-    <lastmod>$lastmod$</lastmod>
-    $endif$
+    <loc>$loc$</loc>
+    <priority>$priority$</priority>
   </url>
 $endfor$
 </urlset>

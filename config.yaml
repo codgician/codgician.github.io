@@ -10,6 +10,9 @@ site:
       - "Vibing..."
   copyright:
     en: "© 2026 codgician"
+  license:
+    name: "CC BY-NC-SA 4.0"
+    url: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 languages:
   - code: en
     label: English

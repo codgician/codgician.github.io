@@ -4,6 +4,7 @@
 module Config
   ( SiteConfig (..),
     SiteInfo (..),
+    LicenseConfig (..),
     AuthorConfig (..),
     NavItem (..),
     SocialLink (..),
@@ -103,9 +104,20 @@ data SiteInfo = SiteInfo
     subtitle :: Translated,
     typewriterPhrases :: TranslatedList,
     baseUrl :: Text,
-    copyright :: Translated
+    copyright :: Translated,
+    license :: Maybe LicenseConfig
   }
   deriving (Show, Generic)
+
+data LicenseConfig = LicenseConfig
+  { licenseName :: Text,
+    licenseUrl :: Text
+  }
+  deriving (Show, Generic)
+
+instance FromJSON LicenseConfig where
+  parseJSON = withObject "LicenseConfig" $ \v ->
+    LicenseConfig <$> v .: "name" <*> v .: "url"
 
 data AuthorConfig = AuthorConfig
   { name :: Text,
