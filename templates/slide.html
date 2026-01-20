@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html$if(lang)$ lang="$lang$"$endif$>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Hakyll + Pandoc">
+$if(author)$
+  <meta name="author" content="$author$">
+$endif$
+$if(date)$
+  <meta name="dcterms.date" content="$date$">
+$endif$
+  <title>$if(title)$$title$$endif$</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  
+  <!-- Reveal.js CSS -->
+  <link rel="stylesheet" href="/vendor/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="/vendor/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="/vendor/reveal.js/dist/theme/$if(theme)$$theme$$else$black$endif$.css" id="theme">
+  
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="/vendor/reveal.js/plugin/highlight/monokai.css">
+  
+$if(math)$
+  <!-- KaTeX CSS for math -->
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+$endif$
+
+  <style>
+    /* Custom slide styles */
+    .reveal .sourceCode {
+      overflow: visible;
+    }
+    code {
+      white-space: pre-wrap;
+    }
+    .s-full-width {
+      width: 100% !important;
+    }
+    .reveal pre {
+      width: 100%;
+    }
+    .reveal pre code {
+      max-height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+$body$
+    </div>
+  </div>
+
+  <script src="/vendor/reveal.js/dist/reveal.js"></script>
+  <script src="/vendor/reveal.js/plugin/notes/notes.js"></script>
+  <script src="/vendor/reveal.js/plugin/search/search.js"></script>
+  <script src="/vendor/reveal.js/plugin/zoom/zoom.js"></script>
+  <script src="/vendor/reveal.js/plugin/highlight/highlight.js"></script>
+
+  <script>
+    Reveal.initialize({
+      width: $if(width)$$width$$else$1366$endif$,
+      height: $if(height)$$height$$else$768$endif$,
+      hash: true,
+      slideNumber: true,
+      transition: 'slide',
+      plugins: [
+        RevealNotes,
+        RevealSearch,
+        RevealZoom,
+        RevealHighlight
+      ]
+    });
+  </script>
+</body>
+</html>

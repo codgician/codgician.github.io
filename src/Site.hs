@@ -5,7 +5,7 @@ module Site
   )
 where
 
-import Compiler.Pandoc (customPandocCompiler)
+import Compiler.Pandoc (customPandocCompiler, slideCompiler)
 import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, loadConfig)
 import Context
 import Control.Monad (filterM, forM_)
@@ -17,6 +17,14 @@ import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtx)
 import Hakyll
 import System.FilePath (joinPath, splitDirectories, takeFileName, (</>))
+
+-- ============================================================================
+-- Constants
+-- ============================================================================
+
+-- | Supported image extensions for assets
+imageExtensions :: [String]
+imageExtensions = ["jpg", "png", "gif", "svg", "webp"]
 
 -- ============================================================================
 -- Configuration
@@ -63,6 +71,11 @@ rules = do
     rssFeeds cfg
     sitemap cfg
 
+    -- Slide rules
+    slideAssets cfg
+    slides cfg
+    slideIndex cfg
+
 -- ============================================================================
 -- Static Assets
 -- ============================================================================
@@ -75,7 +88,7 @@ staticFiles =
 
 postAssets :: SiteConfig -> Rules ()
 postAssets cfg =
-  forM_ ["jpg", "png", "gif", "svg", "webp"] $ \ext ->
+  forM_ imageExtensions $ \ext ->
     match (fromGlob $ "content/posts/*/*." <> ext) $ do
       forM_ (langCodes cfg) $ \lang ->
         version (T.unpack lang) $ do
@@ -248,6 +261,73 @@ sitemap cfg =
           pageCtx' = constField "root" rootUrl <> dateField "lastmod" "%Y-%m-%d" <> defaultContext
           sitemapCtx = listField "pages" pageCtx' (pure allPosts)
       makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
+
+-- ============================================================================
+-- Slide Compilation
+-- ============================================================================
+
+-- | Copy slide assets (images in slide directories) - per language
+slideAssets :: SiteConfig -> Rules ()
+slideAssets cfg =
+  forM_ imageExtensions $ \ext ->
+    match (fromGlob $ "content/slides/*/images/*." <> ext) $ do
+      forM_ (languages cfg) $ \lang ->
+        version (T.unpack $ langCode lang) $ do
+          route $ customRoute $ \ident ->
+            let parts = splitDirectories $ toFilePath ident
+                slug = parts !! 2
+                filename = takeFileName $ toFilePath ident
+             in T.unpack (langCode lang) </> "slides" </> slug </> "images" </> filename
+          compile copyFileCompiler
+
+-- | Compile slides using Pandoc's reveal.js writer - per language
+slides :: SiteConfig -> Rules ()
+slides cfg =
+  match "content/slides/*/slides.md" $ do
+    forM_ (languages cfg) $ \lang ->
+      version (T.unpack $ langCode lang) $ do
+        route $ customRoute $ \ident ->
+          let parts = splitDirectories $ toFilePath ident
+              slug = parts !! 2
+           in T.unpack (langCode lang) </> "slides" </> slug </> "index.html"
+        compile $ do
+          metadata <- getUnderlying >>= getMetadata
+          let enableMath = metaBool "math" metadata
+          slideCompiler enableMath
+            >>= saveSnapshot "content"
+            >>= loadAndApplyTemplate "templates/slide.html" defaultContext
+            >>= relativizeUrls
+
+-- | Create slide index page - per language
+slideIndex :: SiteConfig -> Rules ()
+slideIndex cfg = do
+  slideDep <- makePatternDependency "content/slides/*/slides.md"
+  rulesExtraDependencies [slideDep] $
+    forM_ (languages cfg) $ \lang -> do
+      let langStr = T.unpack $ langCode lang
+      create [fromFilePath $ langStr </> "slides/index.html"] $ do
+        route idRoute
+        compile $ do
+          -- Load slides for this language version
+          allSlides <- loadAllSnapshots ("content/slides/*/slides.md" .&&. hasVersion langStr) "content"
+          let slideItemCtx =
+                field "url" (makeSlideUrl langStr)
+                  <> dateField "date" "%B %e, %Y"
+                  <> defaultContext
+              ctx =
+                constField "title" "Slides"
+                  <> listField "slides" slideItemCtx (pure allSlides)
+                  <> allLangsCtx cfg langStr "/slides/"
+                  <> baseCtx cfg langStr
+          makeItem ""
+            >>= loadAndApplyTemplate "templates/slide-list.html" ctx
+            >>= loadAndApplyTemplate "templates/default.html" ctx
+            >>= relativizeUrls
+  where
+    makeSlideUrl langStr item =
+      let parts = splitDirectories $ toFilePath $ itemIdentifier item
+          slug = parts !! 2
+       in pure $ "/" <> langStr <> "/slides/" <> slug <> "/"
 
 -- ============================================================================
 -- Context Builders (page-specific compositions)

@@ -16,15 +16,16 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        lib = pkgs.lib;
         hPkgs = pkgs.haskellPackages;
 
         # Local packages (manually packaged dependencies)
         localPkgs = import ./packages { inherit pkgs; };
 
         # Source files for the site builder
-        builderSrc = pkgs.lib.fileset.toSource {
+        builderSrc = lib.fileset.toSource {
           root = ./.;
-          fileset = pkgs.lib.fileset.unions [
+          fileset = lib.fileset.unions [
             ./src
             ./app
             ./test
@@ -51,6 +52,9 @@
         # Lucide icons (icon font with CSS)
         lucideFont = "${localPkgs.lucide-static}/font";
 
+        # Reveal.js for slides
+        revealJs = localPkgs.reveal-js;
+
         # Tool versions for cache key (required by site builder)
         katexVersion = pkgs.nodePackages.katex.version;
         mermaidVersion = pkgs.mermaid-cli.version;
@@ -58,9 +62,9 @@
         # The final website derivation
         website = pkgs.stdenv.mkDerivation {
           name = "codgician-site";
-          src = pkgs.lib.fileset.toSource {
+          src = lib.fileset.toSource {
             root = ./.;
-            fileset = pkgs.lib.fileset.unions [
+            fileset = lib.fileset.unions [
               ./content
               ./templates
               ./static
@@ -70,7 +74,7 @@
           nativeBuildInputs = [ siteBuilder ] ++ buildTools;
 
           LANG = "en_US.UTF-8";
-          LOCALE_ARCHIVE = pkgs.lib.optionalString (
+          LOCALE_ARCHIVE = lib.optionalString (
             pkgs.stdenv.hostPlatform.libc == "glibc"
           ) "${pkgs.glibcLocales}/lib/locale/locale-archive";
 
@@ -89,6 +93,11 @@
             mkdir -p static/vendor/lucide
             cp ${lucideFont}/lucide.css static/vendor/lucide/
             cp ${lucideFont}/lucide.woff2 static/vendor/lucide/
+
+            # Copy reveal.js for slides
+            mkdir -p static/vendor/reveal.js
+            cp -r ${revealJs}/dist static/vendor/reveal.js/
+            cp -r ${revealJs}/plugin static/vendor/reveal.js/
 
             site build
             runHook postBuild
@@ -138,6 +147,7 @@
           mkdir -p static/vendor
           ln -sfn ${katexDist} static/vendor/katex
           ln -sfn ${lucideFont} static/vendor/lucide
+          ln -sfn ${revealJs} static/vendor/reveal.js
           exec ${siteBuilder}/bin/site "$@"
         '';
 
@@ -164,6 +174,7 @@
             mkdir -p static/vendor
             ln -sfn ${katexDist} static/vendor/katex
             ln -sfn ${lucideFont} static/vendor/lucide
+            ln -sfn ${revealJs} static/vendor/reveal.js
           '';
         };
 
