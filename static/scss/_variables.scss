@@ -1,12 +1,16 @@
+// =============================================================================
+// Design Tokens - Single source of truth for all values
+// =============================================================================
+
 // Theme colors
 $themes: (
   light: (
-    color-bg: #ffffff,
+    color-bg: #fffcf0,
     color-text: #1a1a1a,
     color-primary: #3b82f6,
     color-secondary: #64748b,
-    color-surface: #f8fafc,
-    color-border: #e2e8f0,
+    color-surface: #f7f3e3,
+    color-border: #e8e0c8,
   ),
   dark: (
     color-bg: #1a1a2e,
@@ -30,9 +34,45 @@ $themes: (
 $font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 $font-mono: "SF Mono", Monaco, "Cascadia Code", monospace;
 
-// Spacing
-$space-xs: 0.25rem;
-$space-sm: 0.5rem;
-$space-md: 1rem;
-$space-lg: 2rem;
-$space-xl: 4rem;
+// Spacing scale (used throughout)
+$space-xs: 0.25rem;  // 4px
+$space-sm: 0.5rem;   // 8px
+$space-md: 1rem;     // 16px
+$space-lg: 1.5rem;   // 24px
+$space-xl: 2rem;     // 32px
+$space-2xl: 3rem;    // 48px
+
+// Layout
+$content-width: 720px;
+$content-padding: $space-lg;
+
+// Breakpoints
+$bp-sm: 480px;   // Small phones
+$bp-md: 768px;   // Tablets
+$bp-lg: 1024px;  // Desktop
+$bp-xl: 1280px;  // Large desktop
+
+// Responsive mixins
+@mixin mobile {
+  @media (max-width: #{$bp-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $bp-md) and (max-width: #{$bp-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $bp-lg) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $bp-md) {
+    @content;
+  }
+}

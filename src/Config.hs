@@ -10,30 +10,71 @@ module Config
     FeedConfig (..),
     Language (..),
     Translated (..),
+    TranslatedList (..),
     loadConfig,
     getTrans,
+    getTransList,
+    defaultLang,
+    langCodes,
   )
 where
 
 import Data.Aeson
+import Data.Aeson.Key (toText)
+import Data.Aeson.KeyMap (toList)
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Yaml (decodeFileThrow)
 import GHC.Generics (Generic)
 
--- | Translated text with per-language values
-data Translated = Translated
-  { en :: Text,
-    zh :: Text
-  }
-  deriving (Show, Generic)
+newtype Translated = Translated {unTranslated :: Map Text Text}
+  deriving (Show)
 
-instance FromJSON Translated
+instance FromJSON Translated where
+  parseJSON = withObject "Translated" $ \v -> do
+    pairs <- mapM parsePair (toList v)
+    pure $ Translated $ Map.fromList pairs
+    where
+      parsePair (k, val) = do
+        t <- parseJSON val
+        pure (toText k, t)
 
--- | Get text for a specific language (falls back to English)
-getTrans :: String -> Translated -> Text
-getTrans "zh" t = zh t
-getTrans _ t = en t
+newtype TranslatedList = TranslatedList {unTranslatedList :: Map Text [Text]}
+  deriving (Show)
+
+instance FromJSON TranslatedList where
+  parseJSON = withObject "TranslatedList" $ \v -> do
+    pairs <- mapM parsePair (toList v)
+    pure $ TranslatedList $ Map.fromList pairs
+    where
+      parsePair (k, val) = do
+        ts <- parseJSON val
+        pure (toText k, ts)
+
+getTrans :: [Language] -> String -> Translated -> Text
+getTrans langs lang (Translated m) =
+  let langText = T.pack lang
+      defLang = defaultLang langs
+   in case Map.lookup langText m of
+        Just t -> t
+        Nothing -> Map.findWithDefault "" defLang m
+
+getTransList :: [Language] -> String -> TranslatedList -> [Text]
+getTransList langs lang (TranslatedList m) =
+  let langText = T.pack lang
+      defLang = defaultLang langs
+   in case Map.lookup langText m of
+        Just ts -> ts
+        Nothing -> Map.findWithDefault [] defLang m
+
+defaultLang :: [Language] -> Text
+defaultLang [] = "en"
+defaultLang (l : _) = langCode l
+
+langCodes :: SiteConfig -> [Text]
+langCodes = map langCode . languages
 
 data SiteConfig = SiteConfig
   { site :: SiteInfo,
@@ -45,7 +86,6 @@ data SiteConfig = SiteConfig
   }
   deriving (Show, Generic)
 
--- | Language definition
 data Language = Language
   { langCode :: Text,
     langLabel :: Text
@@ -59,6 +99,7 @@ instance FromJSON Language where
 data SiteInfo = SiteInfo
   { title :: Translated,
     subtitle :: Translated,
+    typewriterPhrases :: TranslatedList,
     baseUrl :: Text,
     copyright :: Translated
   }

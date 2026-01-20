@@ -6,13 +6,17 @@ module Site
 where
 
 import Compiler.Pandoc (customPandocCompiler)
-import Config (FeedConfig (..), Language (..), SiteConfig (..), SiteInfo (..), loadConfig)
-import Context (AvailableLang (..), availableLangsCtx, langCtx, postCtx, siteCtx)
-import Control.Monad (filterM)
+import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, loadConfig)
+import Context (AvailableLang (..), YearGroup (..), availableLangsCtx, langCtx, postCtx, siteCtx, yearGroupCtx)
+import Control.Monad (filterM, forM_)
+import Data.List (groupBy, nub, sortBy)
+import Data.Maybe (catMaybes, listToMaybe)
+import Data.Ord (Down (..), comparing)
 import qualified Data.Text as T
+import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtx)
 import Hakyll
-import System.FilePath (replaceExtension, splitDirectories, takeFileName, (</>))
+import System.FilePath (joinPath, splitDirectories, takeFileName, (</>))
 
 config :: Configuration
 config =
@@ -26,181 +30,353 @@ config =
 hakyllMain :: IO ()
 hakyllMain = do
   cfg <- loadConfig "config.yaml"
-  hakyllWith config $ do
-    -- Copy static files (excluding SCSS source files)
-    match ("static/**" .&&. complement "static/scss/**") $ do
-      route $ gsubRoute "static/" (const "")
-      compile copyFileCompiler
+  hakyllWith config $ rules cfg
 
-    -- Track SCSS partials for dependency resolution (changes trigger style.scss recompile)
-    match ("static/scss/_*.scss") $ compile getResourceBody
+rules :: SiteConfig -> Rules ()
+rules cfg = do
+  staticFiles
+  postAssets cfg
+  scssCompilation
+  templates
+  homepages cfg
+  standalonePages cfg
+  blogPostSources cfg
+  blogPostPages cfg
+  postListPages cfg
+  rssFeeds cfg
+  sitemap cfg
+  errorPage
 
-    -- Compile SCSS to CSS (using file path, not stdin, for proper @use support)
-    match "static/scss/style.scss" $ do
-      route $ constRoute "css/style.css"
-      compile $ do
-        -- Depend on all SCSS partials so changes trigger recompilation
-        _ <- loadAll "static/scss/_*.scss" :: Compiler [Item String]
-        path <- toFilePath <$> getUnderlying
-        makeItem "" >>= withItemBody (const $ unixFilter "sass" ["--load-path=static/scss", "--style=compressed", path] "")
+getLangCodes :: SiteConfig -> [String]
+getLangCodes = map (T.unpack . langCode) . languages
 
-    -- Compile templates
-    match "templates/*" $ compile templateBodyCompiler
-    match "templates/partials/*" $ compile templateBodyCompiler
+getDefaultLang :: SiteConfig -> String
+getDefaultLang cfg = case languages cfg of
+  (l : _) -> T.unpack $ langCode l
+  [] -> "en"
 
-    -- Homepage (per language) - all languages available
-    match "content/index.*.md" $ do
-      route $ customRoute $ \ident ->
-        let path = toFilePath ident
-            lang = takeWhile (/= '.') $ drop 1 $ dropWhile (/= '.') $ takeFileName path
-         in lang <> "/index.html"
-      compile $ do
-        lang <- getLang
-        let langsCtx = homeLangsCtx cfg lang
-            ctx = langsCtx <> langCtx lang <> siteCtx cfg lang
-        getResourceBody
-          >>= applyAsTemplate ctx
-          >>= loadAndApplyTemplate "templates/home.html" ctx
+staticFiles :: Rules ()
+staticFiles =
+  match ("static/**" .&&. complement "static/scss/**") $ do
+    route $ gsubRoute "static/" (const "")
+    compile copyFileCompiler
 
-    -- Blog posts
-    match "content/posts/*/index.*.md" $ do
-      route $ customRoute $ \ident ->
-        let path = toFilePath ident
-            parts = splitDirectories path
-            slug = parts !! 2
-            filename = parts !! 3
-            lang = takeWhile (/= '.') $ drop 1 $ dropWhile (/= '.') $ filename
-         in lang </> "posts" </> slug </> "index.html"
-      compile $ do
-        ident <- getUnderlying
-        lang <- getLang
-        langsCtx <- postLangsCtx cfg lang ident
-        metadata <- getMetadata ident
-        let enableMath = maybe False (== "true") $ lookupString "math" metadata
-            enableMermaid = maybe False (== "true") $ lookupString "mermaid" metadata
-            ctx = langsCtx <> postCtx cfg lang
-        customPandocCompiler enableMath enableMermaid
-          >>= saveSnapshot "content"
-          >>= loadAndApplyTemplate "templates/post.html" ctx
-          >>= loadAndApplyTemplate "templates/default.html" ctx
-          >>= relativizeUrls
+postAssets :: SiteConfig -> Rules ()
+postAssets cfg =
+  forM_ ["jpg", "png", "gif", "svg", "webp"] $ \ext ->
+    match (fromGlob $ "content/posts/*/*." <> ext) $ do
+      forM_ (getLangCodes cfg) $ \lang ->
+        version lang $ do
+          route $ customRoute $ \ident ->
+            let parts = splitDirectories $ toFilePath ident
+                slug = parts !! 2
+                filename = takeFileName $ toFilePath ident
+             in lang </> "posts" </> slug </> filename
+          compile copyFileCompiler
 
-    -- Post list pages
-    create ["en/posts/index.html"] $ do
+scssCompilation :: Rules ()
+scssCompilation = do
+  match "static/scss/_*.scss" $ compile getResourceBody
+  match "static/scss/style.scss" $ do
+    route $ constRoute "css/style.css"
+    compile $ do
+      _ <- loadAll "static/scss/_*.scss" :: Compiler [Item String]
+      path <- toFilePath <$> getUnderlying
+      makeItem ""
+        >>= withItemBody (const $ unixFilter "sass" ["--load-path=static/scss", "--style=compressed", path] "")
+
+templates :: Rules ()
+templates = do
+  match "templates/*" $ compile templateBodyCompiler
+  match "templates/partials/*" $ compile templateBodyCompiler
+
+homepages :: SiteConfig -> Rules ()
+homepages cfg =
+  match "content/index.*.md" $ do
+    route $ customRoute $ \ident -> extractLang ident <> "/index.html"
+    compile $ do
+      lang <- getLang
+      let ctx = langsCtxAll cfg lang "/" <> langCtx lang <> siteCtx cfg lang
+      getResourceBody
+        >>= applyAsTemplate ctx
+        >>= loadAndApplyTemplate "templates/home.html" ctx
+
+standalonePages :: SiteConfig -> Rules ()
+standalonePages cfg =
+  match ("content/**/index.*.md" .&&. complement "content/index.*.md" .&&. complement "content/posts/**") $ do
+    route $ customRoute $ \ident ->
+      let path = toFilePath ident
+          lang = extractLang ident
+          pathParts = splitDirectories path
+          slugParts = drop 1 $ init pathParts
+          slug = joinPath slugParts
+       in lang </> slug </> "index.html"
+    compile $ do
+      ident <- getUnderlying
+      lang <- getLang
+      langsCtx <- pageLangsCtxNested cfg lang ident
+      (enableMath, enableMermaid) <- getFeatureFlags
+      let ctx = langsCtx <> postCtx cfg lang
+      customPandocCompiler enableMath enableMermaid
+        >>= loadAndApplyTemplate "templates/page.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= relativizeUrls
+
+blogPostSources :: SiteConfig -> Rules ()
+blogPostSources cfg =
+  match "content/posts/*/index.*.md" $ do
+    route $ customRoute $ \ident ->
+      let parts = splitDirectories $ toFilePath ident
+          slug = parts !! 2
+          lang = extractLang ident
+       in lang </> "posts" </> slug </> "index.html"
+    compile $ do
+      ident <- getUnderlying
+      lang <- getLang
+      let slug = splitDirectories (toFilePath ident) !! 2
+      (enableMath, enableMermaid) <- getFeatureFlags
+      let ctx = langsCtxAll cfg lang ("/posts/" <> slug <> "/") <> postCtx cfg lang
+      customPandocCompiler enableMath enableMermaid
+        >>= saveSnapshot "content"
+        >>= loadAndApplyTemplate "templates/post.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= relativizeUrls
+
+blogPostPages :: SiteConfig -> Rules ()
+blogPostPages cfg = do
+  allPostIdents <- makePatternDependency "content/posts/*/index.*.md"
+  rulesExtraDependencies [allPostIdents] $ do
+    postFiles <- getMatches "content/posts/*/index.*.md"
+    let slugs = nub $ map getPostSlug postFiles
+    forM_ (languages cfg) $ \lang -> do
+      let langStr = T.unpack $ langCode lang
+      forM_ slugs $ \slug -> do
+        let hasSource = any (\i -> extractLang i == langStr && getPostSlug i == slug) postFiles
+        if hasSource
+          then pure ()
+          else createFallbackPost cfg langStr slug
+  where
+    getPostSlug ident = splitDirectories (toFilePath ident) !! 2
+
+createFallbackPost :: SiteConfig -> String -> String -> Rules ()
+createFallbackPost cfg targetLang slug =
+  create [fromFilePath $ targetLang </> "posts" </> slug </> "index.html"] $ do
+    route idRoute
+    compile $ do
+      sourceIdent <- findFallbackSource cfg targetLang slug
+      case sourceIdent of
+        Nothing -> fail $ "No source found for post: " <> slug
+        Just srcIdent -> do
+          srcItem <- loadSnapshot srcIdent "content"
+          srcMeta <- getMetadata srcIdent
+          let ctx =
+                constField "date" (getDateFromMeta srcMeta)
+                  <> constField "title" (getTitleFromMeta srcMeta)
+                  <> langsCtxAll cfg targetLang ("/posts/" <> slug <> "/")
+                  <> postCtx cfg targetLang
+          makeItem (itemBody srcItem)
+            >>= loadAndApplyTemplate "templates/post.html" ctx
+            >>= loadAndApplyTemplate "templates/default.html" ctx
+            >>= relativizeUrls
+
+getDateFromMeta :: Metadata -> String
+getDateFromMeta meta = maybe "" id $ lookupString "date" meta
+
+getTitleFromMeta :: Metadata -> String
+getTitleFromMeta meta = maybe "" id $ lookupString "title" meta
+
+findFallbackSource :: SiteConfig -> String -> String -> Compiler (Maybe Identifier)
+findFallbackSource cfg targetLang slug = do
+  let langOrder = targetLang : filter (/= targetLang) (getLangCodes cfg)
+  findFirst langOrder
+  where
+    findFirst [] = pure Nothing
+    findFirst (l : ls) = do
+      let pattern = fromGlob $ "content/posts/" <> slug <> "/index." <> l <> ".md"
+      matches <- getMatches pattern
+      case matches of
+        (ident : _) -> pure $ Just ident
+        [] -> findFirst ls
+
+postListPages :: SiteConfig -> Rules ()
+postListPages cfg =
+  forM_ (languages cfg) $ \lang -> do
+    let langStr = T.unpack $ langCode lang
+        title = getNavTitle cfg langStr "posts/"
+    create [fromFilePath $ langStr </> "posts/index.html"] $ do
       route idRoute
       compile $ do
-        posts <- recentFirst =<< loadAllSnapshots "content/posts/*/index.en.md" "content"
-        let langsCtx = postListLangsCtx cfg "en"
+        allPostFiles <- getMatches "content/posts/*/index.*.md"
+        let slugs = nub $ map getPostSlug allPostFiles
+        posts <- catMaybes <$> mapM (getBestPost cfg langStr) slugs
+        sortedPosts <- recentFirst posts
+        yearGroups <- groupPostsByYear sortedPosts
+        let postCtxWithLangUrl = postCtxForList cfg langStr
             ctx =
-              constField "title" "Blog"
-                <> listField "posts" (postCtx cfg "en") (pure posts)
-                <> langsCtx
-                <> langCtx "en"
-                <> siteCtx cfg "en"
+              constField "title" title
+                <> listField "yearGroups" (yearGroupCtx postCtxWithLangUrl) (pure $ map mkYearGroupItem yearGroups)
+                <> langsCtxAll cfg langStr "/posts/"
+                <> langCtx langStr
+                <> siteCtx cfg langStr
         makeItem ""
           >>= loadAndApplyTemplate "templates/post-list.html" ctx
           >>= loadAndApplyTemplate "templates/default.html" ctx
           >>= relativizeUrls
+  where
+    mkYearGroupItem yg = Item (fromFilePath "") yg
 
-    create ["zh/posts/index.html"] $ do
+    getPostSlug :: Identifier -> String
+    getPostSlug ident = splitDirectories (toFilePath ident) !! 2
+
+    getBestPost :: SiteConfig -> String -> String -> Compiler (Maybe (Item String))
+    getBestPost cfg' targetLang slug = do
+      let langOrder = targetLang : filter (/= targetLang) (getLangCodes cfg')
+      findFirstPost langOrder slug
+
+    findFirstPost :: [String] -> String -> Compiler (Maybe (Item String))
+    findFirstPost [] _ = pure Nothing
+    findFirstPost (l : ls) slug = do
+      let pattern = fromGlob $ "content/posts/" <> slug <> "/index." <> l <> ".md"
+      matches <- getMatches pattern
+      case matches of
+        (ident : _) -> Just <$> loadSnapshot ident "content"
+        [] -> findFirstPost ls slug
+
+postCtxForList :: SiteConfig -> String -> Context String
+postCtxForList cfg lang =
+  field "url" makeUrl
+    <> dateField "date" "%B %e, %Y"
+    <> dateField "dateShort" "%b %d"
+    <> dateField "dateYear" "%Y"
+    <> langCtx lang
+    <> siteCtx cfg lang
+  where
+    makeUrl item = do
+      let ident = itemIdentifier item
+          slug = splitDirectories (toFilePath ident) !! 2
+      pure $ "/" <> lang <> "/posts/" <> slug <> "/"
+
+getNavTitle :: SiteConfig -> String -> T.Text -> String
+getNavTitle cfg lang url =
+  let langs = languages cfg
+      navItems = navigation cfg
+      matchingNav = filter ((== url) . navUrl) navItems
+   in case matchingNav of
+        (n : _) -> T.unpack $ getTrans langs lang $ navLabel n
+        [] -> T.unpack url
+
+groupPostsByYear :: [Item String] -> Compiler [YearGroup]
+groupPostsByYear posts = do
+  postsWithYears <- mapM addYear posts
+  let sorted = sortBy (comparing (Down . fst)) postsWithYears
+      grouped = groupBy (\a b -> fst a == fst b) sorted
+  pure $ map toYearGroup grouped
+  where
+    addYear :: Item String -> Compiler (String, Item String)
+    addYear item = do
+      time <- getItemUTC defaultTimeLocale (itemIdentifier item)
+      let year = formatTime defaultTimeLocale "%Y" time
+      pure (year, item)
+
+    toYearGroup :: [(String, Item String)] -> YearGroup
+    toYearGroup items =
+      YearGroup
+        { ygYear = fst $ head items,
+          ygPosts = map snd items
+        }
+
+rssFeeds :: SiteConfig -> Rules ()
+rssFeeds cfg = do
+  let feedCount = feedItemsCount $ feed cfg
+  forM_ (getLangCodes cfg) $ \lang ->
+    create [fromFilePath $ lang </> "feed.xml"] $ do
       route idRoute
       compile $ do
-        posts <- recentFirst =<< loadAllSnapshots "content/posts/*/index.zh.md" "content"
-        let langsCtx = postListLangsCtx cfg "zh"
-            ctx =
-              constField "title" "博客"
-                <> listField "posts" (postCtx cfg "zh") (pure posts)
-                <> langsCtx
-                <> langCtx "zh"
-                <> siteCtx cfg "zh"
-        makeItem ""
-          >>= loadAndApplyTemplate "templates/post-list.html" ctx
-          >>= loadAndApplyTemplate "templates/default.html" ctx
-          >>= relativizeUrls
+        posts <-
+          fmap (take feedCount) . recentFirst
+            =<< loadAllSnapshots (fromGlob $ "content/posts/*/index." <> lang <> ".md") "content"
+        renderAtom (feedConfiguration cfg lang) feedCtx posts
 
-    -- RSS feeds
-    let feedCount = feedItemsCount $ feed cfg
-    create ["en/feed.xml"] $ do
-      route idRoute
-      compile $ do
-        posts <- fmap (take feedCount) . recentFirst =<< loadAllSnapshots "content/posts/*/index.en.md" "content"
-        renderAtom (feedConfiguration cfg "en") feedCtx posts
+sitemap :: SiteConfig -> Rules ()
+sitemap cfg =
+  create ["sitemap.xml"] $ do
+    route idRoute
+    compile $ do
+      allPosts <- loadAllSnapshots "content/posts/*/index.*.md" "content"
+      let rootUrl = T.unpack $ baseUrl $ site cfg
+          pageCtx = constField "root" rootUrl <> dateField "lastmod" "%Y-%m-%d" <> defaultContext
+          sitemapCtx = listField "pages" pageCtx (pure allPosts)
+      makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
 
-    create ["zh/feed.xml"] $ do
-      route idRoute
-      compile $ do
-        posts <- fmap (take feedCount) . recentFirst =<< loadAllSnapshots "content/posts/*/index.zh.md" "content"
-        renderAtom (feedConfiguration cfg "zh") feedCtx posts
+errorPage :: Rules ()
+errorPage =
+  match "content/404.html" $ do
+    route $ constRoute "404.html"
+    compile copyFileCompiler
 
-    -- Sitemap
-    create ["sitemap.xml"] $ do
-      route idRoute
-      compile $ do
-        enPosts <- loadAllSnapshots "content/posts/*/index.en.md" "content"
-        zhPosts <- loadAllSnapshots "content/posts/*/index.zh.md" "content"
-        let rootUrl = T.unpack $ baseUrl $ site cfg
-            allPages = enPosts ++ zhPosts
-            pageCtx = constField "root" rootUrl <> dateField "lastmod" "%Y-%m-%d" <> defaultContext
-            sitemapCtx = listField "pages" pageCtx (pure allPages)
-        makeItem ""
-          >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
+extractLang :: Identifier -> String
+extractLang ident =
+  let filename = takeFileName $ toFilePath ident
+   in takeWhile (/= '.') $ drop 1 $ dropWhile (/= '.') filename
 
-    -- 404 page
-    match "content/404.html" $ do
-      route $ constRoute "404.html"
-      compile copyFileCompiler
-
--- | Get language from current item's file path
 getLang :: Compiler String
-getLang = do
-  ident <- getUnderlying
-  let path = toFilePath ident
-      lang = takeWhile (/= '.') $ drop 1 $ dropWhile (/= '.') $ takeFileName path
-  pure lang
+getLang = extractLang <$> getUnderlying
 
--- | Homepage language context - all configured languages available
-homeLangsCtx :: SiteConfig -> String -> Context String
-homeLangsCtx cfg currentLang =
+getFeatureFlags :: Compiler (Bool, Bool)
+getFeatureFlags = do
+  metadata <- getUnderlying >>= getMetadata
+  let enableMath = lookupBool "math" metadata
+      enableMermaid = lookupBool "mermaid" metadata
+  pure (enableMath, enableMermaid)
+  where
+    lookupBool key meta = maybe False (== "true") $ lookupString key meta
+
+langsCtxAll :: SiteConfig -> String -> String -> Context String
+langsCtxAll cfg currentLang urlSuffix =
   availableLangsCtx $ map toLang $ languages cfg
   where
     toLang lang =
       AvailableLang
         { alCode = T.unpack $ langCode lang,
           alLabel = T.unpack $ langLabel lang,
-          alUrl = "/" <> T.unpack (langCode lang) <> "/",
+          alUrl = "/" <> T.unpack (langCode lang) <> urlSuffix,
           alActive = T.unpack (langCode lang) == currentLang
         }
 
--- | Post list language context - all configured languages available
-postListLangsCtx :: SiteConfig -> String -> Context String
-postListLangsCtx cfg currentLang =
-  availableLangsCtx $ map toLang $ languages cfg
+pageLangsCtx :: SiteConfig -> String -> Identifier -> Compiler (Context String)
+pageLangsCtx cfg currentLang ident = do
+  let slug = splitDirectories (toFilePath ident) !! 1
+  availLangs <- filterM (hasFile $ "content" </> slug) $ languages cfg
+  pure $ availableLangsCtx $ map (toLang $ "/" <> slug <> "/") availLangs
   where
-    toLang lang =
+    toLang suffix lang =
       AvailableLang
         { alCode = T.unpack $ langCode lang,
           alLabel = T.unpack $ langLabel lang,
-          alUrl = "/" <> T.unpack (langCode lang) <> "/posts/",
+          alUrl = "/" <> T.unpack (langCode lang) <> suffix,
           alActive = T.unpack (langCode lang) == currentLang
         }
 
--- | Post language context - only languages with available translations
-postLangsCtx :: SiteConfig -> String -> Identifier -> Compiler (Context String)
-postLangsCtx cfg currentLang ident = do
+pageLangsCtxNested :: SiteConfig -> String -> Identifier -> Compiler (Context String)
+pageLangsCtxNested cfg currentLang ident = do
   let path = toFilePath ident
-      parts = splitDirectories path
-      slug = parts !! 2
-  -- Check which language versions exist
-  availableLangs <- filterM (hasTranslation slug) $ languages cfg
-  pure $ availableLangsCtx $ map (toLang slug) availableLangs
+      pathParts = splitDirectories path
+      slugParts = drop 1 $ init pathParts
+      slug = joinPath slugParts
+      contentDir = "content" </> joinPath (init slugParts)
+  availLangs <- filterM (hasFile contentDir) $ languages cfg
+  pure $ availableLangsCtx $ map (toLang $ "/" <> slug <> "/") availLangs
   where
-    toLang slug lang =
+    toLang suffix lang =
       AvailableLang
         { alCode = T.unpack $ langCode lang,
           alLabel = T.unpack $ langLabel lang,
-          alUrl = "/" <> T.unpack (langCode lang) <> "/posts/" <> slug <> "/",
+          alUrl = "/" <> T.unpack (langCode lang) <> suffix,
           alActive = T.unpack (langCode lang) == currentLang
         }
-    hasTranslation slug lang = do
-      let transPath = "content/posts" </> slug </> "index." <> T.unpack (langCode lang) <> ".md"
-      getMatches (fromGlob transPath) >>= \matches -> pure (not $ null matches)
+
+hasFile :: FilePath -> Language -> Compiler Bool
+hasFile dir lang = do
+  let path = dir </> "index." <> T.unpack (langCode lang) <> ".md"
+  matches <- getMatches $ fromGlob path
+  pure $ not $ null matches

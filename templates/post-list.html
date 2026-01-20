@@ -1,13 +1,18 @@
 <div class="post-list">
   <h1>$title$</h1>
-  <ul class="post-list-items">
-    $for(posts)$
-    <li class="post-list-item">
-      <a href="$url$">
-        <span class="post-list-title">$title$</span>
-        <span class="post-list-date">$dateShort$</span>
-      </a>
-    </li>
-    $endfor$
-  </ul>
+  $for(yearGroups)$
+  <section class="post-list-year">
+    <h2 class="post-list-year-title">$year$</h2>
+    <ul class="post-list-items">
+      $for(posts)$
+      <li class="post-list-item">
+        <a href="$url$">
+          <span class="post-list-title">$title$</span>
+          <span class="post-list-date">$dateShort$</span>
+        </a>
+      </li>
+      $endfor$
+    </ul>
+  </section>
+  $endfor$
 </div>

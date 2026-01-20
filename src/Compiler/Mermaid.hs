@@ -15,11 +15,13 @@ import System.FilePath ((</>))
 import System.IO.Temp (withSystemTempDirectory)
 import System.Process (callProcess)
 
--- | Get Mermaid version from environment
+-- | Get Mermaid version from environment (required for cache key)
 getMermaidVersion :: IO Text
 getMermaidVersion = do
   ver <- lookupEnv "MERMAID_VERSION"
-  pure $ maybe "unknown" T.pack ver
+  case ver of
+    Just v -> pure $ T.pack v
+    Nothing -> error "MERMAID_VERSION environment variable is not set"
 
 -- | Render Mermaid diagram to SVG
 renderMermaid :: Text -> IO Text

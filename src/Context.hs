@@ -6,10 +6,13 @@ module Context
     langCtx,
     availableLangsCtx,
     AvailableLang (..),
+    YearGroup (..),
+    yearGroupCtx,
   )
 where
 
 import Config
+import Data.List (intercalate)
 import qualified Data.Text as T
 import Hakyll
 
@@ -21,25 +24,34 @@ data AvailableLang = AvailableLang
     alActive :: Bool
   }
 
+-- | Year group for posts
+data YearGroup = YearGroup
+  { ygYear :: String,
+    ygPosts :: [Item String]
+  }
+
 -- | Base site context with config values (language-aware)
 siteCtx :: SiteConfig -> String -> Context String
 siteCtx cfg lang =
-  constField "siteTitle" (T.unpack $ getTrans lang $ title $ site cfg)
-    <> constField "siteSubtitle" (T.unpack $ getTrans lang $ subtitle $ site cfg)
-    <> constField "copyright" (T.unpack $ getTrans lang $ Config.copyright $ site cfg)
+  constField "siteTitle" (T.unpack $ getTrans langs lang $ title $ site cfg)
+    <> constField "siteSubtitle" (T.unpack $ getTrans langs lang $ subtitle $ site cfg)
+    <> constField "typewriterPhrases" (intercalate "|" $ map T.unpack $ getTransList langs lang $ typewriterPhrases $ site cfg)
+    <> constField "copyright" (T.unpack $ getTrans langs lang $ Config.copyright $ site cfg)
     <> constField "authorName" (T.unpack $ Config.name $ author cfg)
-    <> listField "navigation" (navItemCtx lang) (pure $ map mkNavItem $ navigation cfg)
-    <> listField "social" (socialLinkCtx lang) (pure $ map mkSocialItem $ social cfg)
+    <> listField "navigation" (navItemCtx langs lang) (pure $ map mkNavItem $ navigation cfg)
+    <> listField "social" (socialLinkCtx langs lang) (pure $ map mkSocialItem $ social cfg)
     <> defaultContext
   where
-    navItemCtx l =
-      field "name" (\item -> pure $ T.unpack $ getTrans l $ navLabel $ itemBody item)
+    langs = languages cfg
+
+    navItemCtx ls l =
+      field "name" (\item -> pure $ T.unpack $ getTrans ls l $ navLabel $ itemBody item)
         <> field "url" (pure . T.unpack . navUrl . itemBody)
         <> constField "lang" l
     mkNavItem n = Item (fromFilePath "") n
 
-    socialLinkCtx l =
-      field "name" (\item -> pure $ T.unpack $ getTrans l $ socialLabel $ itemBody item)
+    socialLinkCtx ls l =
+      field "name" (\item -> pure $ T.unpack $ getTrans ls l $ socialLabel $ itemBody item)
         <> field "url" (pure . T.unpack . socialUrl . itemBody)
         <> field "icon" (pure . T.unpack . socialIcon . itemBody)
     mkSocialItem s = Item (fromFilePath "") s
@@ -61,11 +73,18 @@ availableLangsCtx langs =
         <> boolField "active" (alActive . itemBody)
     mkLangItem l = Item (fromFilePath "") l
 
+-- | Context for year groups
+yearGroupCtx :: Context String -> Context YearGroup
+yearGroupCtx postCtx' =
+  field "year" (pure . ygYear . itemBody)
+    <> listFieldWith "posts" postCtx' (pure . ygPosts . itemBody)
+
 -- | Post context with date and reading time
 postCtx :: SiteConfig -> String -> Context String
 postCtx cfg lang =
   dateField "date" "%B %e, %Y"
     <> dateField "dateShort" "%b %d"
+    <> dateField "dateYear" "%Y"
     <> field "readingTime" readingTime
     <> langCtx lang
     <> siteCtx cfg lang

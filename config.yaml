@@ -2,13 +2,14 @@ site:
   baseUrl: "https://codgician.me"
   title:
     en: "codgician"
-    zh: "codgician"
   subtitle:
     en: "Coding Magic"
-    zh: "编码魔法"
+  typewriterPhrases:
+    en:
+      - "Coding Magic"
+      - "Vibing..."
   copyright:
-    en: "© 2025 codgician"
-    zh: "© 2025 codgician"
+    en: "© 2026 codgician"
 languages:
   - code: en
     label: English
@@ -31,12 +32,14 @@ social:
     icon: github
     label:
       en: GitHub
-      zh: GitHub
-  - url: "mailto:codgician@outlook.com"
-    icon: mail
+  - url: "https://x.com/codgician"
+    icon: twitter
     label:
-      en: Email
-      zh: 邮箱
+      en: X
+  - url: "https://t.me/codgician"
+    icon: send
+    label:
+      en: Telegram
 feed:
   itemsCount: 20
   title:
@@ -44,4 +47,3 @@ feed:
     zh: "codgician 的博客"
   description:
     en: "Coding Magic"
-    zh: "编码魔法"

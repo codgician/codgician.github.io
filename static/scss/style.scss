@@ -2,7 +2,11 @@
 @use "components";
 @use "syntax";
 
-// Base styles
+// =============================================================================
+// Base Styles
+// =============================================================================
+
+// Theme setup
 :root {
   @include theme-colors(dark);
 }
@@ -17,13 +21,18 @@
   }
 }
 
-* {
+// Reset & base
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   font-family: $font-sans;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -35,14 +44,22 @@ body {
   flex-direction: column;
 }
 
+// Links
 a {
   color: var(--color-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
+// Code
 code {
   font-family: $font-mono;
+  font-size: 0.9em;
   background: var(--color-surface);
-  padding: $space-xs $space-sm;
+  padding: 0.125em 0.375em;
   border-radius: 4px;
 }
 
@@ -51,9 +68,24 @@ pre {
   padding: $space-md;
   border-radius: 8px;
   overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.5;
 
   code {
     background: none;
     padding: 0;
+    font-size: inherit;
+  }
+}
+
+// Selection
+::selection {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }

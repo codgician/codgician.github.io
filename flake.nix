@@ -1,10 +1,5 @@
 {
-  description = "☕️ codgician's personal homepage.";
-
-  nixConfig = {
-    extra-substituters = [ "https://cache.garnix.io" ];
-    extra-trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" ];
-  };
+  description = "codgician's personal homepage.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -22,6 +17,9 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         hPkgs = pkgs.haskellPackages;
+
+        # Local packages (manually packaged dependencies)
+        localPkgs = import ./packages { inherit pkgs; };
 
         # Source files for the site builder
         builderSrc = pkgs.lib.fileset.toSource {
@@ -51,12 +49,11 @@
         katexDist = "${pkgs.nodePackages.katex}/lib/node_modules/katex/dist";
 
         # Lucide icons (icon font with CSS)
-        lucideStatic = pkgs.fetchzip {
-          url = "https://registry.npmjs.org/lucide-static/-/lucide-static-0.544.0.tgz";
-          hash = "sha256-8+MABl6ToG4e3SM7VEzoDoHsCY52gtlMVW9EuOk5fd0=";
-          stripRoot = true;
-        };
-        lucideFont = "${lucideStatic}/font";
+        lucideFont = "${localPkgs.lucide-static}/font";
+
+        # Tool versions for cache key (required by site builder)
+        katexVersion = pkgs.nodePackages.katex.version;
+        mermaidVersion = pkgs.mermaid-cli.version;
 
         # The final website derivation
         website = pkgs.stdenv.mkDerivation {
@@ -77,8 +74,8 @@
             pkgs.stdenv.hostPlatform.libc == "glibc"
           ) "${pkgs.glibcLocales}/lib/locale/locale-archive";
 
-          KATEX_VERSION = pkgs.nodePackages.katex.version or "unknown";
-          MERMAID_VERSION = pkgs.mermaid-cli.version or "unknown";
+          KATEX_VERSION = katexVersion;
+          MERMAID_VERSION = mermaidVersion;
 
           buildPhase = ''
             runHook preBuild
@@ -159,8 +156,8 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [ ghcWithDeps ] ++ devTools;
 
-          KATEX_VERSION = pkgs.nodePackages.katex.version or "unknown";
-          MERMAID_VERSION = pkgs.mermaid-cli.version or "unknown";
+          KATEX_VERSION = katexVersion;
+          MERMAID_VERSION = mermaidVersion;
 
           # Symlink vendor assets into static/ for development
           shellHook = ''
