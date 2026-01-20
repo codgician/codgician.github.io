@@ -23,6 +23,10 @@ navigation:
     label:
       en: Blog
       zh: 博客
+  - url: slides/
+    label:
+      en: Slides
+      zh: 幻灯片
   - url: about/
     label:
       en: About

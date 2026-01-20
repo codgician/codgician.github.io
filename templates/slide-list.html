@@ -1,0 +1,18 @@
+<header class="page-header">
+  <h1 class="page-title">$title$</h1>
+</header>
+
+<div class="slide-list">
+  $for(slides)$
+  <a href="$url$" class="slide-card">
+    <h2 class="slide-card-title">$title$</h2>
+    $if(subtitle)$
+    <p class="slide-card-subtitle">$subtitle$</p>
+    $endif$
+    <div class="slide-card-meta">
+      $if(author)$<span class="slide-card-author"><i class="lucide-user"></i> $author$</span>$endif$
+      $if(date)$<span class="slide-card-date"><i class="lucide-calendar"></i> $date$</span>$endif$
+    </div>
+  </a>
+  $endfor$
+</div>
