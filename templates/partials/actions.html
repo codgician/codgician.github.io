@@ -1,0 +1,17 @@
+<div class="actions">
+  <button id="theme-toggle" class="actions-btn" aria-label="Toggle theme">
+    <i class="icon-sun"></i>
+  </button>
+  $if(hasMultipleLangs)$
+  <div class="actions-lang">
+    <button class="actions-btn actions-lang-toggle" aria-haspopup="true" aria-expanded="false">
+      <i class="icon-globe"></i>
+    </button>
+    <div class="actions-lang-menu">
+      $for(availableLangs)$
+      <a href="$url$"$if(active)$ class="active" aria-current="true"$endif$>$label$</a>
+      $endfor$
+    </div>
+  </div>
+  $endif$
+</div>

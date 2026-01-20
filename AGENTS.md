@@ -39,6 +39,10 @@ A minimalist personal website and blog built with **Hakyll** and **Nix**. The si
 │       ├── KaTeX.hs      # Math rendering
 │       ├── Mermaid.hs    # Diagram rendering
 │       └── Cache.hs      # Content-addressed cache
+├── packages/             # Local Nix packages (manually packaged dependencies)
+│   ├── default.nix       # Auto-discovers packages in subdirectories
+│   └── {pkg-name}/       # Each package in its own directory
+│       └── default.nix   # Package derivation
 ├── content/
 │   ├── posts/{slug}/     # Blog posts (index.en.md, index.zh.md)
 │   ├── index.en.md       # Homepage (English)
@@ -52,9 +56,27 @@ A minimalist personal website and blog built with **Hakyll** and **Nix**. The si
 ## Key Files
 
 - `flake.nix` - Nix build configuration, devShell, and dependencies
+- `packages/` - Local Nix packages for dependencies not in nixpkgs
 - `config.yaml` - Site metadata, navigation, social links
 - `hie.yaml` - HLS configuration (Cabal cradle)
 - `package.yaml` - Haskell package definition (hpack)
+
+## Local Nix Packages
+
+External dependencies not available in nixpkgs are centrally managed in the `packages/` directory. This follows the [NUR packages](https://github.com/codgician/nur-packages) pattern:
+
+- **Auto-discovery**: Packages are automatically discovered by `packages/default.nix`
+- **One package = one directory**: Each package lives in `packages/{pkg-name}/default.nix`
+- **Naming convention**: Use kebab-case for package names (e.g., `lucide-static`)
+- **Self-contained**: Each package directory contains all necessary files (default.nix, patches, etc.)
+- **Proper metadata**: Include `meta` with `description`, `homepage`, `license`, and `maintainers`
+
+To add a new package:
+
+1. Create `packages/{pkg-name}/default.nix`
+1. Write the derivation using standard nixpkgs patterns
+1. Import via `localPkgs.{pkg-name}` in `flake.nix`
+1. No manual registration needed - auto-discovered
 
 ## Guidance for AI Agents
 
@@ -64,3 +86,11 @@ A minimalist personal website and blog built with **Hakyll** and **Nix**. The si
 1. **Keep dependencies minimal** - avoid adding new Haskell packages unless necessary
 1. **Prefer Text over String** - the codebase uses Data.Text throughout
 1. **Test bilingual content** - ensure changes work for both en/zh languages
+
+## Multilingual Architecture Principles
+
+1. **No hardcoded language codes**: All language iteration must use `languages` from config.yaml. Never hardcode `["en", "zh"]` in Haskell code.
+2. **Config fallback**: Translated strings in config.yaml should fall back to the default language (first in `languages` list) if a translation is not provided. This allows defining only `en:` when values are the same across languages.
+3. **All pages in all languages**: Every content page (posts, standalone pages) should generate HTML for ALL configured languages, using fallback content when a translation doesn't exist.
+4. **Language-consistent URLs**: Within a language context, all internal links should stay in that language. For example, the English blog list should link to `/en/posts/{slug}/` even if the post content falls back to Chinese.
+5. **Nested content support**: Standalone pages can be nested (e.g., `content/icpc/templates/math/index.zh.md` → `/zh/icpc/templates/math/`).

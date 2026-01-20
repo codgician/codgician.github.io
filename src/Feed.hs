@@ -15,12 +15,14 @@ import Hakyll
 feedConfiguration :: SiteConfig -> String -> FeedConfiguration
 feedConfiguration cfg lang =
   FeedConfiguration
-    { feedTitle = T.unpack $ Config.getTrans lang $ Config.feedTitle $ feed cfg,
-      feedDescription = T.unpack $ Config.getTrans lang $ Config.feedDescription $ feed cfg,
+    { feedTitle = T.unpack $ Config.getTrans langs lang $ Config.feedTitle $ feed cfg,
+      feedDescription = T.unpack $ Config.getTrans langs lang $ Config.feedDescription $ feed cfg,
       feedAuthorName = T.unpack $ Config.name $ author cfg,
       feedAuthorEmail = T.unpack $ Config.email $ author cfg,
       feedRoot = T.unpack (Config.baseUrl $ site cfg)
     }
+  where
+    langs = Config.languages cfg
 
 -- | Feed context
 feedCtx :: Context String

@@ -14,11 +14,13 @@ import System.Environment (lookupEnv)
 import System.IO (hClose, hFlush)
 import System.Process
 
--- | Get KaTeX version from environment
+-- | Get KaTeX version from environment (required for cache key)
 getKaTeXVersion :: IO Text
 getKaTeXVersion = do
   ver <- lookupEnv "KATEX_VERSION"
-  pure $ maybe "unknown" T.pack ver
+  case ver of
+    Just v -> pure $ T.pack v
+    Nothing -> error "KATEX_VERSION environment variable is not set"
 
 -- | Render LaTeX to HTML using KaTeX CLI
 renderKaTeX :: Bool -> Text -> IO Text

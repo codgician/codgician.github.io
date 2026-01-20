@@ -7,7 +7,7 @@
   $partial("templates/partials/toolbar.html")$
   <main class="home">
     <h1 class="home-title">$siteTitle$</h1>
-    <p class="home-subtitle">$siteSubtitle$</p>
+    <p class="home-subtitle" data-typewriter="$typewriterPhrases$" data-type-speed="120" data-delete-speed="60" data-pause-delay="2500"></p>
     <div class="home-social">
       $for(social)$
       <a href="$url$" title="$name$" target="_blank" rel="noopener"><i class="icon-$icon$"></i></a>
@@ -25,5 +25,6 @@
     </p>
   </footer>
   <script src="/js/theme.js"></script>
+  <script src="/js/typewriter.js"></script>
 </body>
 </html>
