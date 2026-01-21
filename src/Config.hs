@@ -10,6 +10,8 @@ module Config
     SocialLink (..),
     FriendLink (..),
     FeedConfig (..),
+    PaginationConfig (..),
+    PaginationItemConfig (..),
     Language (..),
     Translated (..),
     TranslatedList (..),
@@ -18,6 +20,8 @@ module Config
     getTransList,
     defaultLang,
     langCodes,
+    postsPerPage,
+    slidesPerPage,
   )
 where
 
@@ -85,7 +89,8 @@ data SiteConfig = SiteConfig
     navigation :: [NavItem],
     social :: [SocialLink],
     friends :: [FriendLink],
-    feed :: FeedConfig
+    feed :: FeedConfig,
+    pagination :: Maybe PaginationConfig
   }
   deriving (Show, Generic)
 
@@ -166,6 +171,37 @@ data FeedConfig = FeedConfig
 instance FromJSON FeedConfig where
   parseJSON = withObject "FeedConfig" $ \v ->
     FeedConfig <$> v .: "title" <*> v .: "description" <*> v .: "itemsCount"
+
+-- | Pagination configuration for a single item type
+data PaginationItemConfig = PaginationItemConfig
+  { itemsPerPage :: Int
+  }
+  deriving (Show, Generic)
+
+instance FromJSON PaginationItemConfig where
+  parseJSON = withObject "PaginationItemConfig" $ \v ->
+    PaginationItemConfig <$> v .:? "itemsPerPage" .!= 10
+
+-- | Pagination configuration for all item types
+data PaginationConfig = PaginationConfig
+  { postsPagination :: PaginationItemConfig,
+    slidesPagination :: PaginationItemConfig
+  }
+  deriving (Show, Generic)
+
+instance FromJSON PaginationConfig where
+  parseJSON = withObject "PaginationConfig" $ \v ->
+    PaginationConfig
+      <$> v .:? "posts" .!= PaginationItemConfig 10
+      <*> v .:? "slides" .!= PaginationItemConfig 12
+
+-- | Get posts per page from config, with default fallback
+postsPerPage :: SiteConfig -> Int
+postsPerPage cfg = maybe 10 (itemsPerPage . postsPagination) (pagination cfg)
+
+-- | Get slides per page from config, with default fallback
+slidesPerPage :: SiteConfig -> Int
+slidesPerPage cfg = maybe 12 (itemsPerPage . slidesPagination) (pagination cfg)
 
 instance FromJSON SiteConfig
 

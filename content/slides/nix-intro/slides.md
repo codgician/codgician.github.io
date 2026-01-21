@@ -2,7 +2,7 @@
 title: Introducing Nix
 subtitle: Declarative builds and deployments
 author: codgician
-date: 2024.05.20
+date: 2024-05-20
 math: true
 theme: white
 highlight-style: pygments

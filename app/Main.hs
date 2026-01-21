@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Control.Exception (ErrorCall (..), catch, displayException)
+import Control.Exception (SomeException, catch, displayException, throwIO)
 import Control.Monad (when)
 import Data.List (isInfixOf)
 import Site (hakyllMain)
@@ -10,13 +10,13 @@ import System.IO (hPutStrLn, stderr)
 main :: IO ()
 main = hakyllMain `catch` handleCacheCorruption
 
-handleCacheCorruption :: ErrorCall -> IO ()
-handleCacheCorruption e@(ErrorCallWithLocation msg _)
-  | isCacheCorruption msg = do
+handleCacheCorruption :: SomeException -> IO ()
+handleCacheCorruption e
+  | isCacheCorruption (displayException e) = do
       hPutStrLn stderr "Cache corruption detected, cleaning and retrying..."
       cleanCache
       hakyllMain
-  | otherwise = error (displayException e)
+  | otherwise = throwIO e
 
 isCacheCorruption :: String -> Bool
 isCacheCorruption msg =
