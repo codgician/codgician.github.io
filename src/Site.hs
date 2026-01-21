@@ -15,7 +15,7 @@ import Data.Maybe (catMaybes, fromMaybe)
 import Data.Ord (Down (..), comparing)
 import qualified Data.Text as T
 import Data.Time.Format (defaultTimeLocale, formatTime)
-import Feed (feedConfiguration, feedCtx)
+import Feed (feedConfiguration, feedCtxForLang)
 import Hakyll
 import Hakyll.Web.Paginate (buildPaginateWith, paginateEvery, paginateRules)
 import Paginate (makePageId, paginationCtx)
@@ -258,14 +258,21 @@ postListPages cfg = do
 rssFeeds :: SiteConfig -> Rules ()
 rssFeeds cfg = do
   let feedCount = feedItemsCount $ feed cfg
-  forM_ (map (T.unpack . langCode) $ languages cfg) $ \lang ->
-    create [fromFilePath $ lang </> "feed.xml"] $ do
-      route idRoute
-      compile $ do
-        posts <-
-          fmap (take feedCount) . recentFirst
-            =<< loadAllSnapshots (fromGlob $ "content/posts/*/index." <> lang <> ".md") "content"
-        renderAtom (feedConfiguration cfg lang) feedCtx posts
+  -- Add dependency on all posts so feed rebuilds when any post changes
+  postDep <- makePatternDependency "content/posts/*/index.*.md"
+  rulesExtraDependencies [postDep] $
+    forM_ (map (T.unpack . langCode) $ languages cfg) $ \lang ->
+      create [fromFilePath $ lang </> "feed.xml"] $ do
+        route idRoute
+        compile $ do
+          -- Get all post slugs
+          allPostFiles <- getMatches "content/posts/*/index.*.md"
+          let slugs = nub $ map postSlug allPostFiles
+
+          -- Load best available content for each slug (native or fallback)
+          posts <- fmap catMaybes $ mapM (bestPostForLang cfg lang) slugs
+          sortedPosts <- fmap (take feedCount) $ recentFirst posts
+          renderAtom (feedConfiguration cfg lang) (feedCtxForLang lang) sortedPosts
 
 sitemap :: SiteConfig -> Rules ()
 sitemap cfg = do

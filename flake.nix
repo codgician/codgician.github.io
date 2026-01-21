@@ -32,7 +32,6 @@
             ./package.yaml
             ./builder.cabal
             ./LICENSE
-            ./CHANGELOG.md
           ];
         };
 
