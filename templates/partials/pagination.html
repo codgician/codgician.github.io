@@ -1,0 +1,31 @@
+$if(hasPagination)$
+<nav class="pagination" aria-label="Page navigation">
+  <div class="pagination-inner">
+    $if(previousPageUrl)$
+    <a href="$previousPageUrl$" class="pagination-nav pagination-prev" aria-label="Previous page">
+      <i class="icon-chevron-left" aria-hidden="true"></i>
+    </a>
+    $else$
+    <span class="pagination-nav pagination-prev disabled" aria-disabled="true">
+      <i class="icon-chevron-left" aria-hidden="true"></i>
+    </span>
+    $endif$
+
+    <span class="pagination-info">
+      <span class="pagination-current">$currentPageNum$</span>
+      <span class="pagination-separator">/</span>
+      <span class="pagination-total">$numPages$</span>
+    </span>
+
+    $if(nextPageUrl)$
+    <a href="$nextPageUrl$" class="pagination-nav pagination-next" aria-label="Next page">
+      <i class="icon-chevron-right" aria-hidden="true"></i>
+    </a>
+    $else$
+    <span class="pagination-nav pagination-next disabled" aria-disabled="true">
+      <i class="icon-chevron-right" aria-hidden="true"></i>
+    </span>
+    $endif$
+  </div>
+</nav>
+$endif$

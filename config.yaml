@@ -93,3 +93,8 @@ feed:
     zh: "codgician 的博客"
   description:
     en: "Coding Magic"
+pagination:
+  posts:
+    itemsPerPage: 20
+  slides:
+    itemsPerPage: 24

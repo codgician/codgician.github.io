@@ -38,6 +38,16 @@ ghc-options:
   - -Wredundant-constraints
 library:
   source-dirs: src
+  exposed-modules:
+    - Compiler.Cache
+    - Compiler.KaTeX
+    - Compiler.Mermaid
+    - Compiler.Pandoc
+    - Config
+    - Context
+    - Feed
+    - Paginate
+    - Site
 executables:
   site:
     main: Main.hs

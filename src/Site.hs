@@ -6,7 +6,7 @@ module Site
 where
 
 import Compiler.Pandoc (customPandocCompiler, slideCompiler)
-import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, langCodes, loadConfig)
+import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, langCodes, loadConfig, postsPerPage, slidesPerPage)
 import Context
 import Control.Monad (filterM, forM_)
 import Data.Char (toLower)
@@ -17,6 +17,8 @@ import qualified Data.Text as T
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtx)
 import Hakyll
+import Hakyll.Web.Paginate (buildPaginateWith, paginateEvery, paginateRules)
+import Paginate (makePageId, paginationCtx)
 import System.FilePath (joinPath, splitDirectories, takeFileName, (</>))
 
 -- ============================================================================
@@ -217,28 +219,41 @@ createFallbackPost cfg targetLang slug =
             >>= relativizeUrls
 
 postListPages :: SiteConfig -> Rules ()
-postListPages cfg =
-  forM_ (languages cfg) $ \lang -> do
-    let langStr = T.unpack $ langCode lang
-        pageTitle = navTitle cfg langStr "posts/"
-    create [fromFilePath $ langStr </> "posts/index.html"] $ do
-      route idRoute
-      compile $ do
-        allPostFiles <- getMatches "content/posts/*/index.*.md"
-        let slugs = nub $ map postSlug allPostFiles
-        posts <- catMaybes <$> mapM (bestPostForLang cfg langStr) slugs
-        sortedPosts <- recentFirst posts
-        yearGroups <- groupByYear sortedPosts
-        let listItemCtx = postListItemCtx langStr
-            ctx =
-              constField "title" pageTitle
-                <> listField "yearGroups" (yearGroupsCtx listItemCtx) (pure $ map toItem yearGroups)
-                <> allLangsCtx cfg langStr "/posts/"
-                <> baseCtx cfg langStr
-        makeItem ""
-          >>= loadAndApplyTemplate "templates/post-list.html" ctx
-          >>= loadAndApplyTemplate "templates/default.html" ctx
-          >>= relativizeUrls
+postListPages cfg = do
+  allPostIdents <- makePatternDependency "content/posts/*/index.*.md"
+  rulesExtraDependencies [allPostIdents] $
+    forM_ (languages cfg) $ \lang -> do
+      let langStr = T.unpack $ langCode lang
+          pageTitle = navTitle cfg langStr "posts/"
+          perPage = postsPerPage cfg
+
+      -- Build paginator for this language
+      paginate <- buildPaginateWith
+        (\ids -> do
+          sorted <- sortRecentFirst ids
+          return $ paginateEvery perPage sorted)
+        (fromGlob $ "content/posts/*/index." <> langStr <> ".md")
+        (makePageId langStr "posts")
+
+      -- Generate rules for each page
+      paginateRules paginate $ \pageNum pattern -> do
+        route idRoute
+        compile $ do
+          posts <- recentFirst =<< loadAllSnapshots pattern "content"
+          yearGroups <- groupByYear posts
+
+          let listItemCtx = postListItemCtx langStr
+              ctx =
+                constField "title" pageTitle
+                  <> listField "yearGroups" (yearGroupsCtx listItemCtx) (pure $ map toItem yearGroups)
+                  <> paginationCtx paginate pageNum
+                  <> allLangsCtx cfg langStr "/posts/"
+                  <> baseCtx cfg langStr
+
+          makeItem ""
+            >>= loadAndApplyTemplate "templates/post-list.html" ctx
+            >>= loadAndApplyTemplate "templates/default.html" ctx
+            >>= relativizeUrls
 
 rssFeeds :: SiteConfig -> Rules ()
 rssFeeds cfg = do
@@ -361,27 +376,45 @@ slides cfg =
             >>= loadAndApplyTemplate "templates/slide.html" defaultContext
             >>= relativizeUrls
 
--- | Create slide index page - per language
+-- | Create slide index page - per language (paginated)
 slideIndex :: SiteConfig -> Rules ()
 slideIndex cfg = do
   slideDep <- makePatternDependency "content/slides/*/slides.md"
   rulesExtraDependencies [slideDep] $
     forM_ (languages cfg) $ \lang -> do
       let langStr = T.unpack $ langCode lang
-      create [fromFilePath $ langStr </> "slides/index.html"] $ do
+          perPage = slidesPerPage cfg
+
+      -- Build paginator for slides
+      -- Note: We use the base pattern without hasVersion because getMatches
+      -- works on source files, not compiled versions. The version is used
+      -- when loading snapshots.
+      paginate <- buildPaginateWith
+        (\ids -> do
+          sorted <- sortRecentFirst ids
+          return $ paginateEvery perPage sorted)
+        (fromGlob "content/slides/*/slides.md")
+        (makePageId langStr "slides")
+
+      paginateRules paginate $ \pageNum _pattern -> do
         route idRoute
         compile $ do
-          -- Load slides for this language version
-          allSlides <- loadAllSnapshots ("content/slides/*/slides.md" .&&. hasVersion langStr) "content"
-          let slideItemCtx =
+          -- Load slides with the specific language version
+          -- We load from the versioned items directly since that's where snapshots are saved
+          allSlides <- loadAllSnapshots (fromGlob "content/slides/*/slides.md" .&&. hasVersion langStr) "content"
+
+          let pageTitle = navTitle cfg langStr "slides/"
+              slideItemCtx =
                 field "url" (makeSlideUrl langStr)
-                  <> dateField "date" "%B %e, %Y"
+                  <> field "date" getSlideDate
                   <> defaultContext
               ctx =
-                constField "title" "Slides"
+                constField "title" pageTitle
                   <> listField "slides" slideItemCtx (pure allSlides)
+                  <> paginationCtx paginate pageNum
                   <> allLangsCtx cfg langStr "/slides/"
                   <> baseCtx cfg langStr
+
           makeItem ""
             >>= loadAndApplyTemplate "templates/slide-list.html" ctx
             >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -391,6 +424,11 @@ slideIndex cfg = do
       let parts = splitDirectories $ toFilePath $ itemIdentifier item
           slug = parts !! 2
        in pure $ "/" <> langStr <> "/slides/" <> slug <> "/"
+
+    -- Get date from metadata, return empty string if missing/unparseable
+    getSlideDate item = do
+      metadata <- getMetadata (itemIdentifier item)
+      pure $ fromMaybe "" $ lookupString "date" metadata
 
 -- ============================================================================
 -- Context Builders (page-specific compositions)

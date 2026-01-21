@@ -113,6 +113,18 @@ Your content here...
 | `math` | `true` to enable KaTeX rendering |
 | `mermaid` | `true` to enable Mermaid diagrams |
 
+## Troubleshooting
+
+### Cache corruption error
+
+If you see an error like `Data.Binary.Get.runGet at position X: not enough bytes` during `watch` mode, run:
+
+```bash
+nix run . -- clean
+```
+
+This is a [known Hakyll behavior](https://github.com/jaspervdj/hakyll/pull/876) that can occur when the build process is interrupted mid-write (e.g., Ctrl+C at an unlucky moment) or after template changes. The `clean` command removes the `_cache/` directory and resolves the issue.
+
 # License
 
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
