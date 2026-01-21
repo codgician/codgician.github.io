@@ -470,7 +470,7 @@ $G$ 是一个群（这里我们就看成置换群），$M$ 是一个集合。如
 
 ::: { .fragment .fade-in-then-out style="height:0" }
 
-![在旋转意义下同构](./images/ga-example-1.png){ .plain style="background:transparent" }
+![在旋转意义下同构](./ga-example-1.png){ .plain style="background:transparent" }
 
 :::
 
@@ -487,7 +487,7 @@ $$
 
 ::: { .fragment }
 
-![不考虑同构时的染色方案](./images/ga-example-2.png){ .plain style="background:transparent" }
+![不考虑同构时的染色方案](./ga-example-2.png){ .plain style="background:transparent" }
 
 :::
 
@@ -495,19 +495,19 @@ $$
 
 ::: { .fragment .fade-out style="height:0" data-fragment-index="1" }
 
-![$G \times M$](images/ga-example-3.png){ .plain style="background:transparent" }
+![$G \times M$](ga-example-3.png){ .plain style="background:transparent" }
 
 :::
 
 ::: { .fragment .current-visible style="height:0" data-fragment-index="1" }
 
-![等价类？](images/ga-example-4.png){ .plain style="background:transparent" }
+![等价类？](ga-example-4.png){ .plain style="background:transparent" }
 
 :::
 
 ::: { .fragment .current-visible style="height:0" data-fragment-index="2" }
 
-![等价类？](images/ga-example-5.png){ .plain style="background:transparent" }
+![等价类？](ga-example-5.png){ .plain style="background:transparent" }
 
 :::
 
@@ -523,7 +523,7 @@ $$
 
 ---
 
-![](images/ga-example-6.png){ .plain style="background:transparent" }
+![](ga-example-6.png){ .plain style="background:transparent" }
 
 - 一种等价关系？
 - 借助该等价关系对集合进行划分？
@@ -618,7 +618,7 @@ $$
 
 ---
 
-![$G \times M$](images/ga-example-3.png){ .plain style="background:transparent" }
+![$G \times M$](ga-example-3.png){ .plain style="background:transparent" }
 
 ::: { .notes }
 
