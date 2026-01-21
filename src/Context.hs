@@ -19,6 +19,7 @@ module Context
     -- * Page-specific contexts
     homeCtx,
     postMetaCtx,
+    dateCtx,
 
     -- * List contexts
     navCtx,
@@ -26,6 +27,9 @@ module Context
     friendsCtx,
     availableLangsCtx,
     yearGroupsCtx,
+
+    -- * Utilities
+    toItem,
 
     -- * Types
     AvailableLang (..),
@@ -83,18 +87,13 @@ langCtx = constField "lang"
 -- ============================================================================
 
 -- | Homepage context with social links and typewriter effect.
--- Standalone context (includes baseCtx internally for different structure)
+-- Composes baseCtx with homepage-specific fields.
 homeCtx :: SiteConfig -> String -> Context String
 homeCtx cfg lang =
-  constField "siteTitle" (trans $ title $ site cfg)
-    <> constField "siteSubtitle" (trans $ subtitle $ site cfg)
+  constField "siteSubtitle" (trans $ subtitle $ site cfg)
     <> constField "typewriterPhrases" (phrasesStr $ typewriterPhrases $ site cfg)
-    <> constField "copyright" (trans $ Config.copyright $ site cfg)
-    <> licenseCtx (license $ site cfg)
-    <> langCtx lang
-    <> navCtx cfg lang
     <> socialCtx cfg lang
-    <> defaultContext
+    <> baseCtx cfg lang
   where
     trans = T.unpack . getTrans langs lang
     langs = languages cfg
@@ -111,15 +110,20 @@ licenseCtx (Just lic) =
 -- Compose with baseCtx: baseCtx cfg lang <> postMetaCtx
 postMetaCtx :: Context String
 postMetaCtx =
-  dateField "date" "%B %e, %Y"
-    <> dateField "dateShort" "%b %d"
-    <> dateField "dateYear" "%Y"
+  dateCtx
     <> field "readingTime" calcReadingTime
   where
     calcReadingTime item =
       let wordCount = length $ words $ itemBody item
           minutes = max 1 (wordCount `div` 200)
        in pure $ show minutes <> " min read"
+
+-- | Common date fields used by posts and list items
+dateCtx :: Context String
+dateCtx =
+  dateField "date" "%B %e, %Y"
+    <> dateField "dateShort" "%b %d"
+    <> dateField "dateYear" "%Y"
 
 -- ============================================================================
 -- List Contexts
@@ -136,7 +140,6 @@ navCtx cfg lang =
         <> constField "lang" lang  -- Include lang in each nav item for template access
 
     trans = T.unpack . getTrans (languages cfg) lang
-    toItem = Item (fromFilePath "")
 
 -- | Social links context
 socialCtx :: SiteConfig -> String -> Context String
@@ -149,7 +152,6 @@ socialCtx cfg lang =
         <> field "icon" (pure . T.unpack . socialIcon . itemBody)
 
     trans = T.unpack . getTrans (languages cfg) lang
-    toItem = Item (fromFilePath "")
 
 -- | Friends list context
 friendsCtx :: SiteConfig -> Context String
@@ -159,8 +161,6 @@ friendsCtx cfg =
     itemCtx =
       field "name" (pure . T.unpack . friendName . itemBody)
         <> field "url" (pure . T.unpack . friendUrl . itemBody)
-
-    toItem = Item (fromFilePath "")
 
 -- | Available languages context for language switcher
 availableLangsCtx :: [AvailableLang] -> Context String
@@ -174,10 +174,16 @@ availableLangsCtx langs =
         <> field "url" (pure . alUrl . itemBody)
         <> boolField "active" (alActive . itemBody)
 
-    toItem = Item (fromFilePath "")
-
 -- | Year groups context for post archives
 yearGroupsCtx :: Context String -> Context YearGroup
 yearGroupsCtx postCtx' =
   field "year" (pure . ygYear . itemBody)
     <> listFieldWith "posts" postCtx' (pure . ygPosts . itemBody)
+
+-- ============================================================================
+-- Utilities
+-- ============================================================================
+
+-- | Convert a value to an Item (for list fields with non-Item data)
+toItem :: a -> Item a
+toItem = Item (fromFilePath "")

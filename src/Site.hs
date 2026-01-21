@@ -6,7 +6,7 @@ module Site
 where
 
 import Compiler.Pandoc (customPandocCompiler, slideCompiler)
-import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, loadConfig)
+import Config (FeedConfig (..), Language (..), NavItem (..), SiteConfig (..), SiteInfo (..), getTrans, langCodes, loadConfig)
 import Context
 import Control.Monad (filterM, forM_)
 import Data.Char (toLower)
@@ -99,8 +99,6 @@ postAssets cfg =
                 filename = takeFileName $ toFilePath ident
              in T.unpack lang </> "posts" </> slug </> filename
           compile copyFileCompiler
-  where
-    langCodes = map langCode . languages
 
 scssCompilation :: Rules ()
 scssCompilation = do
@@ -412,9 +410,7 @@ pageCtx cfg lang tpl = case tpl of
 postListItemCtx :: String -> Context String
 postListItemCtx lang =
   field "url" makeUrl
-    <> dateField "date" "%B %e, %Y"
-    <> dateField "dateShort" "%b %d"
-    <> dateField "dateYear" "%Y"
+    <> dateCtx
     <> defaultContext
   where
     makeUrl item =
@@ -502,9 +498,10 @@ navTitle cfg lang url =
         (n : _) -> T.unpack $ getTrans (languages cfg) lang $ navLabel n
         [] -> T.unpack url
 
--- | Find fallback source for a post (tries current lang first, then others)
-findFallbackSource :: SiteConfig -> String -> String -> Compiler (Maybe Identifier)
-findFallbackSource cfg targetLang slug = go langOrder
+-- | Find post identifier for a given slug with language fallback
+-- Tries target language first, then falls back to other available languages
+findPostIdent :: SiteConfig -> String -> String -> Compiler (Maybe Identifier)
+findPostIdent cfg targetLang slug = go langOrder
   where
     langOrder = targetLang : filter (/= targetLang) (map (T.unpack . langCode) $ languages cfg)
 
@@ -516,19 +513,15 @@ findFallbackSource cfg targetLang slug = go langOrder
         (ident : _) -> pure $ Just ident
         [] -> go ls
 
--- | Find best post for a language (with fallback)
-bestPostForLang :: SiteConfig -> String -> String -> Compiler (Maybe (Item String))
-bestPostForLang cfg targetLang slug = go langOrder
-  where
-    langOrder = targetLang : filter (/= targetLang) (map (T.unpack . langCode) $ languages cfg)
+-- | Find fallback source for a post (alias for findPostIdent)
+findFallbackSource :: SiteConfig -> String -> String -> Compiler (Maybe Identifier)
+findFallbackSource = findPostIdent
 
-    go [] = pure Nothing
-    go (l : ls) = do
-      let pat = fromGlob $ "content/posts/" <> slug <> "/index." <> l <> ".md"
-      matches <- getMatches pat
-      case matches of
-        (ident : _) -> Just <$> loadSnapshot ident "content"
-        [] -> go ls
+-- | Find best post for a language (with fallback), loading the content
+bestPostForLang :: SiteConfig -> String -> String -> Compiler (Maybe (Item String))
+bestPostForLang cfg targetLang slug = do
+  mIdent <- findPostIdent cfg targetLang slug
+  traverse (`loadSnapshot` "content") mIdent
 
 -- | Group posts by year
 groupByYear :: [Item String] -> Compiler [YearGroup]
@@ -564,7 +557,3 @@ boolCtx :: String -> Metadata -> Context String
 boolCtx key meta
   | metaBool key meta = constField key "true"
   | otherwise         = mempty
-
--- | Convert to Item (for list fields)
-toItem :: a -> Item a
-toItem = Item (fromFilePath "")
