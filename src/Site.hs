@@ -355,14 +355,14 @@ sitemapEntryCtx =
 slideAssets :: SiteConfig -> Rules ()
 slideAssets cfg =
   forM_ imageExtensions $ \ext ->
-    match (fromGlob $ "content/slides/*/images/*." <> ext) $ do
+    match (fromGlob $ "content/slides/*/*." <> ext) $ do
       forM_ (languages cfg) $ \lang ->
         version (T.unpack $ langCode lang) $ do
           route $ customRoute $ \ident ->
             let parts = splitDirectories $ toFilePath ident
                 slug = parts !! 2
                 filename = takeFileName $ toFilePath ident
-             in T.unpack (langCode lang) </> "slides" </> slug </> "images" </> filename
+             in T.unpack (langCode lang) </> "slides" </> slug </> filename
           compile copyFileCompiler
 
 -- | Compile slides using Pandoc's reveal.js writer - per language

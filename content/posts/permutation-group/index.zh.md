@@ -402,17 +402,17 @@ $$
 
 首先来看看不考虑同构时的所有染色方案：
 
-![不考虑同构时的染色方案](/pgslides/assets/ga-example-2.png)
+![不考虑同构时的染色方案](../../slides/permutation-group/ga-example-2.png)
 
 再来看看 $\phi$ 作用下得到的结果：
 
-![$\phi$ 作用下得到的结果](/pgslides/assets/ga-example-3.png){ .plain style="background:transparent" }
+![$\phi$ 作用下得到的结果](../../slides/permutation-group/ga-example-3.png)
 
 可以看到，本质上 $\phi$ 作用后是并没有产生新元素的。另外，存在单位置换（旋转 $0^\circ$）使得它与任何一个染色方案作用都不发生变化；多个旋转作用于染色方案也是满足结合律的。所以在这个例子里 $G$ 对 $M$ 有群作用。
 
 另外，图中每一列其实都是一个等价类。发现实际上不同的等价类只有四种（第 $2, 3, 4$ 列是相同的，第 $5, 6, 7$ 列是相同的）。可见，在旋转群的作用下，本质不同的方案实际上只有 $4$ 种。
 
-![等价类](/pgslides/assets/ga-example-6.png)
+![等价类](../../slides/permutation-group/ga-example-6.png)
 
 ### 轨道
 
