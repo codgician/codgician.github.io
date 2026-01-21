@@ -198,7 +198,7 @@ What is chunking?
   - Let components see dependencies in separate views?
 :::
 
-# ![](./images/nix-logo.svg){ height="72" width="72" } Nix
+# ![](./nix-logo.svg){ height="72" width="72" } Nix
 
 Originating from [The Purely Functional Software Deployment Model](https://edolstra.github.io/pubs/phd-thesis.pdf) (2006),
 
