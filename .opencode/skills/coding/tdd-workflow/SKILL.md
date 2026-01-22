@@ -1,6 +1,8 @@
 ---
 name: tdd-workflow
-description: "Test-driven verification for Hakyll. TRIGGERS: new feature, verify, test, before implementing."
+description: "CORE: Test-driven development workflow. Define verification BEFORE implementing."
+type: core
+layer: L1
 ---
 
 # TDD Workflow

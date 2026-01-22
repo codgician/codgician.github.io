@@ -1,6 +1,8 @@
 ---
 name: hakyll-architecture
-description: "L2 Architecture patterns for routes, templates, compilers. TRIGGERS: route, template, compiler, context, structure, design."
+description: "CORE: L2 architecture patterns for Hakyll - routes, templates, compilers, contexts."
+type: core
+layer: L2
 ---
 
 # Hakyll Architecture (L2: Structure)

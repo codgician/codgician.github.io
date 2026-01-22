@@ -1,6 +1,8 @@
 ---
 name: content-strategy
-description: "L3 Content constraints and reader needs. TRIGGERS: feature, bilingual, i18n, RSS, reader, UX."
+description: "CORE: L3 content strategy - what does the reader need? Bilingual, technical, minimalist."
+type: core
+layer: L3
 ---
 
 # Content Strategy (L3: Why)
