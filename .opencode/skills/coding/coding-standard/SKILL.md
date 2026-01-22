@@ -1,6 +1,8 @@
 ---
 name: coding-standard
-description: "L1 Implementation standards for Haskell/SCSS/Nix. TRIGGERS: type error, compile error, new function, refactor."
+description: "CORE: L1 implementation standards for Haskell/SCSS/Nix. How to write correct code."
+type: core
+layer: L1
 ---
 
 # Coding Standard (L1: Implementation)
