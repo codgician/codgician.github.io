@@ -16,7 +16,7 @@ module Paginate
   )
 where
 
-import qualified Data.Map as M
+import qualified Data.Map as Map
 import Hakyll
 import Hakyll.Web.Paginate
 import System.FilePath ((</>))
@@ -33,10 +33,11 @@ import System.FilePath ((</>))
 -- makePageId "zh" "slides" 3 -- "zh/slides/page/3/index.html"
 -- @
 makePageId :: String -> String -> PageNumber -> Identifier
-makePageId lang section n = fromFilePath $
-  if n == 1
-    then lang </> section </> "index.html"
-    else lang </> section </> "page" </> show n </> "index.html"
+makePageId lang section n =
+  fromFilePath $
+    if n == 1
+      then lang </> section </> "index.html"
+      else lang </> section </> "page" </> show n </> "index.html"
 
 -- | Pagination context with hasPagination boolean for templates.
 --
@@ -55,4 +56,4 @@ paginationCtx pag currentPage =
   paginateContext pag currentPage
     <> boolField "hasPagination" (const $ numPages > 1)
   where
-    numPages = M.size $ paginateMap pag
+    numPages = Map.size $ paginateMap pag

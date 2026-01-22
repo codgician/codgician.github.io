@@ -1,0 +1,140 @@
+# HLint configuration - Strict mode
+
+- arguments: [-XOverloadedStrings]
+
+# =============================================================================
+# Hint Groups
+# =============================================================================
+
+- group: {name: partial, enabled: true}
+- group: {name: future, enabled: true}
+
+# =============================================================================
+# Severity Overrides - Promote suggestions to errors
+# =============================================================================
+
+- error: {name: "Use fold"}
+- error: {name: "Use foldl'"}
+- error: {name: "Use map"}
+- error: {name: "Use concatMap"}
+- error: {name: "Use ++"}
+- error: {name: "Use filter"}
+- error: {name: "Use null"}
+- error: {name: "Use length"}
+- error: {name: "Use any"}
+- error: {name: "Use all"}
+- error: {name: "Use and"}
+- error: {name: "Use or"}
+- error: {name: "Use elem"}
+- error: {name: "Use notElem"}
+- error: {name: "Use maybe"}
+- error: {name: "Use fromMaybe"}
+- error: {name: "Use isNothing"}
+- error: {name: "Use isJust"}
+- error: {name: "Use when"}
+- error: {name: "Use unless"}
+- error: {name: "Use void"}
+- error: {name: "Use guard"}
+- error: {name: "Use <$>"}
+- error: {name: "Use <*>"}
+- error: {name: "Use >>="}
+- error: {name: "Use =<<"}
+- error: {name: "Use pure"}
+- error: {name: "Use const"}
+- error: {name: "Use id"}
+- error: {name: "Use flip"}
+- error: {name: "Use ."}
+- error: {name: "Use $"}
+- error: {name: "Eta reduce"}
+- error: {name: "Redundant $"}
+- error: {name: "Redundant bracket"}
+- error: {name: "Redundant do"}
+- error: {name: "Redundant return"}
+- error: {name: "Redundant pure"}
+- error: {name: "Redundant guard"}
+- error: {name: "Redundant if"}
+- error: {name: "Redundant multi-way if"}
+- error: {name: "Redundant lambda"}
+- error: {name: "Redundant case"}
+- error: {name: "Redundant where"}
+- error: {name: "Redundant id"}
+- error: {name: "Redundant map"}
+- error: {name: "Move brackets to avoid $"}
+- error: {name: "Use section"}
+- error: {name: "Use infix"}
+- error: {name: "Use String"}
+- error: {name: "Use list comprehension"}
+- error: {name: "Use record patterns"}
+
+# =============================================================================
+# Partial Functions - Critical safety
+# =============================================================================
+
+- group: {name: partial, enabled: true}
+- error: {name: "Avoid partial function"}
+- error: {name: "Avoid restricted function"}
+- error: {name: "Avoid restricted alias"}
+
+# =============================================================================
+# Banned Functions
+# =============================================================================
+
+- functions:
+  - name: "error"
+    within: ["Compiler.KaTeX.getKaTeXVersion", "Compiler.Mermaid.getMermaidVersion"]
+    message: "Use Maybe/Either instead of error. Exceptions: version checks (fail-fast if Nix env not set)"
+  - {name: "undefined", within: [], message: "Remove undefined - use typed holes or error with message"}
+  - {name: "head", within: [], message: "Use listToMaybe, uncons, or pattern match"}
+  - {name: "tail", within: [], message: "Use drop 1, uncons, or pattern match"}
+  - {name: "init", within: [], message: "Use dropEnd or pattern match on reverse"}
+  - {name: "last", within: [], message: "Use listToMaybe . reverse or pattern match"}
+  - {name: "!!", within: [], message: "Use safe indexing or pattern match"}
+  - {name: "fromJust", within: [], message: "Use fromMaybe with default or pattern match"}
+  - {name: "read", within: [], message: "Use readMaybe from Text.Read"}
+  - {name: "minimum", within: [], message: "Use minimumMay or check for empty list"}
+  - {name: "maximum", within: [], message: "Use maximumMay or check for empty list"}
+  - {name: "foldl1", within: [], message: "Use foldl with explicit initial value"}
+  - {name: "foldr1", within: [], message: "Use foldr with explicit initial value"}
+  - {name: "cycle", within: [], message: "Infinite list - ensure bounded usage"}
+  - {name: "unsafePerformIO", within: [], message: "Avoid unsafe IO"}
+  - {name: "unsafeCoerce", within: [], message: "Avoid unsafe coercion"}
+  - {name: "unsafeInterleaveIO", within: [], message: "Dangerous lazy IO - avoid"}
+  - {name: "Data.List.nub", within: [], message: "O(n²) - use Data.List.nubOrd or Data.Set"}
+  - {name: "Data.List.nubBy", within: [], message: "O(n²) - use nubOrdBy or Data.Set"}
+
+# =============================================================================
+# Custom Hints - Project-specific
+# =============================================================================
+
+- error: {lhs: "T.pack (T.unpack x)", rhs: x, name: "Redundant Text pack/unpack"}
+- error: {lhs: "T.unpack (T.pack x)", rhs: x, name: "Redundant Text unpack/pack"}
+- error: {lhs: "fmap f (pure x)", rhs: "pure (f x)", name: "Functor law"}
+- error: {lhs: "return x >>= f", rhs: "f x", name: "Monad left identity"}
+- error: {lhs: "m >>= return", rhs: "m", name: "Monad right identity"}
+- warn: {lhs: "length xs == 0", rhs: "null xs", name: "Use null instead of length"}
+- warn: {lhs: "length xs /= 0", rhs: "not (null xs)", name: "Use null instead of length"}
+
+# =============================================================================
+# Module Import Conventions
+# =============================================================================
+
+- modules:
+  - {name: [Data.Text], as: T}
+  - {name: [Data.Text.Lazy], as: TL}
+  - {name: [Data.Text.IO], as: TIO}
+  - {name: [Data.ByteString], as: BS}
+  - {name: [Data.ByteString.Lazy], as: BSL}
+  - {name: [Data.Map, Data.Map.Strict], as: Map}
+  - {name: [Data.Set], as: Set}
+  - {name: [Data.HashMap.Strict], as: HM}
+  - {name: [Data.Vector], as: V}
+  - {name: [Control.Monad.State], as: State}
+  - {name: [Control.Monad.Reader], as: Reader}
+
+# =============================================================================
+# Extensions
+# =============================================================================
+
+- extensions:
+  - name: OverloadedStrings
+  - name: DeriveGeneric

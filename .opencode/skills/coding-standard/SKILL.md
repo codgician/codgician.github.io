@@ -1,81 +1,55 @@
 ---
 name: coding-standard
-description: Project coding standards and architecture principles for Haskell/Hakyll development. Use when writing new code, reviewing changes, adding features, or making architectural decisions.
+description: "L1 Implementation standards for Haskell/SCSS/Nix. TRIGGERS: type error, compile error, new function, refactor."
 ---
 
-# Coding Standard
+# Coding Standard (L1: Implementation)
 
-Shared conventions for this Hakyll blog project. Keep code simple, correct, and maintainable.
+## Core Question
+
+**Is this code correct by construction?**
 
 ## Quick Reference
 
 | Aspect | Standard |
 |--------|----------|
-| Types | Explicit signatures on all top-level functions |
+| Types | Explicit signatures on all functions |
 | Text | Use `Text` not `String` (except Hakyll APIs) |
-| Imports | Explicit, qualified where ambiguous |
-| Error handling | Return `Maybe`/`Either`, avoid `error` |
-| External tools | Subprocess via `readProcess`, never FFI |
-| Caching | Content-addressed in `_artifacts/` |
-| Dependencies | Nix only (`flake.nix` + `package.yaml`) |
+| Imports | Explicit: `import Data.Maybe (fromMaybe)` |
+| Errors | `Maybe`/`Either`, never `error` |
+| External tools | Subprocess via `readProcess` |
+| Dependencies | Nix only (`flake.nix`) |
 
-## Detailed References
+## Thinking Prompt
 
-| Reference | Use When |
-|-----------|----------|
-| [references/haskell.md](references/haskell.md) | Writing Haskell code |
-| [references/scss.md](references/scss.md) | Styling, design tokens |
-| [references/architecture.md](references/architecture.md) | Adding features, dependencies, caching |
+Before implementing:
+1. Is this at a Hakyll API boundary? (They use `String`)
+2. Does similar code exist? (`grep -r "pattern" src/`)
+3. Can this function fail? → Use `Maybe`/`Either`
 
-## Architecture Principles
+## Trace UP ↑ (When to Escalate)
 
-See [references/architecture.md](references/architecture.md) for full details.
+| Symptom | Indicates |
+|---------|-----------|
+| Same error after 3 fixes | Wrong layer - design issue |
+| "Where should this live?" | Architecture question (L2) |
+| Type gymnastics | Design smell |
 
-**Core rules:**
-1. Pragmatism over Purity - Subprocess > complex integrations
-2. Simplicity over Cleverness - If clever, probably wrong
-3. Correctness over Performance - 20-30s rebuild is acceptable
-4. Nix is Truth - All deps in `flake.nix`
+## Anti-Patterns
 
-## Haskell Conventions
+| Don't | Better |
+|-------|--------|
+| `fromJust` | Pattern match or `fromMaybe` |
+| `error "msg"` | Return `Maybe`/`Either` |
+| Wildcard imports | Explicit imports |
+| Copy-paste code | Extract helper |
 
-See [references/haskell.md](references/haskell.md) for patterns.
-
-**Key rules:**
-- Type signatures required
-- Compose contexts: `specific <> shared <> defaultContext`
-- Extract helpers for repeated patterns (3+ uses)
-- Use subprocess for external tools
-
-## SCSS Conventions
-
-See [references/scss.md](references/scss.md) for design tokens.
-
-**Key rules:**
-- Use spacing variables (`$space-*`)
-- Use color CSS variables (`--color-*`)
-- No hardcoded pixels or colors
-- Extract placeholders for reused patterns
-
-## Validation
-
-Before completing any task:
+## Validation Commands
 
 ```bash
-# Build must pass
-nix build
+nix build  # Must pass
 
-# Check for duplicates
+# Check duplicates
 grep -rh "^[a-z][a-zA-Z0-9_]* ::" src/ --include="*.hs" | \
   sed 's/ ::.*//' | sort | uniq -c | sort -rn | head -5
-
-# Check for hardcoded values in SCSS
-grep -E "[0-9]+px" static/scss/*.scss | grep -v "//" | head -5
 ```
-
-## When in Doubt
-
-1. Check [references/architecture.md](references/architecture.md) for red flags
-2. Follow existing patterns in the codebase
-3. Simpler is better
-4. Ask before inventing new conventions

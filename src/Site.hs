@@ -5,11 +5,12 @@ module Site (hakyllMain) where
 import Compiler.Pandoc (customPandocCompiler, slideCompiler)
 import Config
 import Context
-import Control.Monad (filterM, forM_)
+import Control.Monad (filterM, forM_, unless)
 import Data.Char (toLower)
-import Data.List (groupBy, nub, sortBy)
-import Data.Maybe (catMaybes, fromMaybe)
+import Data.List (groupBy, sortBy)
+import Data.Maybe (catMaybes, fromMaybe, listToMaybe)
 import Data.Ord (Down (..), comparing)
+import qualified Data.Set as Set
 import qualified Data.Text as T
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtxForLang)
@@ -26,12 +27,13 @@ imageExtensions :: [String]
 imageExtensions = ["jpg", "png", "gif", "svg", "webp"]
 
 config :: Configuration
-config = defaultConfiguration
-  { destinationDirectory = "_site"
-  , storeDirectory = "_cache"
-  , tmpDirectory = "_cache/tmp"
-  , providerDirectory = "."
-  }
+config =
+  defaultConfiguration
+    { destinationDirectory = "_site",
+      storeDirectory = "_cache",
+      tmpDirectory = "_cache/tmp",
+      providerDirectory = "."
+    }
 
 -- ============================================================================
 -- Main Entry Point
@@ -78,18 +80,16 @@ contentAssets :: SiteConfig -> Rules ()
 contentAssets cfg = forM_ imageExtensions $ \ext -> do
   -- Post images: content/posts/{slug}/*.ext -> {lang}/posts/{slug}/*.ext
   match (fromGlob $ "content/posts/*/*." <> ext) $
-    forM_ (langCodes cfg) $ \lang ->
-      version (T.unpack lang) $ do
-        route $ customRoute $ \i -> T.unpack lang </> "posts" </> slugFrom i </> takeFileName (toFilePath i)
+    forM_ (languages cfg) $ \lang ->
+      version (langStr lang) $ do
+        route $ customRoute $ \i -> langStr lang </> "posts" </> slugFromPath i </> takeFileName (toFilePath i)
         compile copyFileCompiler
   -- Slide images: content/slides/{slug}/*.ext -> {lang}/slides/{slug}/*.ext
   match (fromGlob $ "content/slides/*/*." <> ext) $
-    forM_ (langCodes cfg) $ \lang ->
-      version (T.unpack lang) $ do
-        route $ customRoute $ \i -> T.unpack lang </> "slides" </> slugFrom i </> takeFileName (toFilePath i)
+    forM_ (languages cfg) $ \lang ->
+      version (langStr lang) $ do
+        route $ customRoute $ \i -> langStr lang </> "slides" </> slugFromPath i </> takeFileName (toFilePath i)
         compile copyFileCompiler
-  where
-    slugFrom i = splitDirectories (toFilePath i) !! 2
 
 scssCompilation :: Rules ()
 scssCompilation = do
@@ -128,7 +128,8 @@ standalonePages cfg =
   match ("content/**/index.*.md" .&&. complement "content/index.*.md" .&&. complement "content/posts/**") $ do
     route $ customRoute $ \i ->
       let parts = splitDirectories $ toFilePath i
-          slug = joinPath $ drop 1 $ init parts
+          -- content/{path...}/index.{lang}.md -> {path...}
+          slug = joinPath $ drop 1 $ safeInit parts
        in extractLang i </> slug </> "index.html"
     compile $ do
       ident <- getUnderlying
@@ -151,11 +152,10 @@ blogPosts cfg = do
   -- Compile source posts
   match "content/posts/*/index.*.md" $ do
     route $ customRoute $ \i ->
-      let slug = splitDirectories (toFilePath i) !! 2
-       in extractLang i </> "posts" </> slug </> "index.html"
+      extractLang i </> "posts" </> slugFromPath i </> "index.html"
     compile $ do
       lang <- currentLang
-      slug <- (!! 2) . splitDirectories . toFilePath <$> getUnderlying
+      slug <- slugFromPath <$> getUnderlying
       (enableMath, enableMermaid) <- getFeatureFlags
       let ctx = allLangsCtx cfg lang ("/posts/" <> slug <> "/") <> postCtx cfg lang
       customPandocCompiler enableMath enableMermaid
@@ -168,14 +168,12 @@ blogPosts cfg = do
   postDep <- makePatternDependency "content/posts/*/index.*.md"
   rulesExtraDependencies [postDep] $ do
     postFiles <- getMatches "content/posts/*/index.*.md"
-    let slugs = nub $ map postSlug postFiles
+    let slugs = nubOrd $ map postSlug postFiles
     forM_ (languages cfg) $ \lang -> do
-      let langStr = T.unpack $ langCode lang
+      let ls = langStr lang
       forM_ slugs $ \slug ->
-        unless (any (\i -> extractLang i == langStr && postSlug i == slug) postFiles) $
-          createFallbackPost cfg langStr slug
-  where
-    unless cond action = if cond then pure () else action
+        unless (any (\i -> extractLang i == ls && postSlug i == slug) postFiles) $
+          createFallbackPost cfg ls slug
 
 createFallbackPost :: SiteConfig -> String -> String -> Rules ()
 createFallbackPost cfg targetLang slug =
@@ -188,11 +186,13 @@ createFallbackPost cfg targetLang slug =
         Just srcIdent -> do
           srcItem <- loadSnapshot srcIdent "content"
           srcMeta <- getMetadata srcIdent
-          let ctx = constField "date" (metaStr "date" srcMeta)
-                 <> constField "title" (metaStr "title" srcMeta)
-                 <> boolCtx "math" srcMeta <> boolCtx "mermaid" srcMeta
-                 <> allLangsCtx cfg targetLang ("/posts/" <> slug <> "/")
-                 <> postCtx cfg targetLang
+          let ctx =
+                constField "date" (metaStr "date" srcMeta)
+                  <> constField "title" (metaStr "title" srcMeta)
+                  <> boolCtx "math" srcMeta
+                  <> boolCtx "mermaid" srcMeta
+                  <> allLangsCtx cfg targetLang ("/posts/" <> slug <> "/")
+                  <> postCtx cfg targetLang
           makeItem (itemBody srcItem)
             >>= loadAndApplyTemplate "templates/post.html" ctx
             >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -206,7 +206,7 @@ createFallbackPost cfg targetLang slug =
 loadAllPostsForLang :: SiteConfig -> String -> Compiler [Item String]
 loadAllPostsForLang cfg lang = do
   allFiles <- getMatches "content/posts/*/index.*.md"
-  let slugs = nub $ map postSlug allFiles
+  let slugs = nubOrd $ map postSlug allFiles
   posts <- catMaybes <$> mapM (bestPostForLang cfg lang) slugs
   recentFirst posts
 
@@ -215,25 +215,26 @@ postList cfg = do
   postDep <- makePatternDependency "content/posts/*/index.*.md"
   rulesExtraDependencies [postDep] $
     forM_ (languages cfg) $ \lang -> do
-      let langStr = T.unpack $ langCode lang
+      let ls = langStr lang
           perPage = postsPerPage cfg
 
       allFiles <- getMatches "content/posts/*/index.*.md"
-      let numPosts = length $ nub $ map postSlug allFiles
+      let numPosts = length $ nubOrd $ map postSlug allFiles
           numPages = max 1 $ (numPosts + perPage - 1) `div` perPage
 
       forM_ [1 .. numPages] $ \pageNum ->
-        create [fromFilePath $ pagePath langStr pageNum] $ do
+        create [fromFilePath $ pagePath ls pageNum] $ do
           route idRoute
           compile $ do
-            posts <- loadAllPostsForLang cfg langStr
+            posts <- loadAllPostsForLang cfg ls
             let pagePosts = take perPage $ drop ((pageNum - 1) * perPage) posts
             yearGroups <- groupByYear pagePosts
-            let ctx = constField "title" (navTitle cfg langStr "posts/")
-                   <> listField "yearGroups" (yearGroupsCtx $ postListItemCtx langStr) (pure $ map toItem yearGroups)
-                   <> paginationCtx' langStr pageNum numPages
-                   <> allLangsCtx cfg langStr "/posts/"
-                   <> baseCtx cfg langStr
+            let ctx =
+                  constField "title" (navTitle cfg ls "posts/")
+                    <> listField "yearGroups" (yearGroupsCtx $ postListItemCtx ls) (pure $ map toItem yearGroups)
+                    <> paginationCtx' ls pageNum numPages
+                    <> allLangsCtx cfg ls "/posts/"
+                    <> baseCtx cfg ls
             makeItem ""
               >>= loadAndApplyTemplate "templates/post-list.html" ctx
               >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -253,18 +254,18 @@ rssFeeds cfg = do
   postDep <- makePatternDependency "content/posts/*/index.*.md"
   rulesExtraDependencies [postDep] $
     forM_ (languages cfg) $ \lang -> do
-      let langStr = T.unpack $ langCode lang
-      create [fromFilePath $ langStr </> "feed.xml"] $ do
+      let ls = langStr lang
+      create [fromFilePath $ ls </> "feed.xml"] $ do
         route idRoute
         compile $ do
-          posts <- take (feedItemsCount $ feed cfg) <$> loadAllPostsForLang cfg langStr
-          renderAtom (feedConfiguration cfg langStr) (feedCtxForLang langStr) posts
+          posts <- take (feedItemsCount $ feed cfg) <$> loadAllPostsForLang cfg ls
+          renderAtom (feedConfiguration cfg ls) (feedCtxForLang ls) posts
 
 -- ============================================================================
 -- Sitemap
 -- ============================================================================
 
-data SitemapEntry = SitemapEntry { sitemapLoc :: String, sitemapPriority :: String }
+data SitemapEntry = SitemapEntry {sitemapLoc :: String, sitemapPriority :: String}
 
 sitemap :: SiteConfig -> Rules ()
 sitemap cfg = do
@@ -275,24 +276,29 @@ sitemap cfg = do
       route idRoute
       compile $ do
         posts <- loadAllSnapshots "content/posts/*/index.*.md" "content" :: Compiler [Item String]
-        let defaultLang = T.unpack $ langCode $ head $ languages cfg
+        let defaultLang = maybe "en" (T.unpack . langCode) $ listToMaybe $ languages cfg
         slides <- loadAllSnapshots ("content/slides/*/slides.md" .&&. hasVersion defaultLang) "content" :: Compiler [Item String]
         let root = T.unpack $ baseUrl $ site cfg
-            langs = map (T.unpack . langCode) $ languages cfg
-            entries = concatMap (staticPages root) langs
-                   ++ map (postEntry root) posts
-                   ++ concatMap (slideEntries root langs) slides
+            langs = map langStr $ languages cfg
+            entries =
+              concatMap (staticPages root) langs
+                ++ map (postEntry root) posts
+                ++ concatMap (slideEntries root langs) slides
         makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" (listField "entries" entryCtx (mapM makeItem entries))
   where
-    staticPages root lang = map (\(p, pr) -> SitemapEntry (root <> "/" <> lang <> p) pr)
-      [("/", "1.0"), ("/posts/", "0.8"), ("/slides/", "0.8"), ("/about/", "0.7")]
+    staticPages root lang =
+      map
+        (\(p, pr) -> SitemapEntry (root <> "/" <> lang <> p) pr)
+        [("/", "1.0"), ("/posts/", "0.8"), ("/slides/", "0.8"), ("/about/", "0.7")]
     postEntry root item =
       let parts = splitDirectories $ toFilePath $ itemIdentifier item
-          slug = parts !! 2
-          lang = takeWhile (/= '.') $ drop 6 $ parts !! 3
+          -- content/posts/{slug}/index.{lang}.md -> extract slug and lang
+          (slug, lang) = case parts of
+            _ : _ : s : filename : _ -> (s, takeWhile (/= '.') $ drop 6 filename)
+            _ -> ("unknown", "en")
        in SitemapEntry (root <> "/" <> lang <> "/posts/" <> slug <> "/") "0.6"
     slideEntries root langs item =
-      let slug = splitDirectories (toFilePath $ itemIdentifier item) !! 2
+      let slug = slugFromPath $ itemIdentifier item
        in [SitemapEntry (root <> "/" <> l <> "/slides/" <> slug <> "/") "0.6" | l <- langs]
     entryCtx = field "loc" (pure . sitemapLoc . itemBody) <> field "priority" (pure . sitemapPriority . itemBody)
 
@@ -303,10 +309,9 @@ sitemap cfg = do
 slidePages :: SiteConfig -> Rules ()
 slidePages cfg = match "content/slides/*/slides.md" $
   forM_ (languages cfg) $ \lang ->
-    version (T.unpack $ langCode lang) $ do
+    version (langStr lang) $ do
       route $ customRoute $ \i ->
-        let slug = splitDirectories (toFilePath i) !! 2
-         in T.unpack (langCode lang) </> "slides" </> slug </> "index.html"
+        langStr lang </> "slides" </> slugFromPath i </> "index.html"
       compile $ do
         enableMath <- metaBool "math" <$> (getUnderlying >>= getMetadata)
         slideCompiler enableMath
@@ -319,27 +324,29 @@ slideList cfg = do
   slideDep <- makePatternDependency "content/slides/*/slides.md"
   rulesExtraDependencies [slideDep] $
     forM_ (languages cfg) $ \lang -> do
-      let langStr = T.unpack $ langCode lang
-      paginate <- buildPaginateWith
-        (\ids -> paginateEvery (slidesPerPage cfg) <$> sortRecentFirst ids)
-        (fromGlob "content/slides/*/slides.md")
-        (makePageId langStr "slides")
+      let ls = langStr lang
+      paginate <-
+        buildPaginateWith
+          (fmap (paginateEvery (slidesPerPage cfg)) . sortRecentFirst)
+          (fromGlob "content/slides/*/slides.md")
+          (makePageId ls "slides")
       paginateRules paginate $ \pageNum _ -> do
         route idRoute
         compile $ do
-          slides <- loadAllSnapshots (fromGlob "content/slides/*/slides.md" .&&. hasVersion langStr) "content"
-          let slideCtx = field "url" (makeUrl langStr) <> field "date" getDate <> defaultContext
-              ctx = constField "title" (navTitle cfg langStr "slides/")
-                 <> listField "slides" slideCtx (pure slides)
-                 <> paginationCtx paginate pageNum
-                 <> allLangsCtx cfg langStr "/slides/"
-                 <> baseCtx cfg langStr
+          slides <- loadAllSnapshots (fromGlob "content/slides/*/slides.md" .&&. hasVersion ls) "content"
+          let slideCtx = field "url" (makeUrl ls) <> field "date" getDate <> defaultContext
+              ctx =
+                constField "title" (navTitle cfg ls "slides/")
+                  <> listField "slides" slideCtx (pure slides)
+                  <> paginationCtx paginate pageNum
+                  <> allLangsCtx cfg ls "/slides/"
+                  <> baseCtx cfg ls
           makeItem ""
             >>= loadAndApplyTemplate "templates/slide-list.html" ctx
             >>= loadAndApplyTemplate "templates/default.html" ctx
             >>= relativizeUrls
   where
-    makeUrl lang item = pure $ "/" <> lang <> "/slides/" <> (splitDirectories (toFilePath $ itemIdentifier item) !! 2) <> "/"
+    makeUrl lang item = pure $ "/" <> lang <> "/slides/" <> slugFromPath (itemIdentifier item) <> "/"
     getDate item = fromMaybe "" . lookupString "date" <$> getMetadata (itemIdentifier item)
 
 -- ============================================================================
@@ -355,22 +362,27 @@ pageCtx cfg lang _ = baseCtx cfg lang
 
 postListItemCtx :: String -> Context String
 postListItemCtx lang = field "url" makeUrl <> dateCtx <> defaultContext
-  where makeUrl item = pure $ "/" <> lang <> "/posts/" <> postSlug (itemIdentifier item) <> "/"
+  where
+    makeUrl item = pure $ "/" <> lang <> "/posts/" <> postSlug (itemIdentifier item) <> "/"
 
 allLangsCtx :: SiteConfig -> String -> String -> Context String
-allLangsCtx cfg currentLang urlSuffix = availableLangsCtx
-  [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> urlSuffix) (T.unpack (langCode l) == currentLang)
-  | l <- languages cfg ]
+allLangsCtx cfg currentLang urlSuffix =
+  availableLangsCtx
+    [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> urlSuffix) (T.unpack (langCode l) == currentLang)
+    | l <- languages cfg
+    ]
 
 nestedPageLangsCtx :: SiteConfig -> String -> Identifier -> Compiler (Context String)
 nestedPageLangsCtx cfg currentLang ident = do
   let parts = splitDirectories $ toFilePath ident
-      slug = joinPath $ drop 1 $ init parts
-      dir = "content" </> joinPath (init $ drop 1 parts)
+      slug = joinPath $ drop 1 $ safeInit parts
+      dir = "content" </> joinPath (safeInit $ drop 1 parts)
   availLangs <- filterM (langExists dir) $ languages cfg
-  pure $ availableLangsCtx
-    [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> "/" <> slug <> "/") (T.unpack (langCode l) == currentLang)
-    | l <- availLangs ]
+  pure $
+    availableLangsCtx
+      [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> "/" <> slug <> "/") (T.unpack (langCode l) == currentLang)
+      | l <- availLangs
+      ]
   where
     langExists dir l = not . null <$> getMatches (fromGlob $ dir </> "index." <> T.unpack (langCode l) <> ".md")
 
@@ -384,8 +396,31 @@ extractLang i = takeWhile (/= '.') $ drop 1 $ dropWhile (/= '.') $ takeFileName 
 currentLang :: Compiler String
 currentLang = extractLang <$> getUnderlying
 
+-- | Extract slug from content path (works for posts and slides)
+-- content/posts/{slug}/... or content/slides/{slug}/... -> {slug}
+slugFromPath :: Identifier -> String
+slugFromPath i = case splitDirectories (toFilePath i) of
+  _ : _ : slug : _ -> slug
+  _ -> "unknown"
+
+-- | Safe init - returns empty list instead of error on empty input
+safeInit :: [a] -> [a]
+safeInit [] = []
+safeInit xs = case reverse xs of
+  _ : rest -> reverse rest
+  [] -> []
+
+-- | O(n log n) nub using Set (faster than Data.List.nub which is O(n²))
+nubOrd :: (Ord a) => [a] -> [a]
+nubOrd = Set.toList . Set.fromList
+
+-- | Alias for clarity in post contexts
 postSlug :: Identifier -> String
-postSlug i = splitDirectories (toFilePath i) !! 2
+postSlug = slugFromPath
+
+-- | Get language code as String (convenience for routes)
+langStr :: Language -> String
+langStr = T.unpack . langCode
 
 getFeatureFlags :: Compiler (Bool, Bool)
 getFeatureFlags = do
@@ -412,9 +447,13 @@ bestPostForLang cfg lang slug = traverse (`loadSnapshot` "content") =<< findPost
 
 groupByYear :: [Item String] -> Compiler [YearGroup]
 groupByYear posts = do
-  tagged <- mapM (\p -> do
-    time <- getItemUTC defaultTimeLocale (itemIdentifier p)
-    pure (formatTime defaultTimeLocale "%Y" time, p)) posts
+  tagged <-
+    mapM
+      ( \p -> do
+          time <- getItemUTC defaultTimeLocale (itemIdentifier p)
+          pure (formatTime defaultTimeLocale "%Y" time, p)
+      )
+      posts
   pure [YearGroup y (map snd ps) | ps@((y, _) : _) <- groupBy (\a b -> fst a == fst b) $ sortBy (comparing (Down . fst)) tagged]
 
 metaStr :: String -> Metadata -> String

@@ -41,7 +41,7 @@ spec = describe "Config" $ do
       let langs = [Language "zh" "中文", Language "en" "English"]
       defaultLang langs `shouldBe` "zh"
 
-    it "returns 'en' for empty list" $ do
+    it "returns 'en' for empty list" $
       defaultLang [] `shouldBe` "en"
 
   describe "postsPerPage" $ do
@@ -49,7 +49,7 @@ spec = describe "Config" $ do
       let cfg = minimalConfig {pagination = Just (PaginationConfig (PaginationItemConfig 5) (PaginationItemConfig 6))}
       postsPerPage cfg `shouldBe` 5
 
-    it "returns default 10 when not configured" $ do
+    it "returns default 10 when not configured" $
       postsPerPage minimalConfig `shouldBe` 10
 
   describe "slidesPerPage" $ do
@@ -57,7 +57,7 @@ spec = describe "Config" $ do
       let cfg = minimalConfig {pagination = Just (PaginationConfig (PaginationItemConfig 5) (PaginationItemConfig 8))}
       slidesPerPage cfg `shouldBe` 8
 
-    it "returns default 12 when not configured" $ do
+    it "returns default 12 when not configured" $
       slidesPerPage minimalConfig `shouldBe` 12
 
 -- | Minimal config for testing

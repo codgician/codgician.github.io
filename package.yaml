@@ -26,16 +26,24 @@ dependencies:
   - cryptohash-sha256
   - base16-bytestring
   - temporary
+
 ghc-options:
+  - -Werror
   - -Wall
   - -Wcompat
   - -Widentities
+  - -Wredundant-constraints
   - -Wincomplete-record-updates
   - -Wincomplete-uni-patterns
+  - -Wpartial-fields
   - -Wmissing-export-lists
   - -Wmissing-home-modules
-  - -Wpartial-fields
-  - -Wredundant-constraints
+  - -Wmissing-deriving-strategies
+  - -Wunused-packages
+  - -Wunused-type-patterns
+  - -Wduplicate-exports
+  - -Wprepositive-qualified-module
+
 library:
   source-dirs: src
   exposed-modules:
@@ -48,6 +56,7 @@ library:
     - Feed
     - Paginate
     - Site
+
 executables:
   site:
     main: Main.hs

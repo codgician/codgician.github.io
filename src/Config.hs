@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Config
@@ -173,10 +174,10 @@ instance FromJSON FeedConfig where
     FeedConfig <$> v .: "title" <*> v .: "description" <*> v .: "itemsCount"
 
 -- | Pagination configuration for a single item type
-data PaginationItemConfig = PaginationItemConfig
+newtype PaginationItemConfig = PaginationItemConfig
   { itemsPerPage :: Int
   }
-  deriving (Show, Generic)
+  deriving stock (Show, Generic)
 
 instance FromJSON PaginationItemConfig where
   parseJSON = withObject "PaginationItemConfig" $ \v ->

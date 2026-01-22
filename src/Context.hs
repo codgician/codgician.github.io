@@ -14,7 +14,6 @@
 module Context
   ( -- * Core contexts
     baseCtx,
-    langCtx,
 
     -- * Page-specific contexts
     homeCtx,
@@ -22,8 +21,6 @@ module Context
     dateCtx,
 
     -- * List contexts
-    navCtx,
-    socialCtx,
     friendsCtx,
     availableLangsCtx,
     yearGroupsCtx,
@@ -137,8 +134,7 @@ navCtx cfg lang =
     itemCtx =
       field "name" (pure . trans . navLabel . itemBody)
         <> field "url" (pure . T.unpack . navUrl . itemBody)
-        <> constField "lang" lang  -- Include lang in each nav item for template access
-
+        <> constField "lang" lang -- Include lang in each nav item for template access
     trans = T.unpack . getTrans (languages cfg) lang
 
 -- | Social links context
