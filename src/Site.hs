@@ -241,9 +241,11 @@ postList cfg = do
   where
     pagePath lang n = if n == 1 then lang </> "posts/index.html" else lang </> "posts/page" </> show n </> "index.html"
     paginationCtx' lang cur total =
-      constField "currentPage" (show cur) <> constField "numPages" (show total)
-        <> (if cur > 1 then constField "prevUrl" (prevUrl lang cur) else mempty)
-        <> (if cur < total then constField "nextUrl" ("/" <> lang <> "/posts/page/" <> show (cur + 1) <> "/") else mempty)
+      constField "hasPagination" "true"
+        <> constField "currentPageNum" (show cur)
+        <> constField "numPages" (show total)
+        <> (if cur > 1 then constField "previousPageUrl" (prevUrl lang cur) else mempty)
+        <> (if cur < total then constField "nextPageUrl" ("/" <> lang <> "/posts/page/" <> show (cur + 1) <> "/") else mempty)
     prevUrl lang cur = if cur == 2 then "/" <> lang <> "/posts/" else "/" <> lang <> "/posts/page/" <> show (cur - 1) <> "/"
 
 rssFeeds :: SiteConfig -> Rules ()

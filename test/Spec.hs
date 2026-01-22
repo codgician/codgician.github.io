@@ -1,2 +1,8 @@
+module Main (main) where
+
+import qualified Site.HtmlSpec
+import Test.Hspec
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = hspec $ do
+  Site.HtmlSpec.spec

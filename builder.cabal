@@ -93,6 +93,8 @@ test-suite builder-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Site.Helpers
+      Site.HtmlSpec
       Paths_builder
   autogen-modules:
       Paths_builder
@@ -110,10 +112,13 @@ test-suite builder-test
     , directory
     , filepath
     , hakyll >=4.16
+    , hedgehog
     , hspec
+    , hspec-hedgehog
     , pandoc >=3.0
     , pandoc-types >=1.23
     , process
+    , tagsoup
     , temporary
     , text
     , time

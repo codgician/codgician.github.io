@@ -29,8 +29,11 @@ _artifacts/
 # Vendor assets (symlinked from Nix store)
 static/vendor/
 
-# OpenCode
-.opencode/
+# OpenCode (track skills/agents/commands, ignore runtime)
+.opencode/node_modules/
+.opencode/package.json
+.opencode/bun.lock
+.opencode/.gitignore
 
 # OS files
 .DS_Store
