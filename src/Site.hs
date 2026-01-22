@@ -15,7 +15,7 @@ import qualified Data.Text as T
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtxForLang)
 import Hakyll
-import Hakyll.Web.Paginate (buildPaginateWith, paginateEvery, paginateRules)
+import Hakyll.Web.Paginate ()
 import Paginate (makePageId, paginationCtx)
 import System.FilePath (joinPath, splitDirectories, takeFileName, (</>))
 
@@ -99,7 +99,7 @@ scssCompilation = do
     compile $ do
       _ <- loadAll "static/scss/_*.scss" :: Compiler [Item String]
       path <- toFilePath <$> getUnderlying
-      makeItem "" >>= withItemBody (const $ unixFilter "sass" ["--load-path=static/scss", "--style=compressed", path] "")
+      makeItem ("" :: String) >>= withItemBody (const $ unixFilter "sass" ["--load-path=static/scss", "--style=compressed", path] "")
 
 templates :: Rules ()
 templates = do
@@ -276,15 +276,15 @@ sitemap cfg = do
       route idRoute
       compile $ do
         posts <- loadAllSnapshots "content/posts/*/index.*.md" "content" :: Compiler [Item String]
-        let defaultLang = maybe "en" (T.unpack . langCode) $ listToMaybe $ languages cfg
-        slides <- loadAllSnapshots ("content/slides/*/slides.md" .&&. hasVersion defaultLang) "content" :: Compiler [Item String]
+        let defLang = maybe "en" (T.unpack . langCode) $ listToMaybe $ languages cfg
+        slides <- loadAllSnapshots ("content/slides/*/slides.md" .&&. hasVersion defLang) "content" :: Compiler [Item String]
         let root = T.unpack $ baseUrl $ site cfg
             langs = map langStr $ languages cfg
             entries =
               concatMap (staticPages root) langs
                 ++ map (postEntry root) posts
                 ++ concatMap (slideEntries root langs) slides
-        makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" (listField "entries" entryCtx (mapM makeItem entries))
+        makeItem ("" :: String) >>= loadAndApplyTemplate "templates/sitemap.xml" (listField "entries" entryCtx (mapM makeItem entries))
   where
     staticPages root lang =
       map
@@ -366,21 +366,21 @@ postListItemCtx lang = field "url" makeUrl <> dateCtx <> defaultContext
     makeUrl item = pure $ "/" <> lang <> "/posts/" <> postSlug (itemIdentifier item) <> "/"
 
 allLangsCtx :: SiteConfig -> String -> String -> Context String
-allLangsCtx cfg currentLang urlSuffix =
+allLangsCtx cfg curLang urlSuffix =
   availableLangsCtx
-    [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> urlSuffix) (T.unpack (langCode l) == currentLang)
+    [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> urlSuffix) (T.unpack (langCode l) == curLang)
     | l <- languages cfg
     ]
 
 nestedPageLangsCtx :: SiteConfig -> String -> Identifier -> Compiler (Context String)
-nestedPageLangsCtx cfg currentLang ident = do
+nestedPageLangsCtx cfg curLang ident = do
   let parts = splitDirectories $ toFilePath ident
       slug = joinPath $ drop 1 $ safeInit parts
       dir = "content" </> joinPath (safeInit $ drop 1 parts)
   availLangs <- filterM (langExists dir) $ languages cfg
   pure $
     availableLangsCtx
-      [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> "/" <> slug <> "/") (T.unpack (langCode l) == currentLang)
+      [ AvailableLang (T.unpack $ langCode l) (T.unpack $ langLabel l) ("/" <> T.unpack (langCode l) <> "/" <> slug <> "/") (T.unpack (langCode l) == curLang)
       | l <- availLangs
       ]
   where
@@ -437,8 +437,8 @@ findPostIdent cfg targetLang slug = go $ targetLang : filter (/= targetLang) (ma
   where
     go [] = pure Nothing
     go (l : ls) = do
-      matches <- getMatches $ fromGlob $ "content/posts/" <> slug <> "/index." <> l <> ".md"
-      case matches of
+      postMatches <- getMatches $ fromGlob $ "content/posts/" <> slug <> "/index." <> l <> ".md"
+      case postMatches of
         (i : _) -> pure $ Just i
         [] -> go ls
 
