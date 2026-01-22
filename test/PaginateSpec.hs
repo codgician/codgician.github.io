@@ -7,7 +7,7 @@ import Paginate
 import Test.Hspec
 
 spec :: Spec
-spec = describe "Paginate" $ do
+spec = describe "Paginate" $
   describe "makePageId" $ do
     it "generates clean URL for page 1" $ do
       toFilePath (makePageId "en" "posts" 1) `shouldBe` "en/posts/index.html"

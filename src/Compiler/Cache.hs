@@ -29,7 +29,8 @@ data CacheConfig = CacheConfig
 buildCacheKey :: CacheConfig -> Text -> Text
 buildCacheKey cfg content =
   let components =
-        T.intercalate "\n"
+        T.intercalate
+          "\n"
           [ "v1",
             toolName cfg,
             toolVersion cfg,
@@ -54,7 +55,7 @@ cachedRender cfg content render = do
     else writeAtomically dir path render content
 
 handleReadError :: FilePath -> (Text -> IO Text) -> Text -> SomeException -> IO Text
-handleReadError path render content _ = do
+handleReadError path render content _ =
   writeAtomically (takeDirectory path) path render content
   where
     takeDirectory = reverse . dropWhile (/= '/') . reverse
