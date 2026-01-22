@@ -1,4 +1,4 @@
-cabal-version: 2.2
+cabal-version: 1.12
 
 -- This file has been generated from package.yaml by hpack version 0.38.3.
 --
@@ -10,9 +10,9 @@ description:    Static site generator for codgician.me
 homepage:       https://github.com/codgician/codgician.github.io#readme
 bug-reports:    https://github.com/codgician/codgician.github.io/issues
 author:         codgician
-maintainer:     codgician@outlook.com
+maintainer:     codgician
 copyright:      2025 codgician
-license:        BSD-3-Clause
+license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
@@ -35,8 +35,6 @@ library
       Paginate
       Site
   other-modules:
-      Paths_builder
-  autogen-modules:
       Paths_builder
   hs-source-dirs:
       src
@@ -63,8 +61,6 @@ library
 executable site
   main-is: Main.hs
   other-modules:
-      Paths_builder
-  autogen-modules:
       Paths_builder
   hs-source-dirs:
       app
@@ -93,10 +89,8 @@ test-suite builder-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Site.Helpers
-      Site.HtmlSpec
-      Paths_builder
-  autogen-modules:
+      ConfigSpec
+      PaginateSpec
       Paths_builder
   hs-source-dirs:
       test
@@ -112,13 +106,10 @@ test-suite builder-test
     , directory
     , filepath
     , hakyll >=4.16
-    , hedgehog
     , hspec
-    , hspec-hedgehog
     , pandoc >=3.0
     , pandoc-types >=1.23
     , process
-    , tagsoup
     , temporary
     , text
     , time

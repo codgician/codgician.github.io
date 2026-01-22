@@ -35,7 +35,7 @@
           ];
         };
 
-        # The Hakyll site generator binary
+        # The Hakyll site generator (with tests)
         siteBuilder = hPkgs.callCabal2nix "builder" builderSrc { };
 
         # External tools needed for building
@@ -129,9 +129,6 @@
           ps.temporary
           # Test dependencies
           ps.hspec
-          ps.hedgehog
-          ps.hspec-hedgehog
-          ps.tagsoup
         ]);
 
         # Development environment with HLS and all tools
@@ -142,8 +139,7 @@
           hPkgs.hlint
           pkgs.pkg-config
           pkgs.zlib
-        ]
-        ++ buildTools;
+        ] ++ buildTools;
 
         # Wrapper script that sets up vendor symlinks before running site
         siteWrapper = pkgs.writeShellScriptBin "site" ''

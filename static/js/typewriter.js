@@ -1,6 +1,10 @@
 /**
  * Typewriter effect module
  * Usage: Add data-typewriter="text1|text2|text3" to any element
+ * 
+ * Behavior:
+ * - First phrase is always the first one defined
+ * - Subsequent phrases cycle randomly (shuffled)
  */
 (function () {
   "use strict";
@@ -10,6 +14,20 @@
     deleteSpeed: 40,
     pauseDelay: 2000,
   };
+
+  /**
+   * Fisher-Yates shuffle algorithm
+   */
+  function shuffle(array) {
+    var result = array.slice();
+    for (var i = result.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = result[i];
+      result[i] = result[j];
+      result[j] = temp;
+    }
+    return result;
+  }
 
   function init(element) {
     var texts = (element.dataset.typewriter || "").split("|").filter(Boolean);
@@ -23,12 +41,16 @@
     element.textContent = "";
     element.classList.add("typewriter");
 
-    var textIndex = 0;
+    var firstPhrase = texts[0];
+    var otherPhrases = texts.slice(1);
+    var phraseQueue = [firstPhrase].concat(shuffle(otherPhrases));
+
+    var queueIndex = 0;
     var charIndex = 0;
     var isDeleting = false;
 
     function tick() {
-      var current = texts[textIndex];
+      var current = phraseQueue[queueIndex];
 
       if (isDeleting) {
         charIndex--;
@@ -45,7 +67,12 @@
         isDeleting = true;
       } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
-        textIndex = (textIndex + 1) % texts.length;
+        queueIndex++;
+        
+        if (queueIndex >= phraseQueue.length) {
+          phraseQueue = [firstPhrase].concat(shuffle(otherPhrases));
+          queueIndex = 0;
+        }
       }
 
       setTimeout(tick, delay);

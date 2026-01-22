@@ -127,4 +127,5 @@ This is a [known Hakyll behavior](https://github.com/jaspervdj/hakyll/pull/876) 
 
 # License
 
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- **Code** (src/, app/, integration-tests/, templates/, static/): [MIT](LICENSE)
+- **Content** (content/): [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
