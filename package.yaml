@@ -69,3 +69,9 @@ tests:
     dependencies:
       - builder
       - hspec
+      - hedgehog
+      - hspec-hedgehog
+      - tagsoup
+      - directory
+      - filepath
+      - text

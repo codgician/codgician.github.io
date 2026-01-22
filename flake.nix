@@ -127,7 +127,11 @@
           ps.cryptohash-sha256
           ps.base16-bytestring
           ps.temporary
+          # Test dependencies
           ps.hspec
+          ps.hedgehog
+          ps.hspec-hedgehog
+          ps.tagsoup
         ]);
 
         # Development environment with HLS and all tools
