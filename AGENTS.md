@@ -58,7 +58,7 @@ nix fmt                # Format all code
 
 This repo uses OpenCode agents for structured development.
 
-### Commands (User Entry Points)
+### Commands (`.opencode/commands/`)
 
 | Command | Purpose |
 |---------|---------|
@@ -67,23 +67,26 @@ This repo uses OpenCode agents for structured development.
 | `/design <desc>` | UI work → Designer |
 | `/architect <desc>` | Technical design → Tech Lead |
 | `/review` | Quality check → Validator |
-| `/reflect <incident>` | Process improvement → Reflector |
+| `/reflect <incident>` | Process improvement via reflection skill |
 
 ### Agents (`.opencode/agents/`)
 
-| Agent | Mode | Role |
-|-------|------|------|
-| `planner` | primary | Orchestrates team via Task tool |
-| `tech-lead` | subagent | Research + Architecture |
-| `designer` | subagent | Visual/UX design |
-| `coder` | subagent | Implementation |
-| `validator` | subagent | Quality gate |
-| `reflector` | subagent | Process improvement |
+| Agent | Role |
+|-------|------|
+| `planner` | Orchestrates team via Task tool |
+| `tech-lead` | Research + Architecture |
+| `designer` | Visual/UX design |
+| `coder` | Implementation |
+| `validator` | Quality gate |
 
 ### Skills (`.opencode/skills/`)
 
-- `hakyll-minimalist` - Coding patterns for this project
-- `hakyll-design-system` - Design tokens and component specs
+| Skill | Purpose |
+|-------|---------|
+| `coding-standard` | Coding patterns and conventions for this project |
+| `code-review` | Code review guidelines |
+| `tdd-workflow` | Test-driven development workflow |
+| `reflection` | Process improvement and incident reflection |
 
 ## Before Completing Any Task
 

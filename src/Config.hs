@@ -126,7 +126,7 @@ instance FromJSON LicenseConfig where
 
 data AuthorConfig = AuthorConfig
   { name :: Text,
-    email :: Text
+    email :: Maybe Text
   }
   deriving (Show, Generic)
 

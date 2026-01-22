@@ -20,7 +20,7 @@ feedConfiguration cfg lang =
     { feedTitle = T.unpack $ Config.getTrans langs lang $ Config.feedTitle $ feed cfg,
       feedDescription = T.unpack $ Config.getTrans langs lang $ Config.feedDescription $ feed cfg,
       feedAuthorName = T.unpack $ Config.name $ author cfg,
-      feedAuthorEmail = T.unpack $ Config.email $ author cfg,
+      feedAuthorEmail = maybe "" T.unpack $ Config.email $ author cfg,
       feedRoot = T.unpack (Config.baseUrl $ site cfg)
     }
   where

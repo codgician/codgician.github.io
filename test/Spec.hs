@@ -1,8 +1,10 @@
 module Main (main) where
 
-import qualified Site.HtmlSpec
+import qualified ConfigSpec
+import qualified PaginateSpec
 import Test.Hspec
 
 main :: IO ()
 main = hspec $ do
-  Site.HtmlSpec.spec
+  ConfigSpec.spec
+  PaginateSpec.spec

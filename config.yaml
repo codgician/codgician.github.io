@@ -8,6 +8,10 @@ site:
     en:
       - "Coding Magic"
       - "Vibing..."
+      - "INFP-T?"
+      - "nix build ."
+      - "1 1 4 5 1 4"
+      - "sudo reboot"
   copyright:
     en: "© 2026 codgician"
   license:
@@ -20,7 +24,6 @@ languages:
     label: 中文
 author:
   name: "codgician"
-  email: "codgician@outlook.com"
 navigation:
   - url: posts/
     label:
