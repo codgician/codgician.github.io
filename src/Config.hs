@@ -41,8 +41,8 @@ newtype Translated = Translated {unTranslated :: Map Text Text}
 
 instance FromJSON Translated where
   parseJSON = withObject "Translated" $ \v -> do
-    pairs <- mapM parsePair (toList v)
-    pure $ Translated $ Map.fromList pairs
+    kvPairs <- mapM parsePair (toList v)
+    pure $ Translated $ Map.fromList kvPairs
     where
       parsePair (k, val) = do
         t <- parseJSON val
@@ -53,8 +53,8 @@ newtype TranslatedList = TranslatedList {unTranslatedList :: Map Text [Text]}
 
 instance FromJSON TranslatedList where
   parseJSON = withObject "TranslatedList" $ \v -> do
-    pairs <- mapM parsePair (toList v)
-    pure $ TranslatedList $ Map.fromList pairs
+    kvPairs <- mapM parsePair (toList v)
+    pure $ TranslatedList $ Map.fromList kvPairs
     where
       parsePair (k, val) = do
         ts <- parseJSON val

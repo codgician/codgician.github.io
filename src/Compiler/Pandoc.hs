@@ -15,7 +15,7 @@ import qualified Data.Version as V
 import Hakyll
 import qualified Paths_builder as Meta
 import Text.Pandoc
-import Text.Pandoc.Highlighting (Style, pygments)
+import Text.Pandoc.Highlighting (pygments)
 import Text.Pandoc.Walk (walkM)
 import Text.Read (readMaybe)
 

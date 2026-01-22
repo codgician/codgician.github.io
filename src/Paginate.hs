@@ -18,7 +18,6 @@ where
 
 import qualified Data.Map as Map
 import Hakyll
-import Hakyll.Web.Paginate
 import System.FilePath ((</>))
 
 -- | Generate page identifiers with clean URLs.

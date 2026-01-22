@@ -38,12 +38,11 @@ library
       Paths_builder
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports
   build-depends:
       aeson
     , base >=4.7 && <5
     , base16-bytestring
-    , bytestring
     , containers
     , cryptohash-sha256
     , directory
@@ -64,25 +63,11 @@ executable site
       Paths_builder
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
-    , base >=4.7 && <5
-    , base16-bytestring
+      base >=4.7 && <5
     , builder
-    , bytestring
-    , containers
-    , cryptohash-sha256
     , directory
-    , filepath
-    , hakyll >=4.16
-    , pandoc >=3.0
-    , pandoc-types >=1.23
-    , process
-    , temporary
-    , text
-    , time
-    , yaml
   default-language: Haskell2010
 
 test-suite builder-test
@@ -94,24 +79,11 @@ test-suite builder-test
       Paths_builder
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
-    , base >=4.7 && <5
-    , base16-bytestring
+      base >=4.7 && <5
     , builder
-    , bytestring
     , containers
-    , cryptohash-sha256
-    , directory
-    , filepath
     , hakyll >=4.16
     , hspec
-    , pandoc >=3.0
-    , pandoc-types >=1.23
-    , process
-    , temporary
-    , text
-    , time
-    , yaml
   default-language: Haskell2010

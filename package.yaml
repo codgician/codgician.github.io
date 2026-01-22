@@ -9,23 +9,6 @@ extra-source-files:
   - README.md
   - CHANGELOG.md
 description: Static site generator for codgician.me
-dependencies:
-  - base >= 4.7 && < 5
-  - hakyll >= 4.16
-  - pandoc >= 3.0
-  - pandoc-types >= 1.23
-  - text
-  - bytestring
-  - filepath
-  - directory
-  - process
-  - yaml
-  - aeson
-  - time
-  - containers
-  - cryptohash-sha256
-  - base16-bytestring
-  - temporary
 
 ghc-options:
   - -Werror
@@ -38,11 +21,9 @@ ghc-options:
   - -Wpartial-fields
   - -Wmissing-export-lists
   - -Wmissing-home-modules
-  - -Wmissing-deriving-strategies
   - -Wunused-packages
   - -Wunused-type-patterns
   - -Wduplicate-exports
-  - -Wprepositive-qualified-module
 
 library:
   source-dirs: src
@@ -56,6 +37,22 @@ library:
     - Feed
     - Paginate
     - Site
+  dependencies:
+    - base >= 4.7 && < 5
+    - hakyll >= 4.16
+    - pandoc >= 3.0
+    - pandoc-types >= 1.23
+    - text
+    - filepath
+    - directory
+    - process
+    - yaml
+    - aeson
+    - time
+    - containers
+    - cryptohash-sha256
+    - base16-bytestring
+    - temporary
 
 executables:
   site:
@@ -66,7 +63,9 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
+      - base >= 4.7 && < 5
       - builder
+      - directory
 
 tests:
   builder-test:
@@ -77,6 +76,8 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
+      - base >= 4.7 && < 5
       - builder
+      - hakyll >= 4.16
       - hspec
       - containers
