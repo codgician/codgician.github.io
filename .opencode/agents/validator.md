@@ -2,10 +2,10 @@
 name: validator
 description: Final quality gate with evidence-based verdicts. Call after Coder completes. SKIP for docs-only changes.
 mode: subagent
-model: claude-sonnet-4-20250514
+model: dendro/claude-opus-4.5
 thinking:
   type: enabled
-  budgetTokens: 16000
+  budgetTokens: 32000
 permission:
   skill:
     "*": allow

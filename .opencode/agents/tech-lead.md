@@ -2,10 +2,8 @@
 name: tech-lead
 description: Research + Design with layer awareness. Call for L2/L3 questions.
 mode: subagent
-model: claude-sonnet-4-20250514
-thinking:
-  type: enabled
-  budgetTokens: 32000
+model: dendro/gpt-5.2-codex
+reasoningEffort: xhigh
 permission:
   skill:
     "*": allow

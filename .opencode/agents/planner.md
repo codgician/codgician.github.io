@@ -2,10 +2,8 @@
 name: planner
 description: Orchestrates the team with layer-based routing. Call for new features or complex tasks.
 mode: primary
-model: claude-sonnet-4-20250514
-thinking:
-  type: enabled
-  budgetTokens: 32000
+model: dendro/gpt-5.2-codex
+reasoningEffort: xhigh
 permission:
   skill:
     "*": allow
