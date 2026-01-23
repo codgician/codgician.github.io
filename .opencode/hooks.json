@@ -2,37 +2,13 @@
   "hooks": {
     "PreToolUse": [
       {
-        "name": "warn-console-log",
-        "description": "Warn about console.log in TypeScript/JavaScript files",
-        "matcher": "tool == 'Edit' && tool_input.file_path matches '\\.(ts|tsx|js|jsx)$'",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "#!/bin/bash\nif grep -n 'console\\.log' \"$TOOL_INPUT_FILE_PATH\" 2>/dev/null; then\n  echo '[Hook] Warning: Remove console.log before committing' >&2\nfi"
-          }
-        ]
-      },
-      {
         "name": "validate-haskell-edit",
         "description": "Check Haskell edits for common issues",
         "matcher": "tool == 'Edit' && tool_input.file_path matches '\\.hs$'",
         "hooks": [
           {
             "type": "command",
-            "command": "#!/bin/bash\n# Check for unsafe functions\nif grep -E '(fromJust|head\\s|tail\\s|error\\s)' \"$TOOL_INPUT_NEW_STRING\" 2>/dev/null; then\n  echo '[Hook] Warning: Unsafe function detected. Use safe alternatives.' >&2\nfi"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "name": "post-edit-build-check",
-        "description": "Remind to build after Haskell edits",
-        "matcher": "tool == 'Edit' && tool_input.file_path matches '\\.hs$' && tool_output.success",
-        "hooks": [
-          {
-            "type": "message",
-            "message": "💡 Haskell file edited. Run `nix build` to verify."
+            "command": "#!/bin/bash\n# Check for unsafe functions in the new content\nif echo \"$TOOL_INPUT_NEW_STRING\" | grep -qE '(fromJust|head\\s|tail\\s|error\\s)'; then\n  echo '[Hook] Warning: Unsafe function detected. Use safe alternatives.' >&2\nfi"
           }
         ]
       }
@@ -45,10 +21,6 @@
           {
             "type": "command",
             "command": "#!/bin/bash\nMEMORY_FILE=\".opencode/_memory/session-memory.md\"\nif [ -f \"$MEMORY_FILE\" ]; then\n  echo \"## Previous Session Context\"\n  cat \"$MEMORY_FILE\"\n  echo \"\"\n  echo \"---\"\nfi"
-          },
-          {
-            "type": "message",
-            "message": "🧠 Session memory loaded. Use `/learn` to extract patterns, `/checkpoint` to save state."
           }
         ]
       },
@@ -73,54 +45,6 @@
             "command": "#!/bin/bash\nmkdir -p .opencode/_memory\nMEMORY_FILE=\".opencode/_memory/session-memory.md\"\necho \"# Session Memory\" > \"$MEMORY_FILE\"\necho \"\" >> \"$MEMORY_FILE\"\necho \"**Last Updated**: $(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> \"$MEMORY_FILE\"\necho \"\" >> \"$MEMORY_FILE\"\necho \"## Recent Work\" >> \"$MEMORY_FILE\"\ngit log --oneline -5 2>/dev/null >> \"$MEMORY_FILE\" || echo \"(no git history)\" >> \"$MEMORY_FILE\"\necho \"\" >> \"$MEMORY_FILE\"\necho \"## Uncommitted Changes\" >> \"$MEMORY_FILE\"\ngit status --short 2>/dev/null >> \"$MEMORY_FILE\" || echo \"(no changes)\" >> \"$MEMORY_FILE\"\necho \"\" >> \"$MEMORY_FILE\"\necho \"Session memory saved to $MEMORY_FILE\""
           }
         ]
-      },
-      {
-        "name": "suggest-learning-extraction",
-        "description": "Prompt to extract learnings if significant work done",
-        "hooks": [
-          {
-            "type": "message",
-            "message": "📝 Session ending. Consider running `/learn` to extract patterns from this session."
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "name": "final-verification-reminder",
-        "description": "Remind to verify before claiming completion",
-        "matcher": "message contains 'done' || message contains 'complete' || message contains 'finished'",
-        "hooks": [
-          {
-            "type": "message",
-            "message": "🔍 Before finalizing: Did the validator run? Is there evidence of passing checks?"
-          }
-        ]
-      }
-    ],
-    "OnMessage": [
-      {
-        "name": "auto-route",
-        "description": "Automatically route questions through the router skill",
-        "matcher": "message.role == 'user' && message.length > 20",
-        "hooks": [
-          {
-            "type": "skill",
-            "skill": "router",
-            "silent": true
-          }
-        ]
-      },
-      {
-        "name": "detect-repeated-failure",
-        "description": "Detect if same error appears 3+ times",
-        "matcher": "message contains 'error' || message contains 'failed'",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "#!/bin/bash\n# This is a placeholder - actual implementation would track conversation history\necho \"[Hook] Monitoring for repeated failures. 3-strike rule active.\""
-          }
-        ]
       }
     ],
     "OnError": [
@@ -139,8 +63,6 @@
   },
   "settings": {
     "enableHooks": true,
-    "silentRouting": true,
-    "memoryPersistence": true,
-    "autoVerification": true
+    "memoryPersistence": true
   }
 }
