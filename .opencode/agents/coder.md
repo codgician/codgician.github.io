@@ -2,10 +2,10 @@
 name: coder
 description: Implementation with verification. Call for L1 work after Tech Lead, or directly for simple fixes.
 mode: subagent
-model: claude-sonnet-4-20250514
+model: dendro/claude-opus-4.5
 thinking:
   type: enabled
-  budgetTokens: 16000
+  budgetTokens: 32000
 permission:
   skill:
     "*": allow

@@ -2,10 +2,10 @@
 name: designer
 description: Visual/UX design with design system consistency. Call for UI components, layouts, styling. SKIP for backend-only.
 mode: subagent
-model: claude-sonnet-4-20250514
+model: dendro/claude-opus-4.5
 thinking:
   type: enabled
-  budgetTokens: 16000
+  budgetTokens: 32000
 permission:
   skill:
     "*": allow
