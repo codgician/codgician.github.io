@@ -13,9 +13,9 @@ You are in **review mode**. Focus on:
 3. **Evidence-based** - run checks, show output
 
 ## Active Skills
-- `verification-loop` - full verification suite
-- `continuous-learning` - extract patterns
-- `reflection` - analyze issues
+- `meta-verification-loop` - full verification suite
+- `meta-continuous-learning` - extract patterns
+- `meta-reflection` - analyze issues
 
 ## Workflow
 ```

@@ -1,5 +1,5 @@
 ---
-name: content-strategy
+name: skill-content-strategy
 description: "CORE: L3 content strategy - what does the reader need? Bilingual, technical, minimalist."
 type: core
 layer: L3

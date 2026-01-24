@@ -1,7 +1,7 @@
 ---
-name: verification-loop
-description: "CORE: Checkpoint and continuous verification. Never claim success without evidence."
-type: core
+name: meta-verification-loop
+description: "META: Checkpoint and continuous verification. Never claim success without evidence."
+type: meta
 ---
 
 # Verification Loop

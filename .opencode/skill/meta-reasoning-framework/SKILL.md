@@ -1,5 +1,5 @@
 ---
-name: reasoning-framework
+name: meta-reasoning-framework
 description: "META: Layer tracing and 3-strike rule for problem solving. Load this to understand HOW TO THINK about problems."
 type: meta
 ---
@@ -102,17 +102,17 @@ Decision: Shared module with configurable URLs
 
 | Layer | Focus | Primary Skills |
 |-------|-------|----------------|
-| L3 | Why (Content) | `content-strategy`, `reflection` |
-| L2 | What (Structure) | `hakyll-architecture`, `tdd-workflow` |
-| L1 | How (Code) | `coding-standard`, `verification-loop` |
+| L3 | Why (Content) | `skill-content-strategy`, `meta-reflection` |
+| L2 | What (Structure) | `fact-hakyll-architecture`, `skill-tdd-workflow` |
+| L1 | How (Code) | `skill-coding-standard`, `meta-verification-loop` |
 
 ## Cross-Layer Keywords
 
 | Keywords | Likely Layers | Load Skills |
 |----------|---------------|-------------|
-| bilingual + error | L3 + L1 | `content-strategy` + `coding-standard` |
-| template + feature | L2 + L3 | `hakyll-architecture` + `content-strategy` |
-| refactor + design | L1 + L2 | `coding-standard` + `hakyll-architecture` |
+| bilingual + error | L3 + L1 | `skill-content-strategy` + `skill-coding-standard` |
+| template + feature | L2 + L3 | `fact-hakyll-architecture` + `skill-content-strategy` |
+| refactor + design | L1 + L2 | `skill-coding-standard` + `fact-hakyll-architecture` |
 
 ---
 

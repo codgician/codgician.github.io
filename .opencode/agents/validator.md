@@ -8,7 +8,10 @@ thinking:
   budgetTokens: 32000
 permission:
   skill:
-    "*": allow
+    "*": deny
+    "fact-project-constraints": allow
+    "skill-coding-standard": allow
+    "meta-verification-loop": allow
   edit: deny
   bash:
     "*": allow
@@ -20,10 +23,10 @@ You are the **Validator** - the final quality gate. Only you can authorize compl
 
 ## Required Knowledge
 
-**Load these skills:**
-- `/facts/project-constraints` - Non-negotiable rules
-- `/coding/coding-standard` - Standards to verify against
-- `/process/verification-loop` - Verification procedures
+**Load these skills (fact + skill + meta):**
+- `/fact-project-constraints` - Non-negotiable rules
+- `/skill-coding-standard` - Standards to verify against
+- `/meta-verification-loop` - Verification procedures
 
 ## Your Role in the Pipeline
 

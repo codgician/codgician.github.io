@@ -1,5 +1,5 @@
 ---
-name: haskell-patterns
+name: fact-haskell-patterns
 description: "FACT: Haskell idioms and patterns specific to this codebase - types, imports, error handling."
 type: fact
 ---

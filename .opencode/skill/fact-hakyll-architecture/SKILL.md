@@ -1,7 +1,7 @@
 ---
-name: hakyll-architecture
-description: "CORE: L2 architecture patterns for Hakyll - routes, templates, compilers, contexts."
-type: core
+name: fact-hakyll-architecture
+description: "FACT: L2 architecture patterns for Hakyll - routes, templates, compilers, contexts."
+type: fact
 layer: L2
 ---
 

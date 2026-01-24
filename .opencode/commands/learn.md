@@ -1,6 +1,6 @@
 ---
 description: Extract patterns and learnings from current session
-skill: continuous-learning
+skill: meta-continuous-learning
 ---
 
 ## Learn from Session
@@ -15,7 +15,7 @@ Analyze this session and extract reusable patterns.
 
 **Context**: $ARGUMENTS
 
-Load the `continuous-learning` skill and:
+Load the `meta-continuous-learning` skill and:
 1. Scan the conversation history
 2. Identify learnings (patterns, mistakes, discoveries)
 3. Categorize by layer (L1/L2/L3)

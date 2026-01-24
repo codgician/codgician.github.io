@@ -1,7 +1,7 @@
 ---
-name: reflection
-description: "CORE: Analyze failures and improve the system. 5-question reboot for when things go wrong."
-type: core
+name: meta-reflection
+description: "META: Analyze failures and improve the system. 5-question reboot for when things go wrong."
+type: meta
 ---
 
 # Reflection
@@ -111,7 +111,7 @@ After applying these updates, this type of issue should be caught by:
 
 ## Integration with Continuous Learning
 
-After reflection, invoke `continuous-learning` skill to:
+After reflection, invoke `meta-continuous-learning` skill to:
 1. Persist the learning to memory
 2. Track pattern effectiveness over time
 3. Update relevant skills with new patterns

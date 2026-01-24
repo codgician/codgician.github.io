@@ -1,5 +1,5 @@
 ---
-name: uncertainty-handling
+name: meta-uncertainty-handling
 description: "META: Decide when to ask, proceed, or defer based on confidence and reversibility."
 type: meta
 ---
