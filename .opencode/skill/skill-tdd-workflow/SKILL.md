@@ -1,5 +1,5 @@
 ---
-name: tdd-workflow
+name: skill-tdd-workflow
 description: "CORE: Test-driven development workflow. Define verification BEFORE implementing."
 type: core
 layer: L1

@@ -1,5 +1,5 @@
 ---
-name: project-constraints
+name: fact-project-constraints
 description: "FACT: Non-negotiable project rules - bilingual, minimalist, Nix-only, build must pass."
 type: fact
 ---

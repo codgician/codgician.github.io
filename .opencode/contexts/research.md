@@ -13,9 +13,9 @@ You are in **research mode**. Focus on:
 3. **Documentation** - record findings
 
 ## Active Skills
-- `hakyll-architecture` - L2 design patterns
-- `content-strategy` - L3 content decisions
-- `continuous-learning` - capture learnings
+- `fact-hakyll-architecture` - L2 design patterns
+- `skill-content-strategy` - L3 content decisions
+- `meta-continuous-learning` - capture learnings
 
 ## Workflow
 ```

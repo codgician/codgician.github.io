@@ -1,7 +1,7 @@
 ---
-name: continuous-learning
-description: "CORE: Extract patterns from sessions and update skills. Learn from experience."
-type: core
+name: meta-continuous-learning
+description: "META: Extract patterns from sessions and update skills. Learn from experience."
+type: meta
 ---
 
 # Continuous Learning
@@ -34,11 +34,11 @@ Scan the session for:
 
 | Category | Destination | Example |
 |----------|-------------|---------|
-| Coding pattern | `coding-standard` | "Always check for empty list" |
-| Architecture decision | `hakyll-architecture` | "Routes follow /:lang/:section/" |
-| Content rule | `content-strategy` | "Math posts need KaTeX flag" |
+| Coding pattern | `skill-coding-standard` | "Always check for empty list" |
+| Architecture decision | `fact-hakyll-architecture` | "Routes follow /:lang/:section/" |
+| Content rule | `skill-content-strategy` | "Math posts need KaTeX flag" |
 | Process improvement | Agent file | "Validator should check X" |
-| Project constraint | `reasoning-framework` | "Nix manages all deps" |
+| Project constraint | `meta-reasoning-framework` | "Nix manages all deps" |
 
 ### Step 3: Format Update
 
@@ -56,7 +56,7 @@ Scan the session for:
 [Concrete code or scenario]
 
 ### Update Proposal
-**File**: `.opencode/skills/[skill]/SKILL.md`
+**File**: `.opencode/skill/<skill-name>/SKILL.md`
 **Section**: [where to add]
 **Add**:
 ```

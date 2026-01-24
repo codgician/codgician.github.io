@@ -1,5 +1,5 @@
 ---
-name: router
+name: skill-router
 description: "ROUTING: Master router with 400+ keywords. Identifies layer, loads skills, routes to agents."
 type: routing
 ---
@@ -8,13 +8,13 @@ type: routing
 
 > Identify entry layer → Load skills → Route to agent
 
-## Automatic Invocation
+## Invocation
 
-This skill is auto-triggered by hooks on every user message. It:
+This skill is invoked manually (e.g. via the `/route` command). It:
 1. Scans for keywords
-2. Identifies entry layer
-3. Loads appropriate skill(s)
-4. Suggests agent routing
+2. Identifies the entry layer
+3. Suggests which skills to load
+4. Recommends which agent should lead
 
 ---
 
@@ -119,12 +119,12 @@ function detectLayer(input):
 
 | Entry Layer | Trace | Primary Agent | Skills to Load |
 |-------------|-------|---------------|----------------|
-| L1 (error) | UP ↑ | coder | `coding-standard` |
-| L1 (refactor) | UP ↑ | coder | `coding-standard` + `hakyll-architecture` |
-| L2 (design) | Both ↕ | tech-lead | `hakyll-architecture` |
-| L2 (template) | Both ↕ | tech-lead | `hakyll-architecture` + `content-strategy` |
-| L3 (feature) | DOWN ↓ | planner | `content-strategy` |
-| L3 (bilingual) | DOWN ↓ | planner | `content-strategy` + `hakyll-architecture` |
+| L1 (error) | UP ↑ | coder | `skill-coding-standard` |
+| L1 (refactor) | UP ↑ | coder | `skill-coding-standard` + `fact-hakyll-architecture` |
+| L2 (design) | Both ↕ | tech-lead | `fact-hakyll-architecture` |
+| L2 (template) | Both ↕ | tech-lead | `fact-hakyll-architecture` + `skill-content-strategy` |
+| L3 (feature) | DOWN ↓ | planner | `skill-content-strategy` |
+| L3 (bilingual) | DOWN ↓ | planner | `skill-content-strategy` + `fact-hakyll-architecture` |
 
 ## Dual-Skill Loading
 
@@ -132,9 +132,9 @@ When keywords from multiple layers appear:
 
 | Combination | Load Both | Rationale |
 |-------------|-----------|-----------|
-| L1 + L3 | `coding-standard` + `content-strategy` | Error in feature context |
-| L2 + L3 | `hakyll-architecture` + `content-strategy` | Design for feature |
-| L1 + L2 | `coding-standard` + `hakyll-architecture` | Implementation of design |
+| L1 + L3 | `skill-coding-standard` + `skill-content-strategy` | Error in feature context |
+| L2 + L3 | `fact-hakyll-architecture` + `skill-content-strategy` | Design for feature |
+| L1 + L2 | `skill-coding-standard` + `fact-hakyll-architecture` | Implementation of design |
 
 ---
 
@@ -180,6 +180,6 @@ If conversation already has layer context, don't re-route unless topic changes.
 
 ## Integration Points
 
-**Triggered by**: `hooks.json` on every user message
+**Triggered by**: `/route` command (or direct skill invocation)
 **Outputs to**: Planner, Tech-Lead, or Coder
-**Feedback to**: `continuous-learning` skill for pattern updates
+**Feedback to**: `meta-continuous-learning` for pattern updates

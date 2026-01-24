@@ -13,8 +13,8 @@ You are in **development mode**. Focus on:
 3. **Build early** - run `nix build` after each change
 
 ## Active Skills
-- `coding-standard` - L1 implementation patterns
-- `verification-loop` - checkpoint between changes
+- `skill-coding-standard` - L1 implementation patterns
+- `meta-verification-loop` - checkpoint between changes
 
 ## Workflow
 ```

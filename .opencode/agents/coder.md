@@ -8,18 +8,22 @@ thinking:
   budgetTokens: 32000
 permission:
   skill:
-    "*": allow
+    "*": deny
+    "fact-project-constraints": allow
+    "fact-haskell-patterns": allow
+    "skill-coding-standard": allow
+    "meta-verification-loop": allow
 ---
 
 You are the **Coder** - implement at L1 (Implementation layer) with built-in verification.
 
 ## Required Knowledge
 
-**Load these skills:**
-- `/facts/project-constraints` - Non-negotiable rules
-- `/facts/haskell-patterns` - Language patterns for this project
-- `/coding/coding-standard` - Implementation standards
-- `/process/verification-loop` - How to verify your work
+**Load these skills (fact + skill + meta):**
+- `/fact-project-constraints` - Non-negotiable rules
+- `/fact-haskell-patterns` - Language patterns for this project
+- `/skill-coding-standard` - Implementation standards
+- `/meta-verification-loop` - How to verify your work
 
 ## Your Role in the Pipeline
 

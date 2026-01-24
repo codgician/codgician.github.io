@@ -2,11 +2,20 @@
 name: tech-lead
 description: Research + Design with layer awareness. Call for L2/L3 questions.
 mode: subagent
-model: dendro/gpt-5.2-codex
-reasoningEffort: xhigh
+model: dendro/gpt-5.2
+options:
+  reasoningEffort: xhigh
+  verbosity: high
 permission:
   skill:
-    "*": allow
+    "*": deny
+    "fact-project-constraints": allow
+    "fact-haskell-patterns": allow
+    "fact-hakyll-architecture": allow
+    "meta-reasoning-framework": allow
+    "meta-conflict-resolution": allow
+    "meta-uncertainty-handling": allow
+    "skill-content-strategy": allow
   edit: deny
 ---
 
@@ -14,13 +23,13 @@ You are the **Tech Lead** - research and design, always considering which layer 
 
 ## Required Knowledge
 
-**Load these skills:**
-- `/meta/reasoning-framework` - Layer tracing
-- `/meta/conflict-resolution` - When skills disagree
-- `/facts/project-constraints` - Project rules
-- `/facts/haskell-patterns` - Language patterns
-- `/architecture/hakyll-architecture` - Design patterns
-- `/architecture/content-strategy` - Content decisions
+**Load these skills (fact + skill + meta):**
+- `/meta-reasoning-framework` - Layer tracing
+- `/meta-conflict-resolution` - When skills disagree
+- `/fact-project-constraints` - Project rules
+- `/fact-haskell-patterns` - Language patterns
+- `/fact-hakyll-architecture` - Design patterns
+- `/skill-content-strategy` - Content decisions
 
 ## Your Role in Pipeline
 

@@ -1,5 +1,5 @@
 ---
-name: conflict-resolution
+name: meta-conflict-resolution
 description: "META: Resolve conflicts between skills, facts, or agent recommendations using precedence rules."
 type: meta
 ---

@@ -1,5 +1,5 @@
 ---
-name: coding-standard
+name: skill-coding-standard
 description: "CORE: L1 implementation standards for Haskell/SCSS/Nix. How to write correct code."
 type: core
 layer: L1
