@@ -6,9 +6,9 @@
 
 **Agents are compositions of skills.**
 
-OpenCode discovers skills via: `.opencode/skill/<skill-name>/SKILL.md`
+OpenCode discovers skills via: `.opencode/skills/<skill-name>/SKILL.md`
 
-All knowledge types are organized as skills under `.opencode/skill/` with a **flat structure**.
+All knowledge types are organized as skills under `.opencode/skills/` with a **flat structure**.
 
 ---
 
@@ -190,7 +190,7 @@ This makes dependencies explicit and documents what knowledge each agent needs.
 Skills are invoked via the `/skill-name` syntax in chat or programmatically by agents using the `skill` tool.
 
 **Skill Discovery Locations** (in order of precedence):
-1. Project: `.opencode/skill/<name>/SKILL.md`
+1. Project: `.opencode/skills/<name>/SKILL.md`
 2. Global: `~/.config/opencode/skill/<name>/SKILL.md`
 
 **Permission Control**: Agents can restrict skill access via `permission.skill` in frontmatter:
@@ -363,7 +363,7 @@ layer: L1
 
 ### Why Flat Structure?
 
-OpenCode expects skills at `.opencode/skill/<skill-name>/SKILL.md` - a flat structure where skill names are unique identifiers. This matches the invocation syntax `/skill-name` and ensures proper discovery.
+OpenCode expects skills at `.opencode/skills/<skill-name>/SKILL.md` - a flat structure where skill names are unique identifiers. This matches the invocation syntax `/skill-name` and ensures proper discovery.
 
 Previous nested structures like `.opencode/skills/meta/reasoning-framework/SKILL.md` were not supported by OpenCode's discovery mechanism.
 

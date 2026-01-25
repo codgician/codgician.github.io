@@ -56,7 +56,7 @@ Scan the session for:
 [Concrete code or scenario]
 
 ### Update Proposal
-**File**: `.opencode/skill/<skill-name>/SKILL.md`
+**File**: `.opencode/skills/<skill-name>/SKILL.md`
 **Section**: [where to add]
 **Add**:
 ```

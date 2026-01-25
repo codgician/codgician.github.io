@@ -9,7 +9,7 @@ type: core
 > This repo treats **agents as compositions of skills**.
 >
 > **Non-negotiables**:
-> 1. Skills live at `.opencode/skill/<skill-name>/SKILL.md` (flat discovery)
+> 1. Skills live at `.opencode/skills/<skill-name>/SKILL.md` (flat discovery)
 > 2. Skill names are **prefixed**: `fact-*`, `meta-*`, `skill-*`
 > 3. Subagents use **strict permissions**: `"*": deny` then explicit allowlists
 > 4. A subagent must combine the **3 knowledge types**:
@@ -58,14 +58,14 @@ skill-add-opencode-component
 Constraints:
 - Lowercase
 - Hyphen-separated
-- Must be globally unique within `.opencode/skill/`
+- Must be globally unique within `.opencode/skills/`
 
 ### Step 2: Create the directory + SKILL.md
 
 Create:
 
 ```
-.opencode/skill/<name>/SKILL.md
+.opencode/skills/<name>/SKILL.md
 ```
 
 Frontmatter requirements:
@@ -93,7 +93,7 @@ Choose the integration points:
    - Set `skill: <skill-name>` in command frontmatter
 
 3. **Router usage**: if it should be suggested for certain inputs
-   - Update `.opencode/skill/skill-router/SKILL.md` mapping tables
+   - Update `.opencode/skills/skill-router/SKILL.md` mapping tables
 
 ### Step 5: Verification (skill)
 
@@ -101,7 +101,7 @@ Run:
 
 ```bash
 # skill exists
-test -f ".opencode/skill/<name>/SKILL.md"
+test -f ".opencode/skills/<name>/SKILL.md"
 
 # no stale references
 rg "\.opencode/skills" .opencode
