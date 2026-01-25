@@ -13,5 +13,5 @@ Load the `meta-reflection` skill and analyze this incident using the conversatio
 1. Review what happened in this conversation
 2. Identify which agent/skill made the error and why
 3. Find the root cause (missing context, unclear instruction, wrong assumption, etc.)
-4. Propose specific changes to `.opencode/agents/` or `.opencode/skill/`
+4. Propose specific changes to `.opencode/agents/` or `.opencode/skills/`
 5. Generate the exact text edits to prevent recurrence
