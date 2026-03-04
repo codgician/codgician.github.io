@@ -3,7 +3,6 @@ title: "浅谈莫比乌斯反演"
 date: 2018-11-18
 language: zh
 canonical: true
-translationKey: mobius-inversion-formula
 tags:
   - icpc-notes
   - algorithm

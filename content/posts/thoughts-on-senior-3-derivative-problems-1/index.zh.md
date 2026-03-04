@@ -3,7 +3,6 @@ title: "高考导数: “两点”问题"
 date: 2017-03-21
 language: zh
 canonical: true
-translationKey: thoughts-on-senior-3-derivative-problems-1
 tags:
   - math
 math: true

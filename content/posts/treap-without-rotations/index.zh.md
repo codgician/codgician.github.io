@@ -3,7 +3,6 @@ title: "浅谈无旋转 Treap"
 date: 2018-07-28
 language: zh
 canonical: true
-translationKey: treap-without-rotations
 tags:
   - icpc-notes
   - algorithm-

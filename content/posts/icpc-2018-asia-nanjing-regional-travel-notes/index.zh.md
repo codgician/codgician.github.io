@@ -3,7 +3,6 @@ title: "ICPC 2018 亚洲区域赛南京站游记"
 date: 2018-10-16
 language: zh
 canonical: true
-translationKey: icpc-2018-asia-nanjing-regional-travel-notes
 tags:
   - life
   - competitive-programming

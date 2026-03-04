@@ -3,7 +3,6 @@ title: "浅谈类欧几里德算法"
 date: 2018-10-18
 language: zh
 canonical: true
-translationKey: quasi-euclidean-algorithm
 tags:
   - icpc-notes
   - algorithm

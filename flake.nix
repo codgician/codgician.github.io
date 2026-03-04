@@ -15,7 +15,10 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true; # Required for google-chrome on aarch64-darwin
+        };
         lib = pkgs.lib;
         hPkgs = pkgs.haskellPackages;
 
@@ -38,11 +41,24 @@
         # The Hakyll site generator (with tests)
         siteBuilder = hPkgs.callCabal2nix "builder" builderSrc { };
 
+        # Browser for mermaid-cli (platform-aware)
+        browser =
+          if pkgs.stdenv.isDarwin then
+            pkgs.google-chrome
+          else
+            pkgs.chromium;
+        browserPath =
+          if pkgs.stdenv.isDarwin then
+            "${browser}/bin/google-chrome-stable"
+          else
+            "${lib.getExe browser}";
+
         # External tools needed for building
         buildTools = [
           pkgs.dart-sass
           pkgs.nodePackages.katex
           pkgs.mermaid-cli
+          browser
         ];
 
         # KaTeX dist path for CSS and fonts
@@ -68,6 +84,7 @@
               ./templates
               ./static
               ./config.yaml
+              ./puppeteer-config.json
             ];
           };
           nativeBuildInputs = [ siteBuilder ] ++ buildTools;
@@ -79,10 +96,12 @@
 
           KATEX_VERSION = katexVersion;
           MERMAID_VERSION = mermaidVersion;
+          PUPPETEER_EXECUTABLE_PATH = browserPath;
+          PUPPETEER_CONFIG = "./puppeteer-config.json";
+
 
           buildPhase = ''
             runHook preBuild
-
             # Copy KaTeX CSS and fonts into static/ so Hakyll picks them up
             mkdir -p static/vendor/katex
             cp ${katexDist}/katex.min.css static/vendor/katex/
@@ -147,6 +166,10 @@
           ln -sfn ${katexDist} static/vendor/katex
           ln -sfn ${lucideFont} static/vendor/lucide
           ln -sfn ${revealJs} static/vendor/reveal.js
+          export KATEX_VERSION="${katexVersion}"
+          export MERMAID_VERSION="${mermaidVersion}"
+          export PUPPETEER_EXECUTABLE_PATH="${browserPath}"
+          export PUPPETEER_CONFIG="./puppeteer-config.json"
           exec ${siteBuilder}/bin/site "$@"
         '';
 
@@ -167,6 +190,8 @@
 
           KATEX_VERSION = katexVersion;
           MERMAID_VERSION = mermaidVersion;
+          PUPPETEER_EXECUTABLE_PATH = browserPath;
+          PUPPETEER_CONFIG = "./puppeteer-config.json";
 
           # Symlink vendor assets into static/ for development
           shellHook = ''

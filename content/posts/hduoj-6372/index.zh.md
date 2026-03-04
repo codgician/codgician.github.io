@@ -3,7 +3,6 @@ title: "HDUOJ 6372: sacul"
 date: 2018-08-10
 language: zh
 canonical: true
-translationKey: hduoj-6372
 tags:
   - icpc-solutions
   - algorithm

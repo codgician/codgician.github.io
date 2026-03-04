@@ -3,7 +3,6 @@ title: "浅谈 Min25 筛"
 date: 2019-09-01
 language: zh
 canonical: true
-translationKey: min25-sieve
 tags:
   - icpc-notes
   - algorithm

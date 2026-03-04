@@ -3,7 +3,6 @@ title: "乱谈整型与浮点"
 date: 2017-08-18
 language: zh
 canonical: true
-translationKey: on-int-and-float
 tags:
   - icpc-notes
   - computer-organization

@@ -3,7 +3,6 @@ title: "BZOJ 2187: fraction"
 date: 2018-10-28
 language: zh
 canonical: true
-translationKey: bzoj-2187
 tags:
   - icpc-solutions
   - algorithm

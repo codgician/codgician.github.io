@@ -3,7 +3,6 @@ title: "HDUOJ 4947: GCD Array"
 date: 2018-11-24
 language: zh
 canonical: true
-translationKey: hduoj-4947
 tags:
   - icpc-solutions
   - algorithm

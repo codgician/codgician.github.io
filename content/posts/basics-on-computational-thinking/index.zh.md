@@ -3,7 +3,6 @@ title: "计算导论: 计算系统基本思维"
 date: 2017-08-19
 language: zh
 canonical: true
-translationKey: basics-on-computational-thinking
 tags:
   - icpc-notes
   - computational-thinking

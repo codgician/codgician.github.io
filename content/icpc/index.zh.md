@@ -2,7 +2,6 @@
 title: "算法竞赛"
 language: zh
 canonical: true
-translationKey: icpc
 math: false
 toc: false
 draft: false

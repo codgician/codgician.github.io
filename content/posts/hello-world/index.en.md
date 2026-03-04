@@ -3,7 +3,6 @@ title: "Hello World... Again!"
 date: 2019-10-15
 language: en
 canonical: false
-translationKey: hello-world
 tags:
   - life
   - hello

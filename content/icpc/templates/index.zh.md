@@ -2,7 +2,6 @@
 title: "代码模板"
 language: zh
 canonical: true
-translationKey: icpc-templates
 math: true
 toc: true
 draft: false

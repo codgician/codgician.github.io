@@ -2,7 +2,6 @@
 title: "Graph Theory"
 language: zh
 canonical: true
-translationKey: icpc-templates-graph-theory
 math: true
 toc: true
 draft: false

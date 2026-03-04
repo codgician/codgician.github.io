@@ -3,7 +3,6 @@ title: "高考导数: 优化函数以方便求解"
 date: 2017-04-08
 language: zh
 canonical: true
-translationKey: thoughts-on-senior-3-derivative-problems-2
 tags:
   - math
 math: true

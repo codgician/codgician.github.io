@@ -38,7 +38,7 @@ library
       Paths_builder
   hs-source-dirs:
       src
-  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports
+  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -Wmissing-signatures
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -63,7 +63,7 @@ executable site
       Paths_builder
   hs-source-dirs:
       app
-  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -Wmissing-signatures -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , builder
@@ -79,7 +79,7 @@ test-suite builder-test
       Paths_builder
   hs-source-dirs:
       test
-  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -Wmissing-signatures -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , builder

@@ -3,7 +3,6 @@ title: "ICPC 2018 亚洲区域赛北京站游记"
 date: 2018-11-26
 language: zh
 canonical: true
-translationKey: icpc-2018-asia-beijing-regional-travel-notes
 tags:
   - life
   - competitive-programming

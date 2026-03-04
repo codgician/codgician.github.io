@@ -2,7 +2,6 @@
 title: "Data Structure"
 language: zh
 canonical: true
-translationKey: icpc-templates-data-structure
 math: true
 toc: true
 draft: false
