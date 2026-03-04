@@ -31,7 +31,7 @@ ZFS 解锁方案，能防御三种常见攻击手法——而这些恰恰是 Cle
 PCR 里存的不是任意写入的值，而是通过 extend 操作累加出来的哈希：
 
 ```
-新PCR值 = hash(旧PCR值 || 新数据)
+新PCR值 = hash(旧PCR值 ‖ 新数据)  # ‖ 表示拼接
 ```
 
 这意味着：
@@ -170,7 +170,7 @@ systemd-creds decrypt mycred.cred -
 从 ZFS 内部的加密元数据派生指纹：
 
 ```bash
-fingerprint = hash(GUID || MAC)
+fingerprint = hash(GUID ‖ MAC)  # ‖ 表示拼接
 ```
 
 其中：
@@ -201,7 +201,7 @@ flowchart TD
     C --> D["zfs-tpm-unlock.service"]
 
     subgraph unlock[" "]
-        D --> E["Compute fingerprint<br/>hash(GUID || MAC)"]
+        D --> E["Compute fingerprint<br/>hash(GUID ‖ MAC)"]
         E --> F["Extend PCR 15"]
         F --> G{"PCR 15 matches?"}
         G -->|Yes| H["systemd-creds decrypt<br/>(PCR 7 + 15)"]
