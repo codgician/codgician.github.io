@@ -232,7 +232,7 @@ The fingerprint computation uses `zdb` to extract these values directly from ZFS
 metadata:
 
 ```bash
-# Simplified version of our zfs-fingerprint script
+# Simplified version of my zfs-fingerprint script
 crypto_obj=$(zdb -ddddd "$pool" "$root_ds" | grep -oP 'crypto_key_obj = \K\d+')
 guid=$(zdb -ddddd "$pool" "$crypto_obj" | grep -oP 'DSL_CRYPTO_GUID = \K\d+')
 mac=$(zdb -ddddd "$pool" "$crypto_obj" | grep -oP 'DSL_CRYPTO_MAC = \K[0-9a-f]+')
@@ -241,7 +241,7 @@ echo -n "${guid}${mac}" | sha256sum | cut -d' ' -f1
 
 ### The Unlock Flow
 
-Here's how our `zfs-unlock` module orchestrates the secure unlock:
+Here's how my `zfs-unlock` module orchestrates the secure unlock:
 
 ```mermaid
 flowchart TD
@@ -337,11 +337,11 @@ The existing ecosystem has gaps. Clevis doesn't use encrypted sessions. Most
 systemd-cryptenroll guides skip PCR 15 verification. Neither addresses ZFS
 native encryption well.
 
-Our solution — combining `mkcreds` for credential creation, ZFS fingerprints for
+My solution — combining `mkcreds` for credential creation, ZFS fingerprints for
 volume identity, and careful PCR 15 management — provides defense-in-depth for
 NixOS systems with ZFS encryption.
 
-The full implementation lives in our
+The full implementation lives in my
 [serenitea-pot](https://github.com/codgician/serenitea-pot) NixOS configuration,
 specifically in `modules/nixos/system/zfs-unlock/`. The
 [mkcreds](https://github.com/codgician/mkcreds) tool is available as a
