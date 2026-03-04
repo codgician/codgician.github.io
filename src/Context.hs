@@ -73,7 +73,7 @@ baseCtx cfg lang =
     <> navCtx cfg lang
     <> defaultContext
   where
-    trans = T.unpack . getTrans (languages cfg) lang
+    trans = transStr (languages cfg) lang
 
 -- | Language field context
 langCtx :: String -> Context String
@@ -92,7 +92,7 @@ homeCtx cfg lang =
     <> socialCtx cfg lang
     <> baseCtx cfg lang
   where
-    trans = T.unpack . getTrans langs lang
+    trans = transStr langs lang
     langs = languages cfg
     phrasesStr = intercalate "|" . map T.unpack . getTransList langs lang
 
@@ -135,7 +135,7 @@ navCtx cfg lang =
       field "name" (pure . trans . navLabel . itemBody)
         <> field "url" (pure . T.unpack . navUrl . itemBody)
         <> constField "lang" lang -- Include lang in each nav item for template access
-    trans = T.unpack . getTrans (languages cfg) lang
+    trans = transStr (languages cfg) lang
 
 -- | Social links context
 socialCtx :: SiteConfig -> String -> Context String
@@ -147,7 +147,7 @@ socialCtx cfg lang =
         <> field "url" (pure . T.unpack . socialUrl . itemBody)
         <> field "icon" (pure . T.unpack . socialIcon . itemBody)
 
-    trans = T.unpack . getTrans (languages cfg) lang
+    trans = transStr (languages cfg) lang
 
 -- | Friends list context
 friendsCtx :: SiteConfig -> Context String
