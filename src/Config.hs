@@ -18,6 +18,7 @@ module Config
     TranslatedList (..),
     loadConfig,
     getTrans,
+    transStr,
     getTransList,
     defaultLang,
     langCodes,
@@ -67,6 +68,10 @@ getTrans langs lang (Translated m) =
    in case Map.lookup langText m of
         Just t -> t
         Nothing -> Map.findWithDefault "" defLang m
+
+-- | Get translated string as String (convenience wrapper)
+transStr :: [Language] -> String -> Translated -> String
+transStr langs lang = T.unpack . getTrans langs lang
 
 getTransList :: [Language] -> String -> TranslatedList -> [Text]
 getTransList langs lang (TranslatedList m) =

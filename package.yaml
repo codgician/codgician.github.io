@@ -24,6 +24,7 @@ ghc-options:
   - -Wunused-packages
   - -Wunused-type-patterns
   - -Wduplicate-exports
+  - -Wmissing-signatures
 
 library:
   source-dirs: src

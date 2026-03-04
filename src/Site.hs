@@ -15,7 +15,6 @@ import qualified Data.Text as T
 import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtxForLang)
 import Hakyll
-import Hakyll.Web.Paginate ()
 import Paginate (makePageId, paginationCtx)
 import System.FilePath (joinPath, splitDirectories, takeFileName, (</>))
 
@@ -77,19 +76,14 @@ staticFiles =
 
 -- | Copy images from content directories to output (posts and slides)
 contentAssets :: SiteConfig -> Rules ()
-contentAssets cfg = forM_ imageExtensions $ \ext -> do
-  -- Post images: content/posts/{slug}/*.ext -> {lang}/posts/{slug}/*.ext
-  match (fromGlob $ "content/posts/*/*." <> ext) $
-    forM_ (languages cfg) $ \lang ->
-      version (langStr lang) $ do
-        route $ customRoute $ \i -> langStr lang </> "posts" </> slugFromPath i </> takeFileName (toFilePath i)
-        compile copyFileCompiler
-  -- Slide images: content/slides/{slug}/*.ext -> {lang}/slides/{slug}/*.ext
-  match (fromGlob $ "content/slides/*/*." <> ext) $
-    forM_ (languages cfg) $ \lang ->
-      version (langStr lang) $ do
-        route $ customRoute $ \i -> langStr lang </> "slides" </> slugFromPath i </> takeFileName (toFilePath i)
-        compile copyFileCompiler
+contentAssets cfg = forM_ imageExtensions $ \ext ->
+  forM_ ["posts", "slides"] $ \section ->
+    match (fromGlob $ "content/" <> section <> "/*/*." <> ext) $
+      forM_ (languages cfg) $ \lang ->
+        version (langStr lang) $ do
+          route $ customRoute $ \i ->
+            langStr lang </> section </> slugFromPath i </> takeFileName (toFilePath i)
+          compile copyFileCompiler
 
 scssCompilation :: Rules ()
 scssCompilation = do
@@ -168,11 +162,11 @@ blogPosts cfg = do
   postDep <- makePatternDependency "content/posts/*/index.*.md"
   rulesExtraDependencies [postDep] $ do
     postFiles <- getMatches "content/posts/*/index.*.md"
-    let slugs = nubOrd $ map postSlug postFiles
+    let slugs = nubOrd $ map slugFromPath postFiles
     forM_ (languages cfg) $ \lang -> do
       let ls = langStr lang
       forM_ slugs $ \slug ->
-        unless (any (\i -> extractLang i == ls && postSlug i == slug) postFiles) $
+        unless (any (\i -> extractLang i == ls && slugFromPath i == slug) postFiles) $
           createFallbackPost cfg ls slug
 
 createFallbackPost :: SiteConfig -> String -> String -> Rules ()
@@ -206,7 +200,7 @@ createFallbackPost cfg targetLang slug =
 loadAllPostsForLang :: SiteConfig -> String -> Compiler [Item String]
 loadAllPostsForLang cfg lang = do
   allFiles <- getMatches "content/posts/*/index.*.md"
-  let slugs = nubOrd $ map postSlug allFiles
+  let slugs = nubOrd $ map slugFromPath allFiles
   posts <- catMaybes <$> mapM (bestPostForLang cfg lang) slugs
   recentFirst posts
 
@@ -219,7 +213,7 @@ postList cfg = do
           perPage = postsPerPage cfg
 
       allFiles <- getMatches "content/posts/*/index.*.md"
-      let numPosts = length $ nubOrd $ map postSlug allFiles
+      let numPosts = length $ nubOrd $ map slugFromPath allFiles
           numPages = max 1 $ (numPosts + perPage - 1) `div` perPage
 
       forM_ [1 .. numPages] $ \pageNum ->
@@ -291,11 +285,9 @@ sitemap cfg = do
         (\(p, pr) -> SitemapEntry (root <> "/" <> lang <> p) pr)
         [("/", "1.0"), ("/posts/", "0.8"), ("/slides/", "0.8"), ("/about/", "0.7")]
     postEntry root item =
-      let parts = splitDirectories $ toFilePath $ itemIdentifier item
-          -- content/posts/{slug}/index.{lang}.md -> extract slug and lang
-          (slug, lang) = case parts of
-            _ : _ : s : filename : _ -> (s, takeWhile (/= '.') $ drop 6 filename)
-            _ -> ("unknown", "en")
+      let ident = itemIdentifier item
+          slug = slugFromPath ident
+          lang = extractLang ident
        in SitemapEntry (root <> "/" <> lang <> "/posts/" <> slug <> "/") "0.6"
     slideEntries root langs item =
       let slug = slugFromPath $ itemIdentifier item
@@ -363,7 +355,7 @@ pageCtx cfg lang _ = baseCtx cfg lang
 postListItemCtx :: String -> Context String
 postListItemCtx lang = field "url" makeUrl <> dateCtx <> defaultContext
   where
-    makeUrl item = pure $ "/" <> lang <> "/posts/" <> postSlug (itemIdentifier item) <> "/"
+    makeUrl item = pure $ "/" <> lang <> "/posts/" <> slugFromPath (itemIdentifier item) <> "/"
 
 allLangsCtx :: SiteConfig -> String -> String -> Context String
 allLangsCtx cfg curLang urlSuffix =
@@ -414,9 +406,6 @@ safeInit xs = case reverse xs of
 nubOrd :: (Ord a) => [a] -> [a]
 nubOrd = Set.toList . Set.fromList
 
--- | Alias for clarity in post contexts
-postSlug :: Identifier -> String
-postSlug = slugFromPath
 
 -- | Get language code as String (convenience for routes)
 langStr :: Language -> String
