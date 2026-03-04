@@ -27,6 +27,10 @@ getMermaidVersion = do
 getPuppeteerConfig :: IO (Maybe String)
 getPuppeteerConfig = lookupEnv "PUPPETEER_CONFIG"
 
+-- | Get mermaid config path from environment
+getMermaidConfig :: IO (Maybe String)
+getMermaidConfig = lookupEnv "MERMAID_CONFIG"
+
 -- | Render Mermaid diagram to SVG with specified theme
 renderMermaidTheme :: Text -> Text -> IO Text
 renderMermaidTheme theme content = withSystemTempDirectory "mermaid" $ \tmpDir -> do
@@ -34,6 +38,7 @@ renderMermaidTheme theme content = withSystemTempDirectory "mermaid" $ \tmpDir -
       outputFile = tmpDir </> "output.svg"
   TIO.writeFile inputFile content
   puppeteerConfig <- getPuppeteerConfig
+  mermaidConfig <- getMermaidConfig
   let baseArgs =
         [ "-i",
           inputFile,
@@ -44,9 +49,15 @@ renderMermaidTheme theme content = withSystemTempDirectory "mermaid" $ \tmpDir -
           "-b",
           "transparent"
         ]
-      args = case puppeteerConfig of
-        Just cfg -> "-p" : cfg : baseArgs
-        Nothing -> baseArgs
+      -- Add puppeteer config if set
+      withPuppeteer xs = case puppeteerConfig of
+        Just cfg -> "-p" : cfg : xs
+        Nothing -> xs
+      -- Add mermaid config if set
+      withMermaid xs = case mermaidConfig of
+        Just cfg -> "-c" : cfg : xs
+        Nothing -> xs
+      args = withPuppeteer $ withMermaid baseArgs
   callProcess "mmdc" args
   TIO.readFile outputFile
 
