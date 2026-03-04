@@ -111,7 +111,9 @@ postMetaCtx =
     <> field "readingTime" calcReadingTime
   where
     calcReadingTime item =
-      let wordCount = length $ words $ itemBody item
+      -- stripTags from Hakyll.Web.Html removes HTML tags
+      let plainText = stripTags $ itemBody item
+          wordCount = length $ words plainText
           minutes = max 1 (wordCount `div` 200)
        in pure $ show minutes <> " min read"
 
