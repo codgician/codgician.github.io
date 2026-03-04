@@ -34,12 +34,12 @@ content/posts/{slug}/
 ```yaml
 ---
 title: "{title}"
-date: {YYYY-MM-DD}
-language: {en|zh}
-canonical: {true for source language, false for translation}
+date: { YYYY-MM-DD }
+language: { en|zh }
+canonical: { true for source language, false for translation }
 tags:
-  - {tag1}
-  - {tag2}
+  - { tag1 }
+  - { tag2 }
 math: false
 toc: false
 draft: true
@@ -48,22 +48,23 @@ draft: true
 
 ## Field Descriptions
 
-| Field | Description |
-|-------|-------------|
-| `title` | Post title (can differ between languages) |
-| `date` | Publication date (YYYY-MM-DD format, use today) |
-| `language` | `en` or `zh` |
+| Field       | Description                                                      |
+| ----------- | ---------------------------------------------------------------- |
+| `title`     | Post title (can differ between languages)                        |
+| `date`      | Publication date (YYYY-MM-DD format, use today)                  |
+| `language`  | `en` or `zh`                                                     |
 | `canonical` | `true` for the original/source language, `false` for translation |
-| `tags` | List of relevant tags (lowercase, hyphenated) |
-| `math` | Set `true` if post contains LaTeX math |
-| `toc` | Set `true` to show table of contents |
-| `draft` | Set `true` initially, change to `false` when ready to publish |
+| `tags`      | List of relevant tags (lowercase, hyphenated)                    |
+| `math`      | Set `true` if post contains LaTeX math                           |
+| `toc`       | Set `true` to show table of contents                             |
+| `draft`     | Set `true` initially, change to `false` when ready to publish    |
 
 ## Example
 
 User: `/new-blog Introduction to Monads`
 
 Creates:
+
 - `content/posts/introduction-to-monads/index.en.md`
 - `content/posts/introduction-to-monads/index.zh.md`
 

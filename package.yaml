@@ -9,7 +9,6 @@ extra-source-files:
   - README.md
   - CHANGELOG.md
 description: Static site generator for codgician.me
-
 ghc-options:
   - -Werror
   - -Wall
@@ -25,7 +24,6 @@ ghc-options:
   - -Wunused-type-patterns
   - -Wduplicate-exports
   - -Wmissing-signatures
-
 library:
   source-dirs: src
   exposed-modules:
@@ -54,7 +52,6 @@ library:
     - cryptohash-sha256
     - base16-bytestring
     - temporary
-
 executables:
   site:
     main: Main.hs
@@ -67,7 +64,6 @@ executables:
       - base >= 4.7 && < 5
       - builder
       - directory
-
 tests:
   builder-test:
     main: Spec.hs

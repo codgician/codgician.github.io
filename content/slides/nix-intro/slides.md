@@ -13,17 +13,19 @@ height: 768
 # Problems
 
 ::: { .incremental }
+
 - Software should still work when distributed among machines.
-- Not the reality. Following challenges: 
-  * Environment issues
-  * Managability issues
+- Not the reality. Following challenges:
+  - Environment issues
+  - Managability issues
 
 :::
 
 ## Environment issues
 
 ::: { .incremental }
-- Components have *dependencies*.
+
+- Components have _dependencies_.
 - Dependencies need to be compatible.
 - Dependencies should be discoverable.
 - Components may depend on **non-software artifacts** (e.g. configurations).
@@ -32,8 +34,10 @@ height: 768
 
 ::: { .notes }
 
-- Dependencies: both build time and run time. Especially in OSS world, hard to know which source is the component built from.
-- Compatibility: Even for non ABI breaking changes, implementation may change and cause side-effects.
+- Dependencies: both build time and run time. Especially in OSS world, hard to
+  know which source is the component built from.
+- Compatibility: Even for non ABI breaking changes, implementation may change
+  and cause side-effects.
 - Needs to be able to find them (e.g. dynmaic linker search path).
 - Non-software artifacts, e.g. database, user configurations.
 
@@ -45,7 +49,8 @@ height: 768
 
 ::: { .incremental }
 
-- **Uninstall / Upgrade**: should not induce failures to another part of the system (e.g. *[DLL hell](https://en.wikipedia.org/wiki/DLL_Hell)*).
+- **Uninstall / Upgrade**: should not induce failures to another part of the
+  system (e.g. _[DLL hell](https://en.wikipedia.org/wiki/DLL_Hell)_).
 - **Administrator queries**: file ownership? disk space consumption? source?
 - **Rollbacks**: able to undo effects of upgrades.
 - **Variability**: build / deployment configurations may differ.
@@ -56,11 +61,17 @@ height: 768
 ::: { .notes }
 
 - **Uninstall**: also should be as clean as possible.
-- **Upgrades**: DLL hell as a typical example, where upgrading or installing one application can cause a failure to another application due to shared dynamic libraries.
+- **Upgrades**: DLL hell as a typical example, where upgrading or installing one
+  application can cause a failure to another application due to shared dynamic
+  libraries.
 - **Administrator queries**
 - **Rollbacks**: both reproduce the old package and the old configuration.
-- **Variability**: software may have different compile options, and may only deploy a subset of components. Especially for OSS, packages with the same name and the same version may be compiled from different source.
-- **Heterogeneous network**: different set of components may be deployed to different machines according to hardware differences. Even for the same software, compiler options may differ (e.g. enable AVX512?)
+- **Variability**: software may have different compile options, and may only
+  deploy a subset of components. Especially for OSS, packages with the same name
+  and the same version may be compiled from different source.
+- **Heterogeneous network**: different set of components may be deployed to
+  different machines according to hardware differences. Even for the same
+  software, compiler options may differ (e.g. enable AVX512?)
 
 Blood pressure rising? That's what we are dealing with on a daily basis :P
 
@@ -71,50 +82,52 @@ Blood pressure rising? That's what we are dealing with on a daily basis :P
 ## Idea #1. Global package management
 
 ::: { .incremental }
+
 - Systematically manage packages (e.g. apt, yum, pacman, etc).
 - Each component provide a set of constraints:
   - A is installed $\rightarrow$ B (>= 1.0) must be installed.
   - A is installed $\rightarrow$ C should NOT be installed.
   - Success deployment $\rightarrow$ pkg1, pkg2, ... is installed.
 - Solve: success deployment.
-  
+
 :::
 
 ::: { .fragment .fade-in style="color:red" }
-[B-SAT](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem) problem (NP-complete).
+[B-SAT](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem) problem
+(NP-complete).
 
 :::
 
-::: { .fragment .fade-in }
-Implement pseudo-solvers.
-:::
+::: { .fragment .fade-in } Implement pseudo-solvers. :::
 
 ---
 
-*When you try to manage the global system,*
+_When you try to manage the global system,_
 
-*you lose isolation.*
+_you lose isolation._
 
 ::: { .fragment .semi-fade-out data-fragment-index="1" }
+
 - Two components want different versions of the same dependency?
 - Two components providing files on the same location?
 
 :::
 
 ::: { .fragment data-fragment-index="1" }
+
 - Upgrading is **destructive**, and not atomic.
 - Files are usually overwritten, making rollbacks non-trivial.
 
 :::
 
-
 ## Idea #2. Go monolithic!
 
 ::: { .incremental }
-- Environment issues? 
+
+- Environment issues?
   - Resolving undeterministic dependency is hard.
   - Why not **bundle everything**?
-- Managability issues? 
+- Managability issues?
   - **Isolation** between bundles.
   - Only load dependencies which are bundled inside.
 - Self-contained packaging: AppImage, most Windows/macOS apps, etc.
@@ -124,83 +137,87 @@ Implement pseudo-solvers.
 
 ::: { .notes }
 
-Why do we need a SAT model for package management? It is because packages are not deterministic (e.g. they can depend on different versions of a component through upgrading).
+Why do we need a SAT model for package management? It is because packages are
+not deterministic (e.g. they can depend on different versions of a component
+through upgrading).
 
-What if we make the packages deterministic? Due to the nature of globality, upgrading one package will require upgrading all other packages sharing dependencies.
+What if we make the packages deterministic? Due to the nature of globality,
+upgrading one package will require upgrading all other packages sharing
+dependencies.
 
-Fine. Then why not bundle everything altogether? 
+Fine. Then why not bundle everything altogether?
 
 :::
 
 ---
 
-*Wait, won't build + deployment be complex due to monolithic?*
+_Wait, won't build + deployment be complex due to monolithic?_
 
-::: { .fragment }
-Chunking.
-:::
+::: { .fragment } Chunking. :::
 
 ::: { .r-stack }
 
 ::: { .fragment .fade-in-then-out }
-- Break big software into multiple parts. 
+
+- Break big software into multiple parts.
   - Inside each part, we go monolithic.
-  - Between parts, apply simpler dependency management.
-:::
+  - Between parts, apply simpler dependency management. :::
 
 ::: { .fragment .fade-in-then-out }
+
 - Break complex build and deployment into multiple stages.
   - Inside each stage, we go imperative.
-  - Between xstages, we declaratively define dependencies.
-:::
+  - Between xstages, we declaratively define dependencies. :::
 
 ::: { .fragment }
+
 - Break huge docker image into multiple layers.
   - Inside each layer, we go imperative.
-  - Between layers, apply simpler dependency management.
-:::
-:::
+  - Between layers, apply simpler dependency management. ::: :::
 
 ::: { .notes }
 
 What is chunking?
-- Imagine you need to data structure with both fast random access, and fast random insertion/deletion, and you find Balanced Trees to hard to implement.
+
+- Imagine you need to data structure with both fast random access, and fast
+  random insertion/deletion, and you find Balanced Trees to hard to implement.
 - Notice that:
   - Arrays have O(1) random access, but O(N) random deletion / insertion.
   - Linked lists have O(N) random access, but O(1) random deletion / insertion.
 - Partition N data into $\sqrt{N}$ chunks.
   - Use linked list between chunks, and array within each chunk.
-  - $O(\sqrt{N})$ for both operations.
-:::
+  - $O(\sqrt{N})$ for both operations. :::
 
 ---
 
-*But we sacrifice sharing between components.*
+_But we sacrifice sharing between components._
 
 - How many Electrons do you have in Windows/macOS?
 - How many Linux base images do you have in your K8s cluster?
 
 ::: { .notes }
+
 - There are optimizations, but coarse-grained.
-- Split into layers and share common bases.
-:::
+- Split into layers and share common bases. :::
 
 ## Idea #3
 
-*Can we marry isolation with fine-grained package management?*
+_Can we marry isolation with fine-grained package management?_
 
 ::: { .fragment .fade-in-then-semi-out data-fragment-index="5" }
+
 - Environment issues:
   - Do we really need SAT model for dependency management?
   - Much simpler if dependency is just a deterministic tree.
 - Managability issues:
   - Store components isolately without bundling?
-  - Let components see dependencies in separate views?
-:::
+  - Let components see dependencies in separate views? :::
 
 # ![](./nix-logo.svg){ height="72" width="72" } Nix
 
-Originating from [The Purely Functional Software Deployment Model](https://edolstra.github.io/pubs/phd-thesis.pdf) (2006),
+Originating from
+[The Purely Functional Software Deployment Model](https://edolstra.github.io/pubs/phd-thesis.pdf)
+(2006),
 
 Nix solves all above problems,
 
@@ -213,44 +230,49 @@ curl https://nixos.org/nix/install | sh
 
 ::: { .notes }
 
-Nix is not the only implementation, we also have [Guix](https://guix.gnu.org/nb-NO/blog/2006/purely-functional-software-deployment-model/) inspired by the same thesis.
+Nix is not the only implementation, we also have
+[Guix](https://guix.gnu.org/nb-NO/blog/2006/purely-functional-software-deployment-model/)
+inspired by the same thesis.
 
 :::
 
 # Nix: build system
 
-*Deterministic software building makes dependencies deterministic.*
+_Deterministic software building makes dependencies deterministic._
 
 $$
 \text{Inputs} \xrightarrow{f} \text{Output}
 $$
 
-::: { .r-stack }
-::: { .fragment .fade-out data-fragment-index="1" }
+::: { .r-stack } ::: { .fragment .fade-out data-fragment-index="1" }
+
 $$
 x = 1, y = 2 \xrightarrow{f(x, y) = x + y} 1 + 2 = 3
 $$
-:::
-::: { .fragment .current-visible data-fragment-index="1" }
+
+::: ::: { .fragment .current-visible data-fragment-index="1" }
+
 $$
 \text{gcc, libc, source, ...} \xrightarrow{\text{./configure, make, make install}} \text{binary}
 $$
-:::
-:::
+
+::: :::
 
 ## Derivation
 
 ::: { .incremental }
-- In Nix, we call the smallest unit of compliation as [*derivation*](https://nixos.org/manual/nix/stable/language/derivations).
-- A *derivation* is written in a Purely Functional Programming Language (Nix).
-- A *derivation* must have all inputs **explictly** specified.
-- A *derivation* is built inside a **sandbox** to avoid global state.
-- Therefore, the build output of a *derivation* is deterministic.
-:::
+
+- In Nix, we call the smallest unit of compliation as
+  [_derivation_](https://nixos.org/manual/nix/stable/language/derivations).
+- A _derivation_ is written in a Purely Functional Programming Language (Nix).
+- A _derivation_ must have all inputs **explictly** specified.
+- A _derivation_ is built inside a **sandbox** to avoid global state.
+- Therefore, the build output of a _derivation_ is deterministic. :::
 
 ::: { .notes }
 
-- You know the output path without building the derivation. This is important for binary cache.
+- You know the output path without building the derivation. This is important
+  for binary cache.
 
 :::
 
@@ -258,31 +280,34 @@ $$
 
 ::: { .incremental }
 
-- *Derivations* are stored in Nix Store, and builds output to Nix Store.
-- A *derivation*'s build inputs are also managed in Nix Store.
+- _Derivations_ are stored in Nix Store, and builds output to Nix Store.
+- A _derivation_'s build inputs are also managed in Nix Store.
 - Nix store paths made unique with cryptographic hash:
 
   ```
   /nix/store/zrwzkd3szh13zd3wrlzj0kdkgiv1xzjn-hello.drv
   /nix/store/rq6w0k38h7kbh2s9snwpysk5yph2fqbf-hello
   ```
+
 - The output path's hash is generated by derivation content.
   - Any slight change to build process is reflected in hash.
-- Nix store is read-only, only modifiable by `nix`.
-:::
+- Nix store is read-only, only modifiable by `nix`. :::
 
 ::: { .notes }
 
-Question: why hash? 
+Question: why hash?
+
 - If any input / build changes, hash changes.
 - Then they will be recognized as different packages.
 
 Question: why output hash is different from derivation hash?
+
 - Because output hash is a part of the derivation content.
 - Hash when the output path is empty -> output hash.
 - Hash after including output hash -> derivation hash.
 
 Question: why don't we hash based on build output?
+
 - For caching. You want to know the hash before build to prevent rebuilding.
 
 :::
@@ -290,17 +315,16 @@ Question: why don't we hash based on build output?
 ## Sandboxing
 
 ::: { .incremental }
+
 - Builds only see specified inputs, and no other files.
   - Assume nothing in global paths like `/lib`, `/usr/bin`, etc.
 - Private version of `/proc`, `/dev`, `/dev/shm` and `/dev/pts` (Linux-only).
   - Therefore, private PID, mount, IPS, UTS namespace, etc.
-  - No networking access during build.
-:::
+  - No networking access during build. :::
 
 ---
 
-::: { .r-stack }
-::: { .fragment .fade-out data-fragment-index="1" }
+::: { .r-stack } ::: { .fragment .fade-out data-fragment-index="1" }
 
 An example "hello world" program:
 
@@ -313,6 +337,7 @@ int main() {
     return 0;
 }
 ```
+
 :::
 
 ::: { .fragment .fade-in-then-out data-fragment-index="1" }
@@ -336,13 +361,18 @@ pkgs.stdenv.mkDerivation {
   '';
 }
 ```
+
 :::
 
 ::: { .fragment .fade-in-then-out data-fragment-index="2" }
+
 ```json { .r-stretch .s-full-width }
 {
   "/nix/store/87zf1q5dx3dkn597lqq17f1g83y116l6-hello.drv": {
-    "args": [ "-e", "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh" ],
+    "args": [
+      "-e",
+      "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"
+    ],
     "builder": "/nix/store/0c337gsdfjf3162avbkchh0yh4qbs2s3-bash-5.2-p15/bin/bash",
     "env": {
       "buildPhase": "gcc main.c -o hello\n",
@@ -355,14 +385,16 @@ pkgs.stdenv.mkDerivation {
       "src": "/nix/store/92m3yxqi2hfmj75b053zvj0kkhv9bplq-src",
       "stdenv": "/nix/store/iszb73m627pq8v3gwf7zl6xaw01ln2hj-stdenv-linux",
       "system": "aarch64-linux"
-    },
+    }
     // to be continued...
-}}
+  }
+}
 ```
-:::
-::: { .fragment }
+
+::: ::: { .fragment }
+
 ```json { .r-stretch .s-full-width }
-{{ // continuing 
+{{ // continuing
     "inputDrvs": {
       "/nix/store/f27pfz65b77lby39rrr48ps21pa6mbxj-gcc-wrapper-12.3.0.drv": {
         "outputs": [ "out" ]
@@ -386,8 +418,8 @@ pkgs.stdenv.mkDerivation {
   }
 }
 ```
-:::
-:::
+
+::: :::
 
 ::: { .notes }
 
@@ -399,10 +431,9 @@ pkgs.stdenv.mkDerivation {
 
 ---
 
-::: { .r-stack }
-::: { .fragment .fade-out data-fragment-index="1" }
+::: { .r-stack } ::: { .fragment .fade-out data-fragment-index="1" }
 
-*Another example of hello world with ncurses*
+_Another example of hello world with ncurses_
 
 ```c { .r-stretch .s-full-width }
 /* ./src/main.c */
@@ -417,6 +448,7 @@ int main() {
     return 0;
 }
 ```
+
 :::
 
 ::: { .fragment .fade-in-then-out data-fragment-index="1" }
@@ -441,13 +473,18 @@ pkgs.stdenv.mkDerivation {
   '';
 }
 ```
+
 :::
 
 ::: { .fragment .fade-in-then-out data-fragment-index="2" }
+
 ```json { .r-stretch .s-full-width }
 {
   "/nix/store/2w3jmr0s30ylyvpri0m2kb91q4c6wvcb-hello.drv": {
-    "args": [ "-e", "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh" ],
+    "args": [
+      "-e",
+      "/nix/store/v6x3cs394jgqfbi0a42pam708flxaphh-default-builder.sh"
+    ],
     "builder": "/nix/store/0c337gsdfjf3162avbkchh0yh4qbs2s3-bash-5.2-p15/bin/bash",
     "env": {
       "buildInputs": "/nix/store/k7wlgnj0d7fp3862gy0s5s6vphkm48k1-ncurses-6.4-dev",
@@ -460,14 +497,15 @@ pkgs.stdenv.mkDerivation {
       "src": "/nix/store/yf2fijnfz19kqh8finky3n2rk11217r9-src",
       "stdenv": "/nix/store/iszb73m627pq8v3gwf7zl6xaw01ln2hj-stdenv-linux",
       "system": "aarch64-linux"
-    },
-}}
+    }
+  }
+}
 ```
 
-:::
-::: { .fragment }
+::: ::: { .fragment }
+
 ```json { .r-stretch .s-full-width }
-{{ // continuing 
+{{ // continuing
     "inputDrvs": {
       "/nix/store/5l9mg0nlx3j0nf08hlaspnnx592acfm1-ncurses-6.4.drv": {
         "outputs": [ "dev" ]
@@ -494,15 +532,14 @@ pkgs.stdenv.mkDerivation {
   }
 }
 ```
-:::
-:::
+
+::: :::
 
 ---
 
-::: { .r-stack }
-::: { .fragment .fade-out data-fragment-index="1" }
+::: { .r-stack } ::: { .fragment .fade-out data-fragment-index="1" }
 
-*What if we call other binaries in source?*
+_What if we call other binaries in source?_
 
 ```c
 #include <stdlib.h>
@@ -517,7 +554,7 @@ int main() {
 
 ::: { .fragment .fade-in-then-out data-fragment-index="1" }
 
-*Create a wrapper to set `PATH` before actually executing the binary*
+_Create a wrapper to set `PATH` before actually executing the binary_
 
 ```nix { .r-stretch .s-full-width }
 { pkgs, ... }:
@@ -540,11 +577,12 @@ pkgs.stdenv.mkDerivation {
   '';
 }
 ```
+
 :::
 
 ::: { .fragment .fade-in-then-out data-fragment-index="2" }
 
-*`/bin/hello` is a wrapper script instead of real binary*
+_`/bin/hello` is a wrapper script instead of real binary_
 
 ```bash { .r-stretch .s-full-width }
 $ cat /nix/store/z7i77wwagy58f6svxc8ksm5snsc8wnrm-hello/bin/hello
@@ -556,31 +594,35 @@ PATH='/nix/store/klqwsfd2xn14bb977d5dvjqdjpp6ka74-cowsay-3.7.0/bin'$PATH
 PATH=${PATH#':'}
 PATH=${PATH%':'}
 export PATH
-exec -a "$0" "/nix/store/z7i77wwagy58f6svxc8ksm5snsc8wnrm-hello/bin/.hello-wrapped"  "$@" 
+exec -a "$0" "/nix/store/z7i77wwagy58f6svxc8ksm5snsc8wnrm-hello/bin/.hello-wrapped"  "$@"
 ```
-:::
-:::
+
+::: :::
 
 ## Binary cache
 
 ::: { .incremental }
+
 - Note that the output hash can be calculated without building the derivation.
 - Meaning, we can **cache** the builds easily.
-- Serve nix store with a file server, which is the [*binary cache*](https://wiki.nixos.org/wiki/Binary_Cache).
-- Packages can be signed before being added to binary cache or on the fly as they are served.
-:::
+- Serve nix store with a file server, which is the
+  [_binary cache_](https://wiki.nixos.org/wiki/Binary_Cache).
+- Packages can be signed before being added to binary cache or on the fly as
+  they are served. :::
 
 ## [NixPkgs](https://github.com/nixos/nixpkgs)
 
-*There are many languages/frameworks, complicated.*
+_There are many languages/frameworks, complicated._
 
 - Why not unite the efforts in building software?
-- Nixpkgs provides not only compiler toolchains, but also infrastructure for packaging applications written in various language and frameworks.
+- Nixpkgs provides not only compiler toolchains, but also infrastructure for
+  packaging applications written in various language and frameworks.
 - And of course, it comes with an official binary cache.
 
 ::: { .notes }
 
-We have so many software, of course Nix users shouldn't care to write derivations themselves if they want to use it on their machine.
+We have so many software, of course Nix users shouldn't care to write
+derivations themselves if they want to use it on their machine.
 
 Create a repository to maintain "how we build softwares with Nix".
 
@@ -588,7 +630,7 @@ Create a repository to maintain "how we build softwares with Nix".
 
 ---
 
-*It seems to restrictive for majority packages to onboard?*
+_It seems to restrictive for majority packages to onboard?_
 
 [Nix Search - Packages](https://search.nixos.org)
 
@@ -596,7 +638,9 @@ Create a repository to maintain "how we build softwares with Nix".
 
 ::: { .fragment }
 
-Take [rust-analyzer](https://github.com/NixOS/nixpkgs/blob/9a50b221e403694b0cc824fc4600ab5930f3090c/pkgs/development/tools/rust/rust-analyzer/default.nix) as a real-life example.
+Take
+[rust-analyzer](https://github.com/NixOS/nixpkgs/blob/9a50b221e403694b0cc824fc4600ab5930f3090c/pkgs/development/tools/rust/rust-analyzer/default.nix)
+as a real-life example.
 
 :::
 
@@ -608,12 +652,12 @@ In repology, packages are deduped.
 
 # Nix: package manager
 
-*Build makes little sense if we cannot install it.*
+_Build makes little sense if we cannot install it._
 
 ::: { .fragment }
 
 - Search for references recursively for a package's derivation,
-- we get a package's *closure*, 
+- we get a package's _closure_,
 - that is, itself and all its direct and transitive runtime dependencies.
 
 :::
@@ -629,53 +673,52 @@ Two possibilities:
 
 :::
 
-::: { .fragment data-fragment-index="1" }
-*How to make the package accessible?*
+::: { .fragment data-fragment-index="1" } _How to make the package accessible?_
 :::
 
 ::: { .fragment }
-- *Activation script*: an idempotent script making things accessible.
+
+- _Activation script_: an idempotent script making things accessible.
 - e.g. add all package outputs to `$PATH`.
 - Executed while initializing profile.
   ```bash
   nix-shell -p hello
   ```
-:::
+  :::
 
 ## Removal
 
 Garbage collection.
 
 ::: { .incremental }
+
 - Register it as gcroot when installing a derivation.
 - Deregister after uninstalling.
-- Periodically, enumerate all reachable store paths from the gcroots, and remove all unreachable paths. 
+- Periodically, enumerate all reachable store paths from the gcroots, and remove
+  all unreachable paths.
   ```bash
   $ nix-collect-garbage
   ```
-:::
+  :::
 
 ## Advantages
 
 ::: { .incremental }
+
 - Deterministic dependencies. No SAT solver.
 - Different versions / variants of the same package can be installed together.
 - Zero assumption about system global state.
-- Atomic installs / upgrades.
-:::
-
+- Atomic installs / upgrades. :::
 
 # NixOS
 
-::: { .fragment .semi-fade-out data-fragment-index="1" }
-*A working system = Software + Configurations*
-:::
+::: { .fragment .semi-fade-out data-fragment-index="1" } _A working system =
+Software + Configurations_ :::
 
-::: { .fragment data-fragment-index="1"  }
-*Why separate packages and configurations?*
+::: { .fragment data-fragment-index="1" } _Why separate packages and
+configurations?_
 
-NixOS leverages Nix to manage both altogether.
-:::
+NixOS leverages Nix to manage both altogether. :::
 
 ---
 
@@ -696,11 +739,12 @@ NixOS leverages Nix to manage both altogether.
 │  ├── lib
 │  └── share
 ```
+
 :::
 
 ::: { .fragment data-fragment-index="1" }
 
-*However, in NixOS ...*
+_However, in NixOS ..._
 
 ```{ .r-stretch }
 /
@@ -722,14 +766,13 @@ NixOS leverages Nix to manage both altogether.
 │  │  ├── system-250-link -> /nix/store/11w...cv-nixos-system-...
 ```
 
-- *Activation script*: `/nix/var/nix/profiles/system/activate`
+- _Activation script_: `/nix/var/nix/profiles/system/activate`
 
-:::
-:::
+::: :::
 
 ---
 
-*Declaratively describe your system in Nix*:
+_Declaratively describe your system in Nix_:
 
 ```nix { .r-stretch }
 { config, lib, pkgs, ...}: {
@@ -740,7 +783,7 @@ NixOS leverages Nix to manage both altogether.
 	boot.initrd.availableKernelModules = [ "xhci_pci" "sr_mod" ];
   	boot.kernelPackages = pkgs.linuxPackages_latest;
 	# Use zsh for shell
- 	programs.zsh.enable = true; 
+ 	programs.zsh.enable = true;
 	programs.zsh.enableCompletion = true;
 	# Enable the OpenSSH daemon.
   	services.openssh.enable = true;
@@ -756,8 +799,10 @@ NixOS leverages Nix to manage both altogether.
 
 ---
 
-- Nixpkgs also provide configuration modules, [search here](https://search.nixos.org/options?).
-- How I manage my devices: [github:codgician/serenitea-pot](https://github.com/codgician/serenitea-pot).
+- Nixpkgs also provide configuration modules,
+  [search here](https://search.nixos.org/options?).
+- How I manage my devices:
+  [github:codgician/serenitea-pot](https://github.com/codgician/serenitea-pot).
 - Demo.
 
 ---
@@ -771,32 +816,36 @@ NixOS leverages Nix to manage both altogether.
 
 ## And even more
 
-- Trivial [remote deployment](https://nixos-and-flakes.thiscute.world/best-practices/remote-deployment): just push closure over ssh
-- [Home manager](https://github.com/nix-community/home-manager): Manage dotfiles under `/home` declaratively using Nix.
-- [Impermanence](https://github.com/nix-community/impermanence): Trivially handle persistent states on systems with **ephemeral** root storage
+- Trivial
+  [remote deployment](https://nixos-and-flakes.thiscute.world/best-practices/remote-deployment):
+  just push closure over ssh
+- [Home manager](https://github.com/nix-community/home-manager): Manage dotfiles
+  under `/home` declaratively using Nix.
+- [Impermanence](https://github.com/nix-community/impermanence): Trivially
+  handle persistent states on systems with **ephemeral** root storage
 
 # Ending
 
 ::: { .incremental }
+
 - Although I am a Nix enthusiastic, I still realize:
   - Nix is hard to adopt in industry due to steep learning curve.
-  - Even if Nix has a novel model, implementations consist many workarounds: 
-	sometimes you "hack" to make a derivation work on Nix.
-  - Many existing infra may be "acceptable" enough.
-    - Completely refactor everything with Nix is usually not necessary.
-:::
+  - Even if Nix has a novel model, implementations consist many workarounds:
+    sometimes you "hack" to make a derivation work on Nix.
+  - Many existing infra may be "acceptable" enough. - Completely refactor
+    everything with Nix is usually not necessary. :::
 
 ---
 
-::: { .fragment .semi-fade-out data-fragment-index="1" }
-Nix/NixOS is still gaining increasing visibility and popularity.
+::: { .fragment .semi-fade-out data-fragment-index="1" } Nix/NixOS is still
+gaining increasing visibility and popularity.
 
 [Google trends: NixOS](https://trends.google.com/trends/explore?date=today%205-y&q=NixOS)
 
 :::
 
-::: { .fragment data-fragment-index="1" }
-*Embracing Nix without fully switching*
+::: { .fragment data-fragment-index="1" } _Embracing Nix without fully
+switching_
 
 - [Flox: your dev environment everywhere](https://flox.dev)
 - [Docker and Nix (DockerCon 2023)](https://www.youtube.com/watch?v=l17oRkhgqHE)
@@ -810,12 +859,13 @@ Nix/NixOS is still gaining increasing visibility and popularity.
 To get started, or learn further about Nix/NixOS:
 
 - Official website: [nixos.org](https://nixos.org)
-- NixOS manual: [nixos.org/manual/nixos/stable](https://nixos.org/manual/nixos/stable/)
+- NixOS manual:
+  [nixos.org/manual/nixos/stable](https://nixos.org/manual/nixos/stable/)
 - Nix docs: [nix.dev](https://nix.dev)
 - NixOS wiki: [wiki.nixos.org](https://wiki.nixos.org)
 - Search packages / configurations: [search.nixos.org](https://search.nixos.org)
 - Search for functions in nix (lang): [noogle.dev](https://noogle.dev)
-  
+
 ---
 
 Slides are
@@ -824,7 +874,7 @@ generated by [pandoc](https://pandoc.org),
 
 rendered by [reveal.js](https://revealjs.com),
 
-and managed by [Nix](https://nixos.org). 
+and managed by [Nix](https://nixos.org).
 
 Fully [open-sourced](https://github.com/codgician/seelies).
 
@@ -836,38 +886,39 @@ Fully [open-sourced](https://github.com/codgician/seelies).
 
 # Supplementaries
 
-*Slides not shown by default*
+_Slides not shown by default_
 
 ---
 
-*Wait, for `hello-ncurses`, doesn't `gcc` do dynmaic linking by default?*
+_Wait, for `hello-ncurses`, doesn't `gcc` do dynmaic linking by default?_
 
 ::: { .incremental }
 
 - Nix has a patched version of dynamic linker in `stdenv`.
   - It never searches global library directories, like `/lib`, `/usr/lib`, etc.
-  - The linker adds `-rpath` flag for every library directory mentioned through -L flags.
+  - The linker adds `-rpath` flag for every library directory mentioned through
+    -L flags.
 - Won't this possibly include unnecessary dependencies?
   - We don't know in advance if a library is actually used by the linker.
-  - Leverage fix up stage at the end to [patchelf](https://github.com/nixos/patchelf) and shrink rpath.
-:::
+  - Leverage fix up stage at the end to
+    [patchelf](https://github.com/nixos/patchelf) and shrink rpath. :::
 
 ---
 
-*Wait, how can Nix magically know runtime dependencies?*
+_Wait, how can Nix magically know runtime dependencies?_
 
 ::: { .fragment }
+
 > "Runtime dependencies must be a subset of build time dependencies".
 
 - Build time dependencies are explictly specified.
 - Runtime dependencies are automatically inferred by:
   - Serializing store paths into NAR,
-  - Then search for references to other store paths within it.
-:::
+  - Then search for references to other store paths within it. :::
 
 ::: { .fragment }
 
-*How can this be true and how can it work?*
+_How can this be true and how can it work?_
 
 :::
 
@@ -879,7 +930,7 @@ It just works! 🤪
 
 ---
 
-*Wait, what if I have secrets in my configurations?*
+_Wait, what if I have secrets in my configurations?_
 
 Nix store is globally readable, any user has R/O access.
 
@@ -887,5 +938,5 @@ Nix store is globally readable, any user has R/O access.
 
 - Store encrypted secrets in Nix Store.
 - Decrypt secrets with user private key / host private key before service load.
-- Example solutions: [agenix](https://github.com/ryantm/agenix) | [sops-nix](https://github.com/Mic92/sops-nix).
-:::
+- Example solutions: [agenix](https://github.com/ryantm/agenix) |
+  [sops-nix](https://github.com/Mic92/sops-nix). :::

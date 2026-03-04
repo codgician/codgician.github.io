@@ -4,7 +4,9 @@ Essential context for AI coding assistants working on this repository.
 
 ## Project Overview
 
-A minimalist personal website and blog built with **Hakyll** (Haskell static site generator) and **Nix** (reproducible builds). Supports bilingual content (English/Chinese).
+A minimalist personal website and blog built with **Hakyll** (Haskell static
+site generator) and **Nix** (reproducible builds). Supports bilingual content
+(English/Chinese).
 
 **Tech Stack**: Haskell, Hakyll, Nix, SCSS, Pandoc, KaTeX, Mermaid
 
@@ -50,22 +52,22 @@ nix fmt                # Format all code
 
 ### Non-Negotiable Constraints
 
-| Constraint | Implication |
-|------------|-------------|
+| Constraint            | Implication                                     |
+| --------------------- | ----------------------------------------------- |
 | **Bilingual (en/zh)** | Every content page needs both language versions |
-| **Minimalist** | No unnecessary features, delete before adding |
-| **Nix-managed** | All dependencies via `flake.nix` only |
-| **Build must pass** | `nix build` is the single source of truth |
+| **Minimalist**        | No unnecessary features, delete before adding   |
+| **Nix-managed**       | All dependencies via `flake.nix` only           |
+| **Build must pass**   | `nix build` is the single source of truth       |
 
 ### Decision Table
 
-| Situation | Do This | Not This |
-|-----------|---------|----------|
-| Add external tool | Subprocess via `readProcess` | FFI or Haskell binding |
-| Need caching | Content-addressed in `_artifacts/` | Persist `_cache/` in CI |
-| Template logic | Hakyll built-in `$if$`/`$for$` | Complex templating |
-| New dependency | Add to `flake.nix` | Manual install |
-| Unused feature | Delete it | Keep "for later" |
+| Situation         | Do This                            | Not This                |
+| ----------------- | ---------------------------------- | ----------------------- |
+| Add external tool | Subprocess via `readProcess`       | FFI or Haskell binding  |
+| Need caching      | Content-addressed in `_artifacts/` | Persist `_cache/` in CI |
+| Template logic    | Hakyll built-in `$if$`/`$for$`     | Complex templating      |
+| New dependency    | Add to `flake.nix`                 | Manual install          |
+| Unused feature    | Delete it                          | Keep "for later"        |
 
 ---
 
@@ -73,12 +75,12 @@ nix fmt                # Format all code
 
 ### Type Safety
 
-| Use | Don't Use |
-|-----|-----------|
-| `Text` | `String` (except Hakyll APIs) |
-| `Maybe a` | `fromJust` |
-| `Either e a` | `error` (except env vars) |
-| Explicit type signatures | Type inference only |
+| Use                      | Don't Use                     |
+| ------------------------ | ----------------------------- |
+| `Text`                   | `String` (except Hakyll APIs) |
+| `Maybe a`                | `fromJust`                    |
+| `Either e a`             | `error` (except env vars)     |
+| Explicit type signatures | Type inference only           |
 
 ### Import Style
 
@@ -104,24 +106,24 @@ let ctx = constField "custom" value  -- specific
 
 ### Anti-Patterns
 
-| Don't | Better |
-|-------|--------|
+| Don't                      | Better                         |
+| -------------------------- | ------------------------------ |
 | `fromJust`, `head`, `tail` | Pattern match or `listToMaybe` |
-| `error "msg"` | Return `Maybe`/`Either` |
-| Wildcard imports | Explicit imports |
-| Copy-paste code | Extract helper (3+ uses) |
-| `nub` | `nubOrd` (O(n log n)) |
+| `error "msg"`              | Return `Maybe`/`Either`        |
+| Wildcard imports           | Explicit imports               |
+| Copy-paste code            | Extract helper (3+ uses)       |
+| `nub`                      | `nubOrd` (O(n log n))          |
 
 ### Existing Helpers
 
-| Helper | Purpose |
-|--------|---------|
-| `slugFromPath` | Extract slug from identifier |
-| `extractLang` | Get language from filename |
-| `langStr` | Language code as String |
-| `safeInit` | Safe `init` (no error on []) |
-| `nubOrd` | O(n log n) deduplication |
-| `transStr` | Get translated string directly |
+| Helper         | Purpose                        |
+| -------------- | ------------------------------ |
+| `slugFromPath` | Extract slug from identifier   |
+| `extractLang`  | Get language from filename     |
+| `langStr`      | Language code as String        |
+| `safeInit`     | Safe `init` (no error on [])   |
+| `nubOrd`       | O(n log n) deduplication       |
+| `transStr`     | Get translated string directly |
 
 ---
 
@@ -146,24 +148,26 @@ let ctx = constField "custom" value  -- specific
 ### Color System
 
 All colors via CSS variables for theming:
+
 - `--color-bg`, `--color-text`, `--color-primary`
 - `--color-secondary`, `--color-surface`, `--color-border`
 
 ### Spacing Scale
 
-`$space-xs` (4px) → `$space-sm` (8px) → `$space-md` (16px) → `$space-lg` (24px) → `$space-xl` (32px)
+`$space-xs` (4px) → `$space-sm` (8px) → `$space-md` (16px) → `$space-lg` (24px)
+→ `$space-xl` (32px)
 
 ---
 
 ## URL Structure
 
-| Content Type | Pattern | Example |
-|--------------|---------|---------|
-| Post | `/:lang/posts/:slug/` | `/en/posts/hello-world/` |
-| Page | `/:lang/:slug/` | `/zh/about/` |
-| Slide | `/:lang/slides/:slug/` | `/en/slides/my-talk/` |
-| Feed | `/:lang/feed.xml` | `/zh/feed.xml` |
-| Pagination | `/:lang/:section/page/:n/` | `/en/posts/page/2/` |
+| Content Type | Pattern                    | Example                  |
+| ------------ | -------------------------- | ------------------------ |
+| Post         | `/:lang/posts/:slug/`      | `/en/posts/hello-world/` |
+| Page         | `/:lang/:slug/`            | `/zh/about/`             |
+| Slide        | `/:lang/slides/:slug/`     | `/en/slides/my-talk/`    |
+| Feed         | `/:lang/feed.xml`          | `/zh/feed.xml`           |
+| Pagination   | `/:lang/:section/page/:n/` | `/en/posts/page/2/`      |
 
 ---
 
@@ -189,7 +193,8 @@ All colors via CSS variables for theming:
 
 ### When Stuck (3-Strike Rule)
 
-After 3 failed attempts at the same fix → STOP → The problem is likely at a different level:
+After 3 failed attempts at the same fix → STOP → The problem is likely at a
+different level:
 
 1. **Implementation issue?** → Check if design is correct
 2. **Design issue?** → Check if requirements are understood
@@ -197,11 +202,12 @@ After 3 failed attempts at the same fix → STOP → The problem is likely at a 
 
 ### Uncertainty Handling
 
-| Confidence | Reversible? | Action |
-|------------|-------------|--------|
-| High | Any | Proceed |
-| Medium | Yes | Proceed with noted assumption |
-| Medium | No | Ask for confirmation |
-| Low | Any | Ask before proceeding |
+| Confidence | Reversible? | Action                        |
+| ---------- | ----------- | ----------------------------- |
+| High       | Any         | Proceed                       |
+| Medium     | Yes         | Proceed with noted assumption |
+| Medium     | No          | Ask for confirmation          |
+| Low        | Any         | Ask before proceeding         |
 
-**Rule**: Never guess on irreversible actions (git push, file deletion, config changes).
+**Rule**: Never guess on irreversible actions (git push, file deletion, config
+changes).

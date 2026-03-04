@@ -16,7 +16,6 @@ toc: false
 draft: false
 ---
 
-
 # 题面
 
 给定 $n, m$，试求：
@@ -33,7 +32,8 @@ $$
 
 # 分析
 
-显然我们需要往莫比乌斯函数的方向考虑。因此，我们要把 $\operatorname{lcm}(i, j)$ 换作使用 $\gcd(i, j)$ 表示。
+显然我们需要往莫比乌斯函数的方向考虑。因此，我们要把 $\operatorname{lcm}(i, j)$
+换作使用 $\gcd(i, j)$ 表示。
 
 为了方便，下文中假设 $n \le m$（如果 $n > m$ 那么两者交换一下就好了）。
 
@@ -43,7 +43,8 @@ $$
 \end{aligned}
 $$
 
-我们发现 $\gcd(i, j)$ 位于分母，这十分不好处理。因此我们在这里介绍一个技巧，令 $\gcd(i, j) = k$ 并枚举 $k$ 从而使得 $\gcd(i, j)$ 离开分母：
+我们发现 $\gcd(i, j)$ 位于分母，这十分不好处理。因此我们在这里介绍一个技巧，令
+$\gcd(i, j) = k$ 并枚举 $k$ 从而使得 $\gcd(i, j)$ 离开分母：
 
 $$
 \begin{aligned}
@@ -64,7 +65,8 @@ $$
 \end{aligned}
 $$
 
-我们注意到最后两项实际上都是等差数列求和。我们不妨令 $g(i) = \sum\limits_{i = 1}^{n} i$，那么有：
+我们注意到最后两项实际上都是等差数列求和。我们不妨令
+$g(i) = \sum\limits_{i = 1}^{n} i$，那么有：
 
 $$
 \begin{aligned}
@@ -93,7 +95,9 @@ F(b) = & \sum\limits_{d \mid b} d\mu(d) \\
 \end{aligned}
 $$
 
-我们不难发现，由 $a \perp b$，故 $a$ 和 $b$ 不存在公共因子，因此 $i  \mid  a, \ j  \mid  b \Leftrightarrow ij \mid ab$。又由于 $\mu(n)$ 本身又是积性函数，所以有 $\mu(ab) = \mu(a) \cdot \mu(b)$。由此：
+我们不难发现，由 $a \perp b$，故 $a$ 和 $b$ 不存在公共因子，因此
+$i  \mid  a, \ j  \mid  b \Leftrightarrow ij \mid ab$。又由于 $\mu(n)$
+本身又是积性函数，所以有 $\mu(ab) = \mu(a) \cdot \mu(b)$。由此：
 
 $$
 \begin{aligned}
@@ -110,10 +114,14 @@ $$
 2. 若 $a$ 是质数，$F(a) = 1 - a$；
 3. 若 $a \perp b$，$F(ab) = F(a) \cdot F(b)$；
 
-由此一来，我们就可以 $\mathcal{O}(N)$ 初始化（线性筛 $F(n)$），并借助整除分块 $\mathcal{O}(\sqrt{N})$ 解决询问了。
+由此一来，我们就可以 $\mathcal{O}(N)$ 初始化（线性筛 $F(n)$），并借助整除分块
+$\mathcal{O}(\sqrt{N})$ 解决询问了。
 
-最后附上 [我的代码](https://github.com/codgician/Competitive-Programming/blob/master/Luogu/P1829/mobius_inversion.cpp) 以供参考。
+最后附上
+[我的代码](https://github.com/codgician/Competitive-Programming/blob/master/Luogu/P1829/mobius_inversion.cpp)
+以供参考。
 
 # %%%
 
-- An-Amazing-Blog - [莫比乌斯反演-让我们从基础开始](https://www.luogu.com.cn/blog/An-Amazing-Blog/mu-bi-wu-si-fan-yan-ji-ge-ji-miao-di-dong-xi)
+- An-Amazing-Blog -
+  [莫比乌斯反演-让我们从基础开始](https://www.luogu.com.cn/blog/An-Amazing-Blog/mu-bi-wu-si-fan-yan-ji-ge-ji-miao-di-dong-xi)

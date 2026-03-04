@@ -13,3 +13,8 @@ excludes = []
 [formatter.yaml]
 command = "yamlfmt"
 includes = [ "*.yaml", "*.yml" ]
+
+[formatter.markdown]
+command = "prettier"
+options = ["--prose-wrap", "always", "--print-width", "80", "--write"]
+includes = ["*.md"]

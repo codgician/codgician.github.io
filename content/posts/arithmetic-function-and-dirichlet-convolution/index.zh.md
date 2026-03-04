@@ -17,7 +17,6 @@ toc: false
 draft: false
 ---
 
-
 # 简介
 
 本文先从狄利克雷卷积讲起，然后会简要介绍一种基于这一理论的有趣数论函数前缀和筛法（江湖人称 “杜教筛”）。
@@ -28,9 +27,11 @@ draft: false
 
 ## 定义
 
-我们研究的对象是诸如欧拉函数 $\varphi$、莫比乌斯函数 $\mu$ 等等的*数论函数 (arithmetic function)*。在此我们不妨把数论函数定义为 $\mathbb{Z}_{+} \longmapsto \mathbb{C}$ 的函数（正整数集合映射至复数集）。
+我们研究的对象是诸如欧拉函数 $\varphi$、莫比乌斯函数 $\mu$
+等等的*数论函数 (arithmetic function)*。在此我们不妨把数论函数定义为
+$\mathbb{Z}_{+} \longmapsto \mathbb{C}$ 的函数（正整数集合映射至复数集）。
 
-**定义**： 对于数论函数 $f, g$，定义其 *狄利克雷卷积 (Dirichlet convolution)*：
+**定义**： 对于数论函数 $f, g$，定义其 _狄利克雷卷积 (Dirichlet convolution)_：
 
 $$
 (f \cdot g)(n) = \sum\limits_{d \mid n} f(d)g(\frac{n}{d})
@@ -40,21 +41,24 @@ $$
 
 ## 构造一个环
 
-**定理**：记 $\mathbb{F}$ 为全体数论函数构成的集合，则 $\langle \mathbb{F}, +, \cdot \rangle$ 构成可交换环。其中 $+$ 就是正常的加法，$\cdot$ 则为刚刚提到的卷积（后文中可能会将其称作“乘法”）。
+**定理**：记 $\mathbb{F}$ 为全体数论函数构成的集合，则
+$\langle \mathbb{F}, +, \cdot \rangle$ 构成可交换环。其中 $+$
+就是正常的加法，$\cdot$ 则为刚刚提到的卷积（后文中可能会将其称作“乘法”）。
 
-*证明*：
+_证明_：
 
 首先我们可以列一个证明清单：
 
 1. 运算的封闭性；
 2. $+$：交换律、结合律；存在零元（零函数 $0(n) = 0$，简记为 $0$）、负元；
-3. $\boldsymbol{\cdot}$：交换律，结合律；存在单位元（元函数 $\epsilon(n) = n$，简记为 $\epsilon$）；
+3. $\boldsymbol{\cdot}$：交换律，结合律；存在单位元（元函数
+   $\epsilon(n) = n$，简记为 $\epsilon$）；
 4. $+$ 和 $\cdot$ 间满足分配律。
 
 第 $1, 2$ 点中的内容较为显然，这里就略去证明了。下面对 $3, 4$ 进行简要证明：
 
 - 乘法交换律：
-  
+
   $$
   \begin{aligned}
   f \cdot g & = \sum\limits_{d | n}f(d)g(\frac{n}{d}) \\
@@ -87,7 +91,7 @@ $$
   $$
 
 - 加法和乘法间的分配律（由于已经证明交换律，因此只证左分配律）：
-  
+
   $$
   \begin{aligned}
   f \cdot (g + h) & = \sum\limits_{d \mid n} f(d) \left[ g(\frac{n}{d}) + h(\frac{n}{d}) \right] \\
@@ -100,11 +104,13 @@ Voilà! 于是我们便得到了一个可交换环。我们来看看用它能够
 
 ## 有趣的性质
 
-**定义**：若数论函数 $f$ 满足 $f(1) = 1$，且 $\forall a,b \ \text{ s.t. } \ a \perp b$（若 $a, b$ 互质）满足 $f(ab) = f(a)f(b)$，则称 $f$ 为 *积性函数 (multiplicative function)*。
+**定义**：若数论函数 $f$ 满足 $f(1) = 1$，且
+$\forall a,b \ \text{ s.t. } \ a \perp b$（若 $a, b$ 互质）满足
+$f(ab) = f(a)f(b)$，则称 $f$ 为 _积性函数 (multiplicative function)_。
 
 **定理**：若 $f, g$ 为积性函数，则 $f \cdot g$ 也为积性函数。
 
-*证明*：
+_证明_：
 
 $\forall a, b \in \mathbb{Z}_{+}, \text{ s.t. } a \perp b$，有：
 
@@ -127,7 +133,11 @@ $$
 \end{aligned}
 $$
 
-对最后一步进行一个补充说明，本质上是 $\sum\limits_{t_1 \mid a}\sum\limits_{t_2 \mid b} 1 = \sum\limits_{t | ab}1$。不妨令 $t_1$ 的质因子集合为 $S_1$，$t_2$ 的质因子集合为 $S_2$，则 $\because t_1 \perp t_2, \ \therefore S_1 \cap S_2 = \Phi$。因此，$\forall t \mid ab$，一定存在唯一的 $t_1, t_2$ 满足 $t = t_1t_2$ 且 $t_1 \perp t_2$（可用反证法容易得证）。
+对最后一步进行一个补充说明，本质上是
+$\sum\limits_{t_1 \mid a}\sum\limits_{t_2 \mid b} 1 = \sum\limits_{t | ab}1$。不妨令
+$t_1$ 的质因子集合为 $S_1$，$t_2$ 的质因子集合为 $S_2$，则
+$\because t_1 \perp t_2, \ \therefore S_1 \cap S_2 = \Phi$。因此，$\forall t \mid ab$，一定存在唯一的
+$t_1, t_2$ 满足 $t = t_1t_2$ 且 $t_1 \perp t_2$（可用反证法容易得证）。
 
 ## 再谈莫比乌斯反演？
 
@@ -141,7 +151,9 @@ $$
 \end{cases}
 $$
 
-如果我们定义一个数论函数 $1(n) = 1$，并且简记为 $1$，那么我们可以将这一性质借助狄利克雷卷积表示为（其中 $\epsilon$ 为我们之前定义的单位元）：
+如果我们定义一个数论函数 $1(n) = 1$，并且简记为
+$1$，那么我们可以将这一性质借助狄利克雷卷积表示为（其中 $\epsilon$
+为我们之前定义的单位元）：
 
 $$
 \mu \cdot 1 = \epsilon
@@ -155,7 +167,7 @@ f = g \cdot 1 & \Rightarrow f \cdot \mu = g \cdot 1 \cdot \mu \\
 & \Rightarrow f \cdot \mu = g \cdot (1 \cdot \mu) \\
 & \Rightarrow f \cdot \mu = g \cdot (\mu \cdot 1) \\
 & \Rightarrow f \cdot \mu = g \cdot \epsilon \\
-& \Rightarrow f \cdot \mu = g 
+& \Rightarrow f \cdot \mu = g
 \end{aligned}
 $$
 
@@ -169,7 +181,8 @@ $$
 
 ---
 
-既然提到了莫比乌斯函数 $\mu$，我们也不能忘了跟他一样经常出现的好基友欧拉函数 $\varphi$。我们知道欧拉函数有一个性质：
+既然提到了莫比乌斯函数 $\mu$，我们也不能忘了跟他一样经常出现的好基友欧拉函数
+$\varphi$。我们知道欧拉函数有一个性质：
 
 $$
 \sum\limits_{d \mid n} \varphi(d) = n
@@ -202,14 +215,15 @@ $$
 
 $$
 \begin{aligned}
-d(n) = \sum\limits_{d \mid n}1 & \Rightarrow d = 1 \cdot 1 \\ 
+d(n) = \sum\limits_{d \mid n}1 & \Rightarrow d = 1 \cdot 1 \\
 \sigma(n) = \sum\limits_{d \mid n}d & \Rightarrow \sigma = N \cdot 1
 \end{aligned}
 $$
 
 # 杜教筛
 
-杜教筛之所以有趣，并不是因为其具有怎样的普适性，而是其本身就在于 “构造”。只要能构造出来，我们就可以对特定的积性函数 $f$ 求出其前缀和 $S(n) = \sum\limits_{i = 1}^{n} f(i)$。
+杜教筛之所以有趣，并不是因为其具有怎样的普适性，而是其本身就在于 “构造”。只要能构造出来，我们就可以对特定的积性函数
+$f$ 求出其前缀和 $S(n) = \sum\limits_{i = 1}^{n} f(i)$。
 
 ## 构造？
 
@@ -230,19 +244,24 @@ $$
 g(1)S(n) = \sum\limits_{i = 1}^{n}h(i) - \sum\limits_{d = 2}^{n} g(d)S(\left\lfloor\frac{n}{d}\right\rfloor)
 $$
 
-这就是杜教筛的本体。换句话说，只要我们构造出的 $\sum\limits_{i = 1}^{n}h(i)$ 是可以 $\mathcal{O}(1)$ 求得的，那么结合适当的预处理和记忆化（预处理规模 $\mathcal{O}(n ^ \frac{2}{3})$），我们可以用 $\mathcal{O}(n ^ \frac{2}{3})$ 的复杂度计算出 $S(n)$。
+这就是杜教筛的本体。换句话说，只要我们构造出的 $\sum\limits_{i = 1}^{n}h(i)$
+是可以 $\mathcal{O}(1)$ 求得的，那么结合适当的预处理和记忆化（预处理规模
+$\mathcal{O}(n ^ \frac{2}{3})$），我们可以用 $\mathcal{O}(n ^ \frac{2}{3})$
+的复杂度计算出 $S(n)$。
 
-更具体地说，即我们应当先用线性筛预处理出前 $\mathcal{O}(n ^ \frac{2}{3})$ 左右的前缀和，然后对于大于这一阈值的前缀和递归求解。同时，每当求出一个值我们将其记忆化在哈希表里以加速未来的运算。
+更具体地说，即我们应当先用线性筛预处理出前 $\mathcal{O}(n ^ \frac{2}{3})$
+左右的前缀和，然后对于大于这一阈值的前缀和递归求解。同时，每当求出一个值我们将其记忆化在哈希表里以加速未来的运算。
 
-对于这一筛法复杂度的详细证明大家可以参考这篇博文：[杜教筛时间复杂度证明 - _Ark](https://blog.csdn.net/Ike940067893/article/details/84781307)
+对于这一筛法复杂度的详细证明大家可以参考这篇博文：[杜教筛时间复杂度证明 - \_Ark](https://blog.csdn.net/Ike940067893/article/details/84781307)
 
 ## 应用
 
 下面我们来看几点应用，感受一下杜教筛的魅力所在~
 
 - $f(i) = \varphi(i), \ S(n) = \sum\limits_{i = 1}^{n} \varphi(i)$：
-  
+
   由 $\varphi \cdot 1 = N$ （对应 $f \cdot g = h$）：
+
   $$
   S(n) = \sum\limits_{i = 1}^{n}i - \sum\limits_{d = 2}^{n} S(\left\lfloor \frac{n}{d} \right\rfloor)
   $$
@@ -257,37 +276,40 @@ $$
 
 - $f(i) = i \varphi(i), \ S(n) = \sum\limits_{i = 1}^{n} i  \varphi(i)$：
 
-   $$
-   \begin{aligned}
-   h= f \cdot g & = \sum\limits_{d \mid n}f(d)g(\frac{n }{d}) \\
-   & = \sum\limits_{d \mid n} d \varphi(d)g(\frac{n}{d}) \\
-   & \text{let } g = N \\ 
-   & = n\sum\limits_{d \mid n}\varphi(d) \\
-   & = n^2
-   \end{aligned}
-   $$
+  $$
+  \begin{aligned}
+  h= f \cdot g & = \sum\limits_{d \mid n}f(d)g(\frac{n }{d}) \\
+  & = \sum\limits_{d \mid n} d \varphi(d)g(\frac{n}{d}) \\
+  & \text{let } g = N \\
+  & = n\sum\limits_{d \mid n}\varphi(d) \\
+  & = n^2
+  \end{aligned}
+  $$
 
-   $$
-   S(n) = \sum\limits_{i = 1}^{n}i^2 - \sum\limits_{d = 2}^{n} dS(\left\lfloor \frac{n}{d} \right\rfloor)
-   $$
-   
+  $$
+  S(n) = \sum\limits_{i = 1}^{n}i^2 - \sum\limits_{d = 2}^{n} dS(\left\lfloor \frac{n}{d} \right\rfloor)
+  $$
+
 - $f(i) = i^2 \varphi(i), \ S(n) = \sum\limits_{i = 1}^{n} i^2 \varphi(i)$：
 
-   $$
-   \begin{aligned}
-   h = f \cdot g & = \sum\limits_{d \mid n} f(d)g(\frac{n}{d}) \\
-   & = \sum\limits_{d \mid n}d^2\varphi(d)g(\frac{n}{d}) \\
-   & \text{let } g = N^2 \\
-   & = n^2\sum\limits_{d \mid n} \varphi(d) \\
-   & = n^3
-   \end{aligned}
-   $$
+  $$
+  \begin{aligned}
+  h = f \cdot g & = \sum\limits_{d \mid n} f(d)g(\frac{n}{d}) \\
+  & = \sum\limits_{d \mid n}d^2\varphi(d)g(\frac{n}{d}) \\
+  & \text{let } g = N^2 \\
+  & = n^2\sum\limits_{d \mid n} \varphi(d) \\
+  & = n^3
+  \end{aligned}
+  $$
 
-   $$
-   S(n) = \sum\limits_{i = 1}^{n}i^3 - \sum\limits_{d = 2}^{n}d^2S(\left\lfloor \frac{n}{d} \right\rfloor)
-   $$
+  $$
+  S(n) = \sum\limits_{i = 1}^{n}i^3 - \sum\limits_{d = 2}^{n}d^2S(\left\lfloor \frac{n}{d} \right\rfloor)
+  $$
 
-至于具体的代码，大家可以去试试 [洛谷 P4213: 杜教筛 (Sum)](https://www.luogu.com.cn/problem/P4213)，顺便提供 [我的代码](https://github.com/codgician/Competitive-Programming/blob/master/Luogu/P4213/arithmetic_function.cpp) 供参考。
+至于具体的代码，大家可以去试试
+[洛谷 P4213: 杜教筛 (Sum)](https://www.luogu.com.cn/problem/P4213)，顺便提供
+[我的代码](https://github.com/codgician/Competitive-Programming/blob/master/Luogu/P4213/arithmetic_function.cpp)
+供参考。
 
 完结撒花~
 
@@ -296,5 +318,4 @@ $$
 - [Dirichlet convolution - Wikipedia](https://en.wikipedia.org/wiki/Dirichlet_convolution)
 - [狄利克雷卷积 - Hanano](https://hanano-yuuki.github.io/2018/08/14/Dirichlet-convolution)
 - [杜教筛 - peng_ym](https://www.cnblogs.com/peng-ym/p/9446555.html)
-- [杜教筛时间复杂度证明 - _Ark](https://blog.csdn.net/Ike940067893/article/details/84781307)
-
+- [杜教筛时间复杂度证明 - \_Ark](https://blog.csdn.net/Ike940067893/article/details/84781307)

@@ -15,7 +15,6 @@ toc: false
 draft: false
 ---
 
-
 > 本文数学公式较长，建议在屏幕较大的设备上阅读。
 
 # 简介
@@ -116,7 +115,8 @@ f(a, b, c, n)
 \end{aligned}
 $$
 
-不难发现，$\sum\limits_{i = 0}^{n} {(\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor < i)}$ 即为 $n - \left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor$。故有：
+不难发现，$\sum\limits_{i = 0}^{n} {(\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor < i)}$
+即为 $n - \left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor$。故有：
 
 $$
 \begin{aligned}
@@ -127,7 +127,13 @@ f(a, b, c, n)
 \end{aligned}
 $$
 
-现在假设我们有 $f(a, b, c, n)$，其中 $a \ge c$。经过情况 $1$ 中的一次运算后 $(a, b, c, n)$ 变为 $(a \bmod c, b \bmod c, c, n)$。此时我们再应用情况 $2$ 进行一次运算四个参数就变成了 $(c, c - b \bmod c - 1, a \bmod c, m - 1)$。我们注意观察第 $1$ 个参数和第 $3$ 个参数，经过上述两次运算后由 $(a, c)$ 变成了 $(c, a \bmod c)$。这与欧几里德算法存在极大的相似之处，因此我们把这种算法称作类欧几里德算法。至于时间复杂度，显然也是与欧几里德算法相同的，为 $\mathcal{O}(\log{n})$ 级别。
+现在假设我们有 $f(a, b, c, n)$，其中 $a \ge c$。经过情况 $1$ 中的一次运算后
+$(a, b, c, n)$ 变为 $(a \bmod c, b \bmod c, c, n)$。此时我们再应用情况 $2$
+进行一次运算四个参数就变成了
+$(c, c - b \bmod c - 1, a \bmod c, m - 1)$。我们注意观察第 $1$ 个参数和第 $3$
+个参数，经过上述两次运算后由 $(a, c)$ 变成了
+$(c, a \bmod c)$。这与欧几里德算法存在极大的相似之处，因此我们把这种算法称作类欧几里德算法。至于时间复杂度，显然也是与欧几里德算法相同的，为
+$\mathcal{O}(\log{n})$ 级别。
 
 ## 结论
 
@@ -178,7 +184,11 @@ g(a, b, c, n) & = \sum\limits_{i = 0}^{n} {i \left\lfloor \frac{ai + b}{c} \righ
 \end{aligned}
 $$
 
-不难发现，$\sum\limits_{i = 0}^{n} {i \cdot (\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor < i)}$ 可看作一个首项为 $\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor + 1$，末项为 $n$ 的等差数列求和，即等于 $\frac{1}{2} \cdot(\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor + 1 + n) \cdot (n - \left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor)$。故有：
+不难发现，$\sum\limits_{i = 0}^{n} {i \cdot (\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor < i)}$
+可看作一个首项为
+$\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor + 1$，末项为 $n$
+的等差数列求和，即等于
+$\frac{1}{2} \cdot(\left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor + 1 + n) \cdot (n - \left\lfloor \frac{cj + c - b - 1}{a} \right\rfloor)$。故有：
 
 $$
 \begin{aligned}
@@ -301,7 +311,7 @@ $$
 ## 仅 f 式
 
 ```cpp
-long long int quasiEuclidean(long long int a, long long int b, 
+long long int quasiEuclidean(long long int a, long long int b,
                             long long int c, long long int n) {
     if (a == 0) {
         return (n + 1) * (b / c);
@@ -321,7 +331,6 @@ long long int quasiEuclidean(long long int a, long long int b,
 
 由于没有找到相应的模板题，所以…… 咕咕咕……
 
-
 # 更通用的情况
 
 在讨论完 $f, g, h$ 式的推导后，我们来看一种更加通用的情况：
@@ -329,12 +338,16 @@ long long int quasiEuclidean(long long int a, long long int b,
 $$
 \sum\limits_{i = 0}^{n} {i^{k_1} \left\lfloor \frac{ai + b}{c} \right\rfloor ^{k_2}}
 $$
+
 题目链接：[类欧几里得算法 - 题目 - LibreOJ](https://loj.ac/problem/138)
 
 咕咕咕……
 
 # %%%
 
-- Bill Yang - [「bsoj4936」「模板题」类欧几里得 - 类欧几里得 附简要学习笔记](https://blog.bill.moe/bsoj4936-euclidean/)
-- WerKeyTom_FTD - [类欧几里得算法小结](https://blog.csdn.net/werkeytom_ftd/article/details/53812718)
-- Cold_Chair - [类欧几里得算法乱搞记](https://blog.csdn.net/Cold_Chair/article/details/78857161)
+- Bill Yang -
+  [「bsoj4936」「模板题」类欧几里得 - 类欧几里得 附简要学习笔记](https://blog.bill.moe/bsoj4936-euclidean/)
+- WerKeyTom_FTD -
+  [类欧几里得算法小结](https://blog.csdn.net/werkeytom_ftd/article/details/53812718)
+- Cold_Chair -
+  [类欧几里得算法乱搞记](https://blog.csdn.net/Cold_Chair/article/details/78857161)

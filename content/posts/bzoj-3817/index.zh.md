@@ -16,7 +16,6 @@ toc: false
 draft: false
 ---
 
-
 # 题面
 
 给定正整数 $n, r$，试求：
@@ -44,8 +43,10 @@ $$
 
 首先，显而易见地：
 
-- 若 $\left\lfloor dt \right\rfloor$ 为偶数，则 $(-1)^{\left\lfloor dt \right\rfloor} = 1$；
-- 若 $\left\lfloor dt \right\rfloor$ 为奇数，则 $(-1)^{\left\lfloor dt \right\rfloor} = -1$；
+- 若 $\left\lfloor dt \right\rfloor$ 为偶数，则
+  $(-1)^{\left\lfloor dt \right\rfloor} = 1$；
+- 若 $\left\lfloor dt \right\rfloor$ 为奇数，则
+  $(-1)^{\left\lfloor dt \right\rfloor} = -1$；
 
 可以归纳出：
 
@@ -63,11 +64,16 @@ $$
 \end{aligned}
 $$
 
-至于为什么对于实数 $n$ 有 $\left\lfloor \frac{\left\lfloor n \right\rfloor}{2} \right\rfloor = \left\lfloor \frac{n}{2} \right\rfloor$，简单想想就明白了，本文不再给出证明。
+至于为什么对于实数 $n$ 有
+$\left\lfloor \frac{\left\lfloor n \right\rfloor}{2} \right\rfloor = \left\lfloor \frac{n}{2} \right\rfloor$，简单想想就明白了，本文不再给出证明。
 
 ---
 
-后两项均可记作 $\sum\limits_{d = 1}^{n} \left\lfloor k \cdot d \right\rfloor$ 的形式，其中 $k = \frac{at + b}{c}$（$a, b, c$ 均为整数，而 $t = \sqrt{r}$ 是无理数）。这就显得跟类欧几里得可解决的问题很相似了。我们尝试仿照之前一篇博文 [浅谈类欧几里德算法](https://codgician.me/zh-hans/posts/2018/10/quasi-euclidean-algorithm/) 里的推导方法对下面的式子进行推导（为了符合一般习惯下面一段中把 $d$ 写作 $i$）：
+后两项均可记作 $\sum\limits_{d = 1}^{n} \left\lfloor k \cdot d \right\rfloor$
+的形式，其中 $k = \frac{at + b}{c}$（$a, b, c$ 均为整数，而 $t = \sqrt{r}$
+是无理数）。这就显得跟类欧几里得可解决的问题很相似了。我们尝试仿照之前一篇博文
+[浅谈类欧几里德算法](https://codgician.me/zh-hans/posts/2018/10/quasi-euclidean-algorithm/)
+里的推导方法对下面的式子进行推导（为了符合一般习惯下面一段中把 $d$ 写作 $i$）：
 
 $$
 f(a, b, c, n) = \sum\limits_{i = 0}^{n} \left\lfloor i \cdot \frac{at + b}{c} \right\rfloor
@@ -76,6 +82,7 @@ $$
 令 $k = \frac{at + b}{c}$。
 
 - 若 $k \ge1$（即满足对所有 $i$ 均有 $\left\lfloor ki \right\rfloor > 0$） ：
+
   $$
   \begin{aligned}
   f(a, b, c, n) = & \sum\limits_{i = 0}^{n} \left\lfloor i \cdot \frac{at + b}{c} \right\rfloor \\
@@ -85,22 +92,22 @@ $$
   \end{aligned}
   $$
 
- - 若 $k < 1$（即不满足对所有 $i$ 均有 $\left\lfloor ki \right\rfloor > 0$）：
-  
-  $$
-  \begin{aligned}
-  f(a, b, c, n) & = \sum\limits_{i = 0}^{n} \left\lfloor ki \right\rfloor \\
-  & = \sum\limits_{i = 0}^{n} \sum\limits_{j = 0}^{\left\lfloor ki \right\rfloor - 1} 1 \\
-  & = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} \sum\limits_{i = 0}^{n} (j \le \left\lfloor ki \right\rfloor - 1) \\
-  & = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} \sum\limits_{i = 0}^{n} (j < ki - 1) \\
-  & = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} \sum\limits_{i = 0}^{n} (i > \frac{j + 1}{k}) \\
-  & = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} (n - \left\lfloor \frac{j + 1}{k} \right\rfloor) \\
-  & \text{let } m = \left\lfloor kn \right\rfloor \\
-  & = \sum\limits_{j = 0}^{m - 1} (n - \left\lfloor \frac{j + 1}{k} \right\rfloor) \\
-  & = nm - \sum\limits_{j = 0}^{m - 1} \left\lfloor \frac{j + 1}{k} \right\rfloor \\
-  & = nm - \sum\limits_{j = 0}^{m - 1} \left\lfloor (j + 1) \cdot \frac{c}{at + b} \right\rfloor \\
-  & = nm - \sum\limits_{j = 0}^{m} \left\lfloor j \cdot \frac{c}{at + b} \right\rfloor \\
-  \end{aligned}
+- 若 $k < 1$（即不满足对所有 $i$ 均有 $\left\lfloor ki \right\rfloor > 0$）：
+
+$$
+\begin{aligned}
+f(a, b, c, n) & = \sum\limits_{i = 0}^{n} \left\lfloor ki \right\rfloor \\
+& = \sum\limits_{i = 0}^{n} \sum\limits_{j = 0}^{\left\lfloor ki \right\rfloor - 1} 1 \\
+& = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} \sum\limits_{i = 0}^{n} (j \le \left\lfloor ki \right\rfloor - 1) \\
+& = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} \sum\limits_{i = 0}^{n} (j < ki - 1) \\
+& = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} \sum\limits_{i = 0}^{n} (i > \frac{j + 1}{k}) \\
+& = \sum\limits_{j = 0}^{\left\lfloor kn \right\rfloor - 1} (n - \left\lfloor \frac{j + 1}{k} \right\rfloor) \\
+& \text{let } m = \left\lfloor kn \right\rfloor \\
+& = \sum\limits_{j = 0}^{m - 1} (n - \left\lfloor \frac{j + 1}{k} \right\rfloor) \\
+& = nm - \sum\limits_{j = 0}^{m - 1} \left\lfloor \frac{j + 1}{k} \right\rfloor \\
+& = nm - \sum\limits_{j = 0}^{m - 1} \left\lfloor (j + 1) \cdot \frac{c}{at + b} \right\rfloor \\
+& = nm - \sum\limits_{j = 0}^{m} \left\lfloor j \cdot \frac{c}{at + b} \right\rfloor \\
+\end{aligned}
 $$
 
 我们注意到最后一项已经比较类似于 $f$ 式的定义，我们需要对其进行分母有理化：
@@ -126,9 +133,13 @@ $$
 
 就按照类欧的样子递归实现就好了。数学妙啊~ 复杂度为 $\mathcal{O}(\log{n})$。
 
-为了防止中间过程爆 `int64` 需要在每一步的时候对 $\frac{at + b}{c}$ 约分。但是由此一来复杂度就变成 $\mathcal{O}(\log^2{n})$了 QAQ... 最后附上 [我的代码](https://github.com/codgician/Competitive-Programming/blob/master/BZOJ/3817/quasi_euclidean.cpp) 以供参考。
- 
+为了防止中间过程爆 `int64` 需要在每一步的时候对 $\frac{at + b}{c}$
+约分。但是由此一来复杂度就变成 $\mathcal{O}(\log^2{n})$了 QAQ... 最后附上
+[我的代码](https://github.com/codgician/Competitive-Programming/blob/master/BZOJ/3817/quasi_euclidean.cpp)
+以供参考。
+
 # %%%
 
-- u014609452 - [类欧几里得算法 数论 BZOJ 3817 Sum](https://blog.csdn.net/u014609452/article/details/52343533)
+- u014609452 -
+  [类欧几里得算法 数论 BZOJ 3817 Sum](https://blog.csdn.net/u014609452/article/details/52343533)
 - Y-E-T-I - [BZOJ 3817 Sum](https://www.cnblogs.com/Y-E-T-I/p/8435828.html)
