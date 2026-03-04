@@ -99,6 +99,10 @@
           PUPPETEER_EXECUTABLE_PATH = browserPath;
           PUPPETEER_CONFIG = "./puppeteer-config.json";
 
+          # Chromium crashpad workaround for sandboxed builds (Linux CI)
+          XDG_CONFIG_HOME = "/tmp/.chromium";
+          XDG_CACHE_HOME = "/tmp/.chromium";
+
 
           buildPhase = ''
             runHook preBuild
