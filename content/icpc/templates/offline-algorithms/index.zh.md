@@ -7,7 +7,6 @@ toc: true
 draft: false
 ---
 
-
 # 莫队算法
 
 ## 普通莫队
@@ -67,7 +66,8 @@ int main() {
 
 # CDQ 分治
 
-$solve(l, r)$：$\forall k \in [l, r]$，若第 $k$ 项操作是查询，则计算 $[l, k - 1]$ 中修改对其造成的影响：
+$solve(l, r)$：$\forall k \in [l, r]$，若第 $k$ 项操作是查询，则计算
+$[l, k - 1]$ 中修改对其造成的影响：
 
 - $mid = \frac{1}{2}(l + r)$；
 - $solve(l, mid)$；
@@ -159,11 +159,11 @@ public:
     }
 };
 
-Query qArr[SIZE << 3]; 
+Query qArr[SIZE << 3];
 set<int> st[VAL_SIZE];
 int arr[SIZE], pre[SIZE], last[VAL_SIZE], bit[SIZE], ans[SIZE];
 
-int lowbit(int n) { 
+int lowbit(int n) {
     return n & -n;
 }
 
@@ -246,7 +246,7 @@ int main() {
                 } else {
                     it = prev(it);
                     pre[x] = *it;
-                    qArr[qPt++] = {2, x, pre[x], 1}; 
+                    qArr[qPt++] = {2, x, pre[x], 1};
                 }
             }
             st[y].insert(x);
@@ -378,17 +378,24 @@ int main() {
 
 ## BZOJ 4025
 
-给定一张 $n$ 个点的图，在 $T$ 时间内一些边会在 $s_i$ 时刻出现，并在 $t_i$ 时刻消失。询问每一个时刻该图是否是二分图。
+给定一张 $n$ 个点的图，在 $T$ 时间内一些边会在 $s_i$ 时刻出现，并在 $t_i$
+时刻消失。询问每一个时刻该图是否是二分图。
 
 ---
 
-$solve(l, r, Q)$：对于时刻 $[l, r]$，操作集为 $Q$，满足 $\forall q \in Q$，其存活时间区间与当前分治的时间区间交集非空；而这个函数的作用为对于 $[l, r]$ 内每个时刻，判断此时图是否是二分图。操作集 $Q$ 中元素 $q$ 带有 $4$ 个属性：$\langle u, v, l, r \rangle$。其中，$u, v$ 代表边的两个端点，而 $l, r$ 代表出现和消失时刻。我们可以考虑如下算法：
+$solve(l, r, Q)$：对于时刻 $[l, r]$，操作集为 $Q$，满足
+$\forall q \in Q$，其存活时间区间与当前分治的时间区间交集非空；而这个函数的作用为对于
+$[l, r]$ 内每个时刻，判断此时图是否是二分图。操作集 $Q$ 中元素 $q$ 带有 $4$
+个属性：$\langle u, v, l, r \rangle$。其中，$u, v$ 代表边的两个端点，而 $l, r$
+代表出现和消失时刻。我们可以考虑如下算法：
 
 - $mid = \frac{1}{2} (l + r)$，并新建两个空操作集 $Q_L, Q_R$；
 - 遍历 $q \in Q$：
-  - 若 $q.l = l \land q.r = r$（说明这一操作对其子树中所有叶子节点都有影响，那么直接加边）：
+  - 若
+    $q.l = l \land q.r = r$（说明这一操作对其子树中所有叶子节点都有影响，那么直接加边）：
     - 并查集中合并 $q.u$ 和 $q.v$，并判断是否出现奇环；
-    - 存在奇环？说明时间区间 $[l, r]$ 都凉了，均标记答案为否！**撤销对并查集的操作并回溯**（所以我们需要可撤销并查集，其实也很简单，就搞一个栈记录一下操作之前值的情况然后撤销的时候弹栈就好了）；
+    - 存在奇环？说明时间区间 $[l, r]$
+      都凉了，均标记答案为否！**撤销对并查集的操作并回溯**（所以我们需要可撤销并查集，其实也很简单，就搞一个栈记录一下操作之前值的情况然后撤销的时候弹栈就好了）；
   - 若 $q.l \le mid$：令 $q.r = \min⁡(q.r, mid)$，并把 $q$ 放入 $Q_L$；
   - 若 $q.r > mid$：$q.l = \max⁡(q.l, mid + 1)$，并把 $q$ 放入 $Q_R$；
 - 若 $l = r$，标记答案为是，**撤销对并查集的操作并回溯**；
@@ -448,7 +455,7 @@ void divideConquer(int leftPt, int rightPt, const vector<Query> & vec) {
                     ans[i] = false;
                 while ((int)stk.size() != stkSiz)
                     undo();
-                return;    
+                return;
             }
         } else {
             if (q.leftPt <= midPt)
@@ -481,7 +488,7 @@ int main() {
         parent[i] = i, dep[i] = 0, siz[i] = 1;
     while (qNum--) {
         int from, to, leftPt, rightPt;
-        cin >> from >> to >> leftPt >> rightPt; 
+        cin >> from >> to >> leftPt >> rightPt;
         from--; to--; leftPt++;
         if (leftPt > rightPt)
             continue;
@@ -497,10 +504,14 @@ int main() {
 
 ## Codeforces 1217F
 
-给定一个初始无边的含有 $n$ 个点的无向图（标号从 $1$ 开始），共 $q$ 次操作。操作有两种形式（其中 $last$ 代表上一次 $2$ 类操作的结果）：
+给定一个初始无边的含有 $n$ 个点的无向图（标号从 $1$ 开始），共 $q$
+次操作。操作有两种形式（其中 $last$ 代表上一次 $2$ 类操作的结果）：
 
-- $1 \ x \ y \ (1 \le x, y \le n, \ x \neq y)$：在点 $(x + last - 1) \bmod (n + 1)$ 和点 $(y + last - 1) \bmod (n + 1)$ 间加一条无向边；
-- $2 \ x \ y \ (1 \le x, y \le n, \ x \neq y)$：查询点 $(x + last - 1) \bmod (n + 1)$ 和点 $(y + last - 1) \bmod (n + 1)$ 是否连通。
+- $1 \ x \ y \ (1 \le x, y \le n, \ x \neq y)$：在点
+  $(x + last - 1) \bmod (n + 1)$ 和点 $(y + last - 1) \bmod (n + 1)$
+  间加一条无向边；
+- $2 \ x \ y \ (1 \le x, y \le n, \ x \neq y)$：查询点
+  $(x + last - 1) \bmod (n + 1)$ 和点 $(y + last - 1) \bmod (n + 1)$ 是否连通。
 
 ```cpp
 stack<pair<int *, int> > stk;
@@ -543,7 +554,7 @@ vector<Query> ques; int vertexNum, last;
 unordered_map<long long int, int> mp;
 const auto p2ll = [](int x, int y) {
     tie(x, y) = make_tuple(min(x, y), max(x, y));
-    return 1ll * x * SIZE + y; 
+    return 1ll * x * SIZE + y;
 };
 
 void divideConquer(int leftPt, int rightPt, const vector<Query> & vec) {
@@ -563,11 +574,11 @@ void divideConquer(int leftPt, int rightPt, const vector<Query> & vec) {
                 rightVec.push_back(Query{q.from, q.to, max(q.leftPt, midPt + 1), q.rightPt});
         }
     }
-    
+
     if (leftPt == rightPt) {
         auto & e = edges[leftPt];
         e.from = (e.from + last) % vertexNum, e.to = (e.to + last) % vertexNum;
-        
+
         if (e.op == 2) {
             last = (getParent(e.from) == getParent(e.to));
             cout << last;
@@ -596,7 +607,7 @@ int main() {
                 mp[p2ll(from, to)] = ques.size();
                 ques.push_back(Query{from, to, i + 1, qNum - 1});
             } else {
-                ques[mp[p2ll(from, to)]].rightPt = max(ques[mp[p2ll(from, to)]].leftPt, i - 1);                    
+                ques[mp[p2ll(from, to)]].rightPt = max(ques[mp[p2ll(from, to)]].leftPt, i - 1);
                 if (i + 1 > qNum - 1)
                     return;
                 mp[p2ll(from, to)] = ques.size();
@@ -855,7 +866,8 @@ int main() {
 
 # 分治解决动态 MST
 
-$n$ 个点，$m$ 条有权边，$q$ 次操作。每次操作修改一条边的边权，动态维护 MST 大小。
+$n$ 个点，$m$ 条有权边，$q$
+次操作。每次操作修改一条边的边权，动态维护 MST 大小。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -918,8 +930,8 @@ void relabel(vector<Edge> & vec) {
         id[e.id] = pt++;
 }
 
-void reduction() { 
-    tmp.clear(); clear(ret); 
+void reduction() {
+    tmp.clear(); clear(ret);
     sort(ret.begin(), ret.end());
     for (const auto & e : ret)
         if (e.len == INT_MAX || merge(e.from, e.to))
@@ -928,12 +940,12 @@ void reduction() {
     relabel(tmp); ret = tmp;
 }
 
-void contraction(long long int & val) { 
+void contraction(long long int & val) {
     // Reduction
     tmp.clear(); clear(ret);
     sort(ret.begin(), ret.end());
     for (const auto & e : ret)
-        if (merge(e.from, e.to)) 
+        if (merge(e.from, e.to))
             tmp.push_back(e);
     // Contraction
     clear(tmp); sort(tmp.begin(), tmp.end());
@@ -946,11 +958,11 @@ void contraction(long long int & val) {
         tmp.push_back({e.id, from, to, e.len});
     }
     relabel(tmp); ret = tmp;
-} 
+}
 
 void divideConquer(int headPt, int tailPt, int dep, long long int val) {
     if (headPt == tailPt)
-        cntLen[qArr[headPt].id] = qArr[headPt].val; 
+        cntLen[qArr[headPt].id] = qArr[headPt].val;
     // Recover
     ret = edge[dep]; relabel(ret);
     for (auto & e : ret)
@@ -974,7 +986,7 @@ void divideConquer(int headPt, int tailPt, int dep, long long int val) {
     int midPt = (headPt + tailPt) >> 1;
     divideConquer(headPt, midPt, dep + 1, val);
     divideConquer(midPt + 1, tailPt, dep + 1, val);
-} 
+}
 
 int main() {
     int vertexNum, edgeNum, qNum;

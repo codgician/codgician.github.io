@@ -1,14 +1,11 @@
 name: Lint
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 permissions:
   contents: read
-
 jobs:
   hlint:
     name: HLint
@@ -18,7 +15,6 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Run HLint
         run: nix develop --command hlint src/ app/ test/
-
   ormolu:
     name: Ormolu
     runs-on: ubuntu-latest
@@ -31,7 +27,6 @@ jobs:
             src/**/*.hs \
             app/*.hs \
             test/*.hs
-
   build:
     name: Build (with -Werror)
     runs-on: ubuntu-latest
@@ -42,7 +37,6 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Build site
         run: nix build
-
   test:
     name: Tests
     runs-on: ubuntu-latest

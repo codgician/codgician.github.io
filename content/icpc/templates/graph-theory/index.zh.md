@@ -7,7 +7,6 @@ toc: true
 draft: false
 ---
 
-
 # 最短路
 
 ## Dijkstra
@@ -77,7 +76,7 @@ void dijkstra(int st) {
     }
 }
 
-// Key points: Vertex labeled [0 ~ keyNum - 1] 
+// Key points: Vertex labeled [0 ~ keyNum - 1]
 for (int st = 0; st < (1 << keyNum); st++)
     fill(dp[st] + 0, dp[st] + vertexNum, INT_MAX);
     for (int i = 0; i < keyNum; i++)
@@ -95,7 +94,11 @@ for (int st = 0; st < (1 << keyNum); st++) {
 }
 ```
 
-如果要求斯坦纳森林，则需要再 DP 一次。记 $f[st] = \min \{ dp[st][i] \}$，然后再按题意对 $f$ 进行合并即可。例如：必须保证相同频率的频道相连，就可以对于每个 $st$ 枚举 $subst$，然后分别检查 $subst$ 和 $st \oplus subst$ 是否合法。如果合法，则进行合并。
+如果要求斯坦纳森林，则需要再 DP 一次。记
+$f[st] = \min \{ dp[st][i] \}$，然后再按题意对 $f$
+进行合并即可。例如：必须保证相同频率的频道相连，就可以对于每个 $st$ 枚举
+$subst$，然后分别检查 $subst$ 和 $st \oplus subst$
+是否合法。如果合法，则进行合并。
 
 # 最大团 / 极大团
 
@@ -197,8 +200,10 @@ void bfs() {
 
 # 差分约束
 
-- 最大解：形如 $x_i - x_j \le c_k$，连边 $j \rightarrow i$ 权值 $c_k$，并且用 SPFA 算最短路；
-- 最小解：形如 $x_i - x_j \ge c_k$，连边 $j \rightarrow i$ 权值 $c_k$，并且用 SPFA 算最长路；
+- 最大解：形如 $x_i - x_j \le c_k$，连边 $j \rightarrow i$ 权值
+  $c_k$，并且用 SPFA 算最短路；
+- 最小解：形如 $x_i - x_j \ge c_k$，连边 $j \rightarrow i$ 权值
+  $c_k$，并且用 SPFA 算最长路；
 - 若需要常数，可令一项为常数项并对其进行特殊限制或 check。
 
 ```cpp
@@ -236,7 +241,8 @@ bool spfa() {
 
 ## 建图
 
-对命题 $i$ 假/真 拆点成 $P_i, \ P_i'$；若 $i$ 为真则 $j$ 为真建有向边：$P_i \rightarrow P_j$。
+对命题 $i$ 假/真 拆点成 $P_i, \ P_i'$；若 $i$ 为真则 $j$
+为真建有向边：$P_i \rightarrow P_j$。
 
 本模板中 `FALSE: (i << 1); TRUE: (i << 1 | 1)`。
 
@@ -247,7 +253,7 @@ bool spfa() {
 ```cpp
 // Lexicographically smallest variant
 bool sel[VERTEX_SIZE];
-int vertexNum; stack<int> stk; 
+int vertexNum; stack<int> stk;
 
 bool dfs(int cntPt) {
     if (sel[cntPt ^ 1])
@@ -286,7 +292,8 @@ bool twoSat() {
 
 ## 任意解
 
-建正图和反图，在正图中跑 Tarjan SCC，同一 SCC 中的所有点必然同时取或不取。如果同一命题的两种状态在同一 SCC 中说明无解。若有解则在反图中按照拓补序构造方案（取正图中拓补序较大者为真）。
+建正图和反图，在正图中跑 Tarjan
+SCC，同一 SCC 中的所有点必然同时取或不取。如果同一命题的两种状态在同一 SCC 中说明无解。若有解则在反图中按照拓补序构造方案（取正图中拓补序较大者为真）。
 
 复杂度：$\mathcal{O}(N)$
 
@@ -334,7 +341,7 @@ bool twoSat() {
         if (!vis[quit[i]])
             dfs2(quit[i], sccPt++);
     for (int i = 0; i < vertexNum; i += 2)
-        if (sccId[i] == sccId[i ^ 1]) 
+        if (sccId[i] == sccId[i ^ 1])
             return false;
     return true;
 }
@@ -389,14 +396,15 @@ cntTime = 0, edccNum = 0, bridgeNum = 0;
 for (int i = 0; i < vertexNum; i++)
     if (dfn[i] == -1)
         tarjan(i, 0);
-for (int i = 0; i < vertexNum; i++) 
+for (int i = 0; i < vertexNum; i++)
     if (edccId[i] == -1)
         dfs(i), edccNum++;
 ```
 
 ### v-DCC
 
-**Mind that `VERTEX_SIZE` and `EDGE_SIZE` should be 2x larger if constructing new graph is necessary.**
+**Mind that `VERTEX_SIZE` and `EDGE_SIZE` should be 2x larger if constructing
+new graph is necessary.**
 
 ```cpp
 int dfn[VERTEX_SIZE], low[VERTEX_SIZE], cntTime;
@@ -408,7 +416,7 @@ bool isCut[VERTEX_SIZE];
 int vdccId[VERTEX_SIZE], newId[VERTEX_SIZE], edgeVdccId[EDGE_SIZE];
 
 void tarjan(int cntPt) {
-    dfn[cntPt] = cntTime; low[cntPt] = cntTime; cntTime++; 
+    dfn[cntPt] = cntTime; low[cntPt] = cntTime; cntTime++;
     stk.push(cntPt);
     if (cntPt == cntRoot && head[cntPt] == -1) {
         vdcc[vdccNum++].push_back(cntPt);
@@ -422,7 +430,7 @@ void tarjan(int cntPt) {
             tarjan(nextPt);
             low[cntPt] = min(low[cntPt], low[nextPt]);
             if (low[nextPt] >= dfn[cntPt]) {
-                if (cntPt != cntRoot || !isFirst) 
+                if (cntPt != cntRoot || !isFirst)
                     isCut[cntPt] = true;
                 isFirst = false;
                 while (!stk.empty()) {
@@ -640,7 +648,7 @@ public:
     int to, next;
 };
 Edge edges[SIZE << 1];
-int head[SIZE << 1], edgesPt; 
+int head[SIZE << 1], edgesPt;
 int fstMatch[SIZE], sndMatch[SIZE], fstDist[SIZE], sndDist[SIZE];
 int fstNum, sndNum; bool sndVis[SIZE], vis[SIZE << 1];
 
@@ -718,18 +726,18 @@ class Edge {
 public:
     int to, next, cap;
 };
- 
+
 Edge edges[EDGE_SIZE];
 int head[VERTEX_SIZE], edgesPt;
 int depth[VERTEX_SIZE], lastVis[VERTEX_SIZE], vertexNum;
- 
+
 void addEdge(int from, int to, int cap){
     edges[edgesPt] = {to, head[from], cap};
     head[from] = edgesPt++;
     edges[edgesPt] = {from, head[to], 0};
     head[to] = edgesPt++;
 }
- 
+
 bool updateDepth(int startPt, int endPt) {
     memset(depth, -1, sizeof(depth));
     queue<int> q;
@@ -750,7 +758,7 @@ bool updateDepth(int startPt, int endPt) {
     }
     return false;
 }
- 
+
 int findAugPath(int cntPt, int endPt, int minCap) {
     if (cntPt == endPt)
         return minCap;
@@ -772,7 +780,7 @@ int findAugPath(int cntPt, int endPt, int minCap) {
     }
     return cntFlow;
 }
- 
+
 int dinic(int srcPt, int snkPt) {
     int ret = 0;
     while (updateDepth(srcPt, snkPt)) {
@@ -877,7 +885,7 @@ typedef struct _Edge {
 
 Edge edges[EDGE_SIZE];
 int head[VERTEX_SIZE], edgePt;
-int dist[VERTEX_SIZE], lastVisitedEdge[VERTEX_SIZE]; 
+int dist[VERTEX_SIZE], lastVisitedEdge[VERTEX_SIZE];
 bool inQueue[VERTEX_SIZE], vis[VERTEX_SIZE];
 int vertexNum;
 
@@ -993,13 +1001,17 @@ void dfs(int cntPt, int prevPt) {
 
 ## 无向图三元环计数
 
-- 记 $d_i$ 为点 $i$ 的度数。对于无向边 $\langle u, v \rangle$，改连成 $d$ 较小的连向 $d$ 较大的，若相等则标号小的连向标号大的；
+- 记 $d_i$ 为点 $i$ 的度数。对于无向边 $\langle u, v \rangle$，改连成 $d$
+  较小的连向 $d$ 较大的，若相等则标号小的连向标号大的；
 - 对于每个点 $u$：
   - 先标记其所有相邻点 $v$：$mark_v = u$；
   - 对于每个相邻点 $v$ 的相邻点 $w$ 判断是否满足 $mark_w = u$；
 - 复杂度：$\mathcal{O}(E \sqrt{E})$，考虑每条有向边 $u \rightarrow v$：
-  - 若 $deg_v \le \sqrt{E}$，则枚举 $v$ 连出的点不会超过 $\mathcal{O}(\sqrt{E})$，处理这些点复杂度至多 $\mathcal{O}(E\sqrt{E})$；
-  - 若 $deg_v > \sqrt{E}$，则 $deg_u \ge \deg_v > \mathcal{O}(\sqrt{E})$，又由于 $\sum deg_i = 2E$，因此这样的点不会超过 $\sqrt{E}$ 个，因此处理这些点复杂度至多 $\mathcal{O}(E\sqrt{E})$。
+  - 若 $deg_v \le \sqrt{E}$，则枚举 $v$ 连出的点不会超过
+    $\mathcal{O}(\sqrt{E})$，处理这些点复杂度至多 $\mathcal{O}(E\sqrt{E})$；
+  - 若 $deg_v > \sqrt{E}$，则 $deg_u \ge \deg_v > \mathcal{O}(\sqrt{E})$，又由于
+    $\sum deg_i = 2E$，因此这样的点不会超过 $\sqrt{E}$
+    个，因此处理这些点复杂度至多 $\mathcal{O}(E\sqrt{E})$。
 
 ## 有向图三元环计数
 
@@ -1167,8 +1179,11 @@ father[rootPt] = 0, depth[rootPt] = 0; cntId = 0;
 dfs1(0); dfs2(0, 0);
 ```
 
-**基环树？**用并查集找出环上的一条边，把它拿出来另外维护，记其为 $\langle u, v \rangle$。
-查询 $\langle s, t \rangle$ 的时候，先查询不经过这条边的答案 `ans1`，再查询经过这条边的答案 `ans2`：$\langle s, v \rangle + \langle u, t \rangle$ 或者 $\langle s, u \rangle + \langle v, t \rangle$。
+**基环树？**用并查集找出环上的一条边，把它拿出来另外维护，记其为
+$\langle u, v \rangle$。查询 $\langle s, t \rangle$
+的时候，先查询不经过这条边的答案 `ans1`，再查询经过这条边的答案
+`ans2`：$\langle s, v \rangle + \langle u, t \rangle$ 或者
+$\langle s, u \rangle + \langle v, t \rangle$。
 
 # 动态树
 
@@ -1180,7 +1195,7 @@ public:
     int val, sum; // Value on vertex, sum of route to root
     bool revLazy; int father, son[2];
 };
-LinkCutTree lct[SIZE]; stack<int> stk; 
+LinkCutTree lct[SIZE]; stack<int> stk;
 const auto node = [](int rt) -> LinkCutTree & { return lct[rt]; };
 const auto father = [](int rt) -> LinkCutTree & { return lct[node(rt).father]; };
 const auto lson = [](int rt) -> LinkCutTree & { return lct[node(rt).son[0]]; };
@@ -1300,7 +1315,8 @@ fill(lct + 0, lct + vertexNum + 1, LinkCutTree{0, 0, 0, 0, {0, 0}});
 
 ### 维护边上信息
 
-对于边 $u \rightarrow v$，新建记录其信息的点 $p'$ ，并连边 $u \rightarrow p' \rightarrow v$。
+对于边 $u \rightarrow v$，新建记录其信息的点 $p'$ ，并连边
+$u \rightarrow p' \rightarrow v$。
 
 ### 维护动态 MST
 
@@ -1308,7 +1324,8 @@ fill(lct + 0, lct + vertexNum + 1, LinkCutTree{0, 0, 0, 0, {0, 0}});
 
 #### 最小差值生成树
 
-最小化最大权值与最小权值之差：将所有边按边权从大到小排序，同时 LCT 里维护最大权边。由于从大到小加边，因此加入的边一定是当前的最小权值。如果加边前两端已经联通 （即：`root(e.from) == root(e.to)`），则 `cut` 掉权值最大的边再加入当前边就好了。
+最小化最大权值与最小权值之差：将所有边按边权从大到小排序，同时 LCT 里维护最大权边。由于从大到小加边，因此加入的边一定是当前的最小权值。如果加边前两端已经联通 （即：`root(e.from) == root(e.to)`），则
+`cut` 掉权值最大的边再加入当前边就好了。
 
 ```cpp
 class LinkCutTree {
@@ -1356,7 +1373,7 @@ int main() {
             continue;
         if (root(e.from) == root(e.to)) {
             pair<int, int> ret = query(e.from, e.to); int cutPt = ret.second - vertexNum - 1;
-            cut(edges[cutPt].from, ret.second); cut(ret.second, edges[cutPt].to);           
+            cut(edges[cutPt].from, ret.second); cut(ret.second, edges[cutPt].to);
             edges[cutPt].vis = false; cntEdge--;
         }
         int pt = vertexNum + i + 1;
@@ -1377,7 +1394,11 @@ int main() {
 
 #### 双权值最小生成树
 
-每条边有两个权值 $\langle a_i, b_i \rangle$，需最小化 $\max\{a_i\} + \max\{b_i\}$：将边先按照 $a$ 维从小到大排序，同时 LCT 里维护 $b$ 的最大值。由于按 $a$ 从小到大加边，因此加入的边一定是当前最大的 $a$。如果加边前两端已经联通，并且当前边的 $b$ 还大于等于树中最大 $b$，那还加个卵，否则就加。
+每条边有两个权值 $\langle a_i, b_i \rangle$，需最小化
+$\max\{a_i\} + \max\{b_i\}$：将边先按照 $a$ 维从小到大排序，同时 LCT 里维护 $b$
+的最大值。由于按 $a$ 从小到大加边，因此加入的边一定是当前最大的
+$a$。如果加边前两端已经联通，并且当前边的 $b$ 还大于等于树中最大
+$b$，那还加个卵，否则就加。
 
 ```cpp
 /* Maintain the same values as the previous example in LCT */

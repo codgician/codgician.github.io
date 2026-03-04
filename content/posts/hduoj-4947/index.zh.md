@@ -18,10 +18,10 @@ toc: false
 draft: false
 ---
 
-
 # 题面
 
-对于长度为 $l$ 且初始全为 $0$ 的序列 $a$（下标 $1 \sim l$），有 $q$ 次操作。操作分为两种：
+对于长度为 $l$ 且初始全为 $0$ 的序列 $a$（下标 $1 \sim l$），有 $q$
+次操作。操作分为两种：
 
 1. 给定 $n, d, v$，对于每个满足 $\gcd(x, n) = d$ 的 $x$，为 $a_x$ 加上 $v$；
 2. 给定 $x$，询问 $\sum\limits_{i = 1}^{x} a_i$。
@@ -32,7 +32,8 @@ draft: false
 
 # 分析
 
-对于操作 $1$，如果 $d \nmid n$，则显然不可能满足 $\gcd(x, n) = d$。对于这样的情况我们忽略即可。
+对于操作 $1$，如果 $d \nmid n$，则显然不可能满足
+$\gcd(x, n) = d$。对于这样的情况我们忽略即可。
 
 我们记 $\Delta{a}(x)$ 代表某次进行第一种操作时位置 $x$ 上值的增量，有：
 
@@ -53,7 +54,9 @@ $$
 \end{aligned}
 $$
 
-我们注意到，$\sum\limits_{kd \mid x} \mu(k) \cdot v$ 看起来十分类似莫比乌斯反演中的 $F(n)$ 函数。既然如此，我们不妨考虑引入一个辅助数组 $f$，使其满足：
+我们注意到，$\sum\limits_{kd \mid x} \mu(k) \cdot v$
+看起来十分类似莫比乌斯反演中的 $F(n)$
+函数。既然如此，我们不妨考虑引入一个辅助数组 $f$，使其满足：
 
 $$
 a(x) = \sum\limits_{k \mid x}f(k)
@@ -61,7 +64,8 @@ $$
 
 由此一来，我们可以通过维护 $f(x)$ 并通过莫比乌斯反演从而求得 $a(x)$。
 
-根据上面推导而来的式子，我们不难发现，操作一实则是对于 $\frac{n}{d}$ 的每一个因子 $k$，向 $f(kd)$ 中增加 $\mu(k) \cdot v$。
+根据上面推导而来的式子，我们不难发现，操作一实则是对于 $\frac{n}{d}$
+的每一个因子 $k$，向 $f(kd)$ 中增加 $\mu(k) \cdot v$。
 
 ---
 
@@ -74,20 +78,28 @@ $$
 \end{aligned}
 $$
 
-整除分块搞一下就好了…… 由于分块需要快速求出区间和，所以可以考虑使用树状数组维护 $f(x)$。
+整除分块搞一下就好了…… 由于分块需要快速求出区间和，所以可以考虑使用树状数组维护
+$f(x)$。
 
 ---
 
 接下来我们简要分析一下复杂度：
 
-对于操作 $1$，$\frac{n}{d}$ 分解质因数的复杂度 $\mathcal{O}(\sqrt{N})$，加上树状数组单点更新后复杂度 $\mathcal{O}(\sqrt{N}\log{N})$；
+对于操作 $1$，$\frac{n}{d}$ 分解质因数的复杂度
+$\mathcal{O}(\sqrt{N})$，加上树状数组单点更新后复杂度
+$\mathcal{O}(\sqrt{N}\log{N})$；
 
-对于操作 $2$，整除分块复杂度 $\mathcal{O}(\sqrt{N})$，加上树状数组区间查询后复杂度 $\mathcal{O}(\sqrt{N}\log{N})$。
+对于操作 $2$，整除分块复杂度
+$\mathcal{O}(\sqrt{N})$，加上树状数组区间查询后复杂度
+$\mathcal{O}(\sqrt{N}\log{N})$。
 
 妙啊！
 
-最后附上 [我的代码](https://github.com/codgician/Competitive-Programming/blob/master/HDUOJ/4947/mobius_inversion_binary_indexed_tree.cpp) 以供参考。
+最后附上
+[我的代码](https://github.com/codgician/Competitive-Programming/blob/master/HDUOJ/4947/mobius_inversion_binary_indexed_tree.cpp)
+以供参考。
 
 # %%%
 
-- flipped - [【HDU4947】GCD Array (莫比乌斯反演+树状数组)](https://www.cnblogs.com/flipped/p/HDU4947.html)
+- flipped -
+  [【HDU4947】GCD Array (莫比乌斯反演+树状数组)](https://www.cnblogs.com/flipped/p/HDU4947.html)

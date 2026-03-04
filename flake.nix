@@ -42,16 +42,9 @@
         siteBuilder = hPkgs.callCabal2nix "builder" builderSrc { };
 
         # Browser for mermaid-cli (platform-aware)
-        browser =
-          if pkgs.stdenv.isDarwin then
-            pkgs.google-chrome
-          else
-            pkgs.chromium;
+        browser = if pkgs.stdenv.isDarwin then pkgs.google-chrome else pkgs.chromium;
         browserPath =
-          if pkgs.stdenv.isDarwin then
-            "${browser}/bin/google-chrome-stable"
-          else
-            "${lib.getExe browser}";
+          if pkgs.stdenv.isDarwin then "${browser}/bin/google-chrome-stable" else "${lib.getExe browser}";
 
         # External tools needed for building
         buildTools = [
@@ -64,9 +57,9 @@
         # Fonts for mermaid-cli rendering (required for foreignObject text)
         mermaidFonts = pkgs.makeFontsConf {
           fontDirectories = [
-            pkgs.liberation_ttf    # Metric-compatible with Arial, Times, Courier
-            pkgs.freefont_ttf      # Free alternatives to common fonts
-            pkgs.dejavu_fonts      # DejaVu font family
+            pkgs.liberation_ttf # Metric-compatible with Arial, Times, Courier
+            pkgs.freefont_ttf # Free alternatives to common fonts
+            pkgs.dejavu_fonts # DejaVu font family
           ];
         };
 
@@ -116,7 +109,6 @@
 
           # Fontconfig for mermaid-cli to find fonts during SVG rendering
           FONTCONFIG_FILE = mermaidFonts;
-
 
           buildPhase = ''
             runHook preBuild
@@ -176,7 +168,8 @@
           hPkgs.hlint
           pkgs.pkg-config
           pkgs.zlib
-        ] ++ buildTools;
+        ]
+        ++ buildTools;
 
         # Wrapper script that sets up vendor symlinks before running site
         siteWrapper = pkgs.writeShellScriptBin "site" ''
@@ -228,8 +221,8 @@
           name = "formatter";
           runtimeInputs = with pkgs; [
             treefmt
-            nixfmt-rfc-style
-            mdformat
+            nixfmt
+            nodePackages.prettier
             yamlfmt
             hPkgs.ormolu
           ];

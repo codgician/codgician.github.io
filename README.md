@@ -1,6 +1,7 @@
 # codgician.github.io
 
-Personal homepage and blog built with [Hakyll](https://jaspervdj.be/hakyll/) and [Nix](https://nixos.org/).
+Personal homepage and blog built with [Hakyll](https://jaspervdj.be/hakyll/) and
+[Nix](https://nixos.org/).
 
 ## Features
 
@@ -104,28 +105,34 @@ Your content here...
 
 ### Frontmatter Options
 
-| Field | Description |
-|-------|-------------|
-| `title` | Post title |
-| `date` | Publication date (YYYY-MM-DD) |
-| `language` | Content language (`en` or `zh`) |
+| Field       | Description                           |
+| ----------- | ------------------------------------- |
+| `title`     | Post title                            |
+| `date`      | Publication date (YYYY-MM-DD)         |
+| `language`  | Content language (`en` or `zh`)       |
 | `canonical` | `true` if this is the source language |
-| `math` | `true` to enable KaTeX rendering |
-| `mermaid` | `true` to enable Mermaid diagrams |
+| `math`      | `true` to enable KaTeX rendering      |
+| `mermaid`   | `true` to enable Mermaid diagrams     |
 
 ## Troubleshooting
 
 ### Cache corruption error
 
-If you see an error like `Data.Binary.Get.runGet at position X: not enough bytes` during `watch` mode, run:
+If you see an error like
+`Data.Binary.Get.runGet at position X: not enough bytes` during `watch` mode,
+run:
 
 ```bash
 nix run . -- clean
 ```
 
-This is a [known Hakyll behavior](https://github.com/jaspervdj/hakyll/pull/876) that can occur when the build process is interrupted mid-write (e.g., Ctrl+C at an unlucky moment) or after template changes. The `clean` command removes the `_cache/` directory and resolves the issue.
+This is a [known Hakyll behavior](https://github.com/jaspervdj/hakyll/pull/876)
+that can occur when the build process is interrupted mid-write (e.g., Ctrl+C at
+an unlucky moment) or after template changes. The `clean` command removes the
+`_cache/` directory and resolves the issue.
 
 # License
 
 - **Code** (src/, app/, integration-tests/, templates/, static/): [MIT](LICENSE)
-- **Content** (content/): [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- **Content** (content/):
+  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)

@@ -16,7 +16,6 @@ toc: false
 draft: false
 ---
 
-
 # 题面
 
 给定四个正整数 $a, b, c, d$，试求最简正分数 $\frac{p}{q}$，满足：
@@ -50,7 +49,9 @@ $$
 
 那么我们取 $p = \left\lfloor \frac{a}{b} \right\rfloor + 1, q = 1$ 为解。
 
-其次，如果 $a = 0$（虽然本题中不会直接出现这一情况，但我们需要解决的子问题中可能会出现），那么很显然我们可以取 $p = 1, q = \left\lfloor \frac{c}{d} \right\rfloor + 1$ 为解。
+其次，如果
+$a = 0$（虽然本题中不会直接出现这一情况，但我们需要解决的子问题中可能会出现），那么很显然我们可以取
+$p = 1, q = \left\lfloor \frac{c}{d} \right\rfloor + 1$ 为解。
 
 ---
 
@@ -62,9 +63,12 @@ $$
 \frac{a}{b} < \frac{p}{q} < \frac{c}{d} \Rightarrow \frac{d}{c} < \frac{q}{p} < \frac{b}{a}
 $$
 
-我们对子问题 $f(d, c, b, a) = \langle p', q' \rangle$ 进行求解，并在回溯的时候令 $p = q', q = p'$ 即可。
+我们对子问题 $f(d, c, b, a) = \langle p', q' \rangle$ 进行求解，并在回溯的时候令
+$p = q', q = p'$ 即可。
 
-接下来我们就只需要考虑 $c > d$ 的情况了。如果此时 $\frac{a}{b}$ 和 $\frac{c}{d}$ 间存在正整数，那么直接回溯即可。如果不存在，考虑对问题进行如下变换从而尽量缩小 $a$：
+接下来我们就只需要考虑 $c > d$ 的情况了。如果此时 $\frac{a}{b}$ 和 $\frac{c}{d}$
+间存在正整数，那么直接回溯即可。如果不存在，考虑对问题进行如下变换从而尽量缩小
+$a$：
 
 $$
 \begin{aligned}
@@ -75,8 +79,15 @@ $$
 \end{aligned}
 $$
 
-由此对子问题 $f(a \bmod b, b, c - d\left\lfloor \frac{a}{b} \right\rfloor, d) = \langle p'', q'' \rangle$ 求解，并在回溯的时候令 $p = p'' + q''\left\lfloor \frac{a}{b} \right\rfloor, q = q''$ 即可。
+由此对子问题
+$f(a \bmod b, b, c - d\left\lfloor \frac{a}{b} \right\rfloor, d) = \langle p'', q'' \rangle$
+求解，并在回溯的时候令
+$p = p'' + q''\left\lfloor \frac{a}{b} \right\rfloor, q = q''$ 即可。
 
-这就跟欧几里德算法很类似了…… 每常数步我们都可以将 $a$ 的规模缩小至 $a \bmod b$，故复杂度为 $\mathcal{O}(\log{n})$。不过为了防止中间爆 `int64` 我们在运算过程中可以约一下分，这样复杂度就变成了 $\mathcal{O}(\log^2{n})$。
+这就跟欧几里德算法很类似了…… 每常数步我们都可以将 $a$ 的规模缩小至
+$a \bmod b$，故复杂度为 $\mathcal{O}(\log{n})$。不过为了防止中间爆 `int64`
+我们在运算过程中可以约一下分，这样复杂度就变成了 $\mathcal{O}(\log^2{n})$。
 
-最后附上我的 [代码](https://github.com/codgician/Competitive-Programming/blob/master/BZOJ/2187/quasi_euclidean.cpp) 以供参考。
+最后附上我的
+[代码](https://github.com/codgician/Competitive-Programming/blob/master/BZOJ/2187/quasi_euclidean.cpp)
+以供参考。

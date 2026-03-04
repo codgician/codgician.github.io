@@ -7,7 +7,6 @@ toc: true
 draft: false
 ---
 
-
 ## ST 表
 
 ### 朴素 RMQ
@@ -40,19 +39,29 @@ pair<long long int, long long int> queryMinMax(int qLeftPt, int qRightPt) {
 
 ### 约束 RMQ
 
-对于序列 $a$，满足 $\forall i \in [2, n], \ |a_i - a_{i - 1}| = 1$。此时预处理部分可以优化至 $\mathcal{O}(1)$。大致思想是分块，块内分别搞一次 RMQ，块间最值再搞一次 RMQ。
+对于序列 $a$，满足
+$\forall i \in [2, n], \ |a_i - a_{i - 1}| = 1$。此时预处理部分可以优化至
+$\mathcal{O}(1)$。大致思想是分块，块内分别搞一次 RMQ，块间最值再搞一次 RMQ。
 
-设块大小 $b = \frac{1}{2} \log{n}$，则块数 $d = \lceil \frac{n}{b} \rceil$。由于相邻两个数只可能 $\pm 1$，故块内情况只有 $2^b = \sqrt{n}$ 种不同情况。预处理时直接对所有情况进行预处理，复杂度不会超过线性。处理好后带上 offset 搞就好了。询问的时候左右不完整块内部查询，中间块外部查询。
+设块大小 $b = \frac{1}{2} \log{n}$，则块数
+$d = \lceil \frac{n}{b} \rceil$。由于相邻两个数只可能 $\pm 1$，故块内情况只有
+$2^b = \sqrt{n}$
+种不同情况。预处理时直接对所有情况进行预处理，复杂度不会超过线性。处理好后带上 offset 搞就好了。询问的时候左右不完整块内部查询，中间块外部查询。
 
 ### 随机数据时的优化
 
-块大小为 $b$，块内预处理前缀 $\max$ 和后缀 $\max$，预处理的复杂度为 $\mathcal{O}(n + \frac{n}{b} \log{\frac{n}{b}})$。若询问两端点跨不同区间则可 $\mathcal{O}(1)$ 得到（块内前后缀，块间 ST 表），而若两端跨相同区间最坏 $\mathcal{O}(b)$ 得到。考虑到询问完全随机时两端在同一区间内概率为 $\frac{b}{n}$，则期望复杂度是 $\mathcal{O}(\frac{b^2}{n})$。
+块大小为 $b$，块内预处理前缀 $\max$ 和后缀 $\max$，预处理的复杂度为
+$\mathcal{O}(n + \frac{n}{b} \log{\frac{n}{b}})$。若询问两端点跨不同区间则可
+$\mathcal{O}(1)$ 得到（块内前后缀，块间 ST 表），而若两端跨相同区间最坏
+$\mathcal{O}(b)$ 得到。考虑到询问完全随机时两端在同一区间内概率为
+$\frac{b}{n}$，则期望复杂度是 $\mathcal{O}(\frac{b^2}{n})$。
 
 总复杂度：$\mathcal{O}(n + \frac{n}{b}\log{\frac{n}{b}} + q + q\frac{b^2}{n})$
 
 - $b$ 至少为 $\mathcal{O}(\log{n})$ 时，预处理不超过 $\mathcal{O}(n)$；
 - $b$ 至多为 $\mathcal{O}(\sqrt{n})$ 时，询问不超过 $\mathcal{O}(q)$；
-- 如果数据不随机，大致取 $2\sqrt{\frac{n}{q}\log{n}}$ 可以让期望复杂度为 $\mathcal{O}(n\sqrt{\log{n}})$；
+- 如果数据不随机，大致取 $2\sqrt{\frac{n}{q}\log{n}}$ 可以让期望复杂度为
+  $\mathcal{O}(n\sqrt{\log{n}})$；
 - 调参即可~
 
 ```cpp
@@ -101,7 +110,7 @@ inline int queryMax(int qLeftPt, int qRightPt) {
     int ret = max(sfx[qLeftPt], pfx[qRightPt]);
     qLeftPt = pos[qLeftPt] + 1, qRightPt = pos[qRightPt] - 1;
     if (qLeftPt > qRightPt)
-        return ret; 
+        return ret;
     int lenLog = logs[qRightPt - qLeftPt + 1];
     return max({ret, stArr[qLeftPt][lenLog], stArr[qRightPt - (1 << lenLog) + 1][lenLog]});
 }
@@ -521,7 +530,7 @@ using namespace std;
 
 #define SIZE 100010
 
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count()); 
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 uniform_int_distribution<int> unifInt;
 
 class Treap {
@@ -587,7 +596,7 @@ void splitByVal(int rt, int val, int & fstRt, int & sndRt) {
     if (node(rt).val > val)
         sndRt = rt, splitByVal(node(rt).son[0], val, fstRt, node(rt).son[0]);
     else
-        fstRt = rt, splitByVal(node(rt).son[1], val, node(rt).son[1], sndRt);        
+        fstRt = rt, splitByVal(node(rt).son[1], val, node(rt).son[1], sndRt);
     maintain(rt);
 }
 
@@ -618,7 +627,7 @@ void insert(int & rt, int val) {
 void remove(int & rt, int val) {
     int k = queryRank(rt, val);
     int fstRt = 0, sndRt = 0, thdRt = 0;
-    split(rt, k - 1, fstRt, sndRt); 
+    split(rt, k - 1, fstRt, sndRt);
     split(sndRt, 1, sndRt, thdRt);
     rt = merge(fstRt, thdRt); vec.push_back(sndRt);
 }
@@ -673,7 +682,7 @@ int main() {
 #include <bits/stdc++.h>
 using namespace std;
 
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count()); 
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 uniform_int_distribution<int> unifInt(0, 1e9);
 
 class Treap {
@@ -759,14 +768,14 @@ void insert(Treap * & rt, int val) {
 void remove(Treap * & rt , int val) {
     int k = getRank(rt, val) ;
     Treap * fstRt = nullptr, * sndRt = nullptr, * thdRt = nullptr;
-    split(rt, k - 1, fstRt, sndRt); 
+    split(rt, k - 1, fstRt, sndRt);
     split(sndRt, 1, sndRt, thdRt);
     rt = merge(fstRt, thdRt); delete sndRt;
 }
 
 void reverse(Treap * & rt, int qLeftPt, int qRightPt) {
     Treap * fstRt = nullptr, * sndRt = nullptr, * thdRt = nullptr;
-    split(rt, qLeftPt - 1, fstRt, sndRt); 
+    split(rt, qLeftPt - 1, fstRt, sndRt);
     split(sndRt, qRightPt - qLeftPt + 1, sndRt, thdRt);
     sndRt -> lazy = true;
     rt = merge(fstRt, merge(sndRt, thdRt));
@@ -839,7 +848,7 @@ using namespace __gnu_pbds;
 
 __gnu_pbds::priority_queue<
     int,
-    less<int>,   // Smaller value at top, Big -> Small when enumerating using iterator 
+    less<int>,   // Smaller value at top, Big -> Small when enumerating using iterator
     pairing_heap_tag // or: binary_heap_tag, binomial_heap_tag, rc_binomial_heap_tag, thin_heap_tag
 > pq;
 

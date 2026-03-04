@@ -11,18 +11,28 @@ toc: false
 draft: false
 ---
 
-
 Hello World... Again!
 
-After days of work I have finally managed to migrate my blog from Hexo to Blogdown + Hugo, and it actually went harder than I expected. Now with the power of Hugo, I shall enjoy faster rendering speed and much better i18n support. Plus, with the power of RMarkdown, it is now possible to create graphs and diagram in a more elegant way. 
+After days of work I have finally managed to migrate my blog from Hexo to
+Blogdown + Hugo, and it actually went harder than I expected. Now with the power
+of Hugo, I shall enjoy faster rendering speed and much better i18n support.
+Plus, with the power of RMarkdown, it is now possible to create graphs and
+diagram in a more elegant way.
 
-The new blog is themed with a modified version of [Hermit](https://github.com/Track3/Hermit), which is a tremendous theme and I would highly recommend to dark theme enthusiasts. I tuned its styles to match my own flavor and performed some dirty little hacks for better compatibility with Blogdown. Anyway it looks quite good to me now.
+The new blog is themed with a modified version of
+[Hermit](https://github.com/Track3/Hermit), which is a tremendous theme and I
+would highly recommend to dark theme enthusiasts. I tuned its styles to match my
+own flavor and performed some dirty little hacks for better compatibility with
+Blogdown. Anyway it looks quite good to me now.
 
-Like before, the source of this blog will be open-sourced in the `source` branch of its [repo](https://github.com/codgician/codgician.github.io). Check it out if you are interested. You can also leave your comment below on what you think.
+Like before, the source of this blog will be open-sourced in the `source` branch
+of its [repo](https://github.com/codgician/codgician.github.io). Check it out if
+you are interested. You can also leave your comment below on what you think.
 
---- 
+---
 
-Check out below to see the power of this new combination! You can view table of contents by clicking its icon in the menu bar if you are on desktop.
+Check out below to see the power of this new combination! You can view table of
+contents by clicking its icon in the menu bar if you are on desktop.
 
 # A grand title
 
