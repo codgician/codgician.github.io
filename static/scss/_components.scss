@@ -757,3 +757,52 @@
 .pagination-current {
   color: var(--color-text);
 }
+
+// =============================================================================
+// Mermaid Diagrams
+// =============================================================================
+
+.mermaid {
+  margin: $space-lg 0;
+  overflow-x: auto;
+
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  // Light theme SVG: show by default, hide in dark mode
+  .mermaid-light {
+    display: block;
+  }
+
+  .mermaid-dark {
+    display: none;
+  }
+}
+
+// Dark mode: swap which SVG is visible
+[data-theme="dark"] .mermaid {
+  .mermaid-light {
+    display: none;
+  }
+
+  .mermaid-dark {
+    display: block;
+  }
+}
+
+// Handle system preference when no explicit theme is set
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .mermaid {
+    .mermaid-light {
+      display: none;
+    }
+
+    .mermaid-dark {
+      display: block;
+    }
+  }
+}

@@ -2,7 +2,6 @@
 title: "Math"
 language: zh
 canonical: true
-translationKey: icpc-templates-math
 math: true
 toc: true
 draft: false

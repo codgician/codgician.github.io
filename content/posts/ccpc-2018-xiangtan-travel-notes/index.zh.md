@@ -3,7 +3,6 @@ title: "CCPC 2018 湘潭邀请赛游记"
 date: 2018-05-16
 language: zh
 canonical: true
-translationKey: ccpc-2018-xiangtan-travel-notes
 tags:
   - life
   - competitive-programming

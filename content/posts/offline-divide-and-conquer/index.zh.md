@@ -3,7 +3,6 @@ title: "浅谈离线分治算法"
 date: 2019-07-22
 language: zh
 canonical: true
-translationKey: offline-divide-and-conquer
 tags:
   - icpc-notes
   - algorithm

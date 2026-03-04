@@ -3,7 +3,6 @@ title: "HDUOJ 6275: Mod, Xor and Everything"
 date: 2018-10-25
 language: zh
 canonical: true
-translationKey: hduoj-6275
 tags:
   - icpc-solutions
   - algorithm

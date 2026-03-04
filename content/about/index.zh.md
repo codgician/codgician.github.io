@@ -2,7 +2,6 @@
 title: "关于"
 language: zh
 canonical: true
-translationKey: about
 template: about
 ---
 

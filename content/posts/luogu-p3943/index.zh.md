@@ -3,7 +3,6 @@ title: "Luogu P3943: 星空"
 date: 2019-02-05
 language: zh
 canonical: true
-translationKey: luogu-p3943
 tags:
   - icpc-solutions
   - algorithm

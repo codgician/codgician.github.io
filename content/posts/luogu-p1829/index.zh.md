@@ -3,7 +3,6 @@ title: "Luogu P1829: Crash 的数字表格"
 date: 2018-11-21
 language: zh
 canonical: true
-translationKey: luogu-p1829
 tags:
   - icpc-solutions
   - algorithm

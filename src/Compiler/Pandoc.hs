@@ -7,7 +7,7 @@ module Compiler.Pandoc
 where
 
 import Compiler.KaTeX (cachedKaTeX)
-import Compiler.Mermaid (cachedMermaid)
+import Compiler.Mermaid (cachedMermaidDual)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -139,12 +139,12 @@ transformMath (Math mathType content) = do
   pure $ RawInline (Format "html") rendered
 transformMath x = pure x
 
--- | Transform Mermaid code blocks to SVG
+-- | Transform Mermaid code blocks to SVG (dual theme: light + dark)
 transformMermaid :: Block -> IO Block
 transformMermaid (CodeBlock (_, classes, _) content)
   | "mermaid" `elem` classes = do
-      svg <- cachedMermaid filterVersion content
+      html <- cachedMermaidDual filterVersion content
       pure $
         RawBlock (Format "html") $
-          "<div class=\"mermaid\">" <> svg <> "</div>"
+          "<div class=\"mermaid\">" <> html <> "</div>"
 transformMermaid x = pure x

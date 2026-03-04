@@ -3,7 +3,6 @@ title: "高考导数: 洛必达法则"
 date: 2017-04-08
 language: zh
 canonical: true
-translationKey: thoughts-on-senior-3-derivative-problems-3
 tags:
   - math
 math: true

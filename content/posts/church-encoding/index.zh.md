@@ -3,7 +3,6 @@ title: "Church 编码学习笔记"
 date: 2020-04-06
 language: zh
 canonical: true
-translationKey: church-encoding
 tags:
   - functional-programming
 math: true

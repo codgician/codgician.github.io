@@ -3,7 +3,6 @@ title: "数论函数与狄利克雷卷积"
 date: 2019-08-06
 language: zh
 canonical: true
-translationKey: arithmetic-function-and-dirichlet-convolution
 tags:
   - icpc-notes
   - abstract-algebra

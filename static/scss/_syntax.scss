@@ -1,5 +1,5 @@
 // Pandoc Skylighting syntax highlighting
-// Using theme-aware colors
+// Dual theme support: light and dark mode colors
 
 .sourceCode {
   background: var(--color-surface);
@@ -13,7 +13,7 @@ code.sourceCode {
   padding: 0;
 }
 
-// Token colors
+// Dark theme token colors (One Dark inspired)
 .kw { color: #c678dd; } // Keyword
 .dt { color: #e5c07b; } // DataType
 .dv { color: #d19a66; } // DecVal
@@ -38,3 +38,61 @@ code.sourceCode {
 .cv { color: #5c6370; font-style: italic; } // CommentVar
 .wa { color: #e06c75; font-weight: bold; } // Warning
 .er { color: #e06c75; font-weight: bold; } // Error
+
+// Light theme token colors
+:root[data-theme="light"] {
+  .kw { color: #a626a4; } // Keyword
+  .dt { color: #c18401; } // DataType
+  .dv { color: #986801; } // DecVal
+  .bn { color: #986801; } // BaseN
+  .fl { color: #986801; } // Float
+  .ch { color: #50a14f; } // Char
+  .st { color: #50a14f; } // String
+  .co { color: #a0a1a7; font-style: italic; } // Comment
+  .ot { color: #0184bc; } // Other
+  .fu { color: #4078f2; } // Function
+  .cf { color: #a626a4; } // ControlFlow
+  .op { color: #383a42; } // Operator
+  .cn { color: #986801; } // Constant
+  .sc { color: #50a14f; } // SpecialChar
+  .vs { color: #50a14f; } // VerbatimString
+  .ss { color: #50a14f; } // SpecialString
+  .im { color: #e45649; } // Import
+  .va { color: #e45649; } // Variable
+  .at { color: #986801; } // Attribute
+  .do { color: #a0a1a7; font-style: italic; } // Documentation
+  .an { color: #a0a1a7; font-style: italic; } // Annotation
+  .cv { color: #a0a1a7; font-style: italic; } // CommentVar
+  .wa { color: #e45649; font-weight: bold; } // Warning
+  .er { color: #e45649; font-weight: bold; } // Error
+}
+
+// Handle system preference when no explicit theme is set
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    .kw { color: #a626a4; }
+    .dt { color: #c18401; }
+    .dv { color: #986801; }
+    .bn { color: #986801; }
+    .fl { color: #986801; }
+    .ch { color: #50a14f; }
+    .st { color: #50a14f; }
+    .co { color: #a0a1a7; font-style: italic; }
+    .ot { color: #0184bc; }
+    .fu { color: #4078f2; }
+    .cf { color: #a626a4; }
+    .op { color: #383a42; }
+    .cn { color: #986801; }
+    .sc { color: #50a14f; }
+    .vs { color: #50a14f; }
+    .ss { color: #50a14f; }
+    .im { color: #e45649; }
+    .va { color: #e45649; }
+    .at { color: #986801; }
+    .do { color: #a0a1a7; font-style: italic; }
+    .an { color: #a0a1a7; font-style: italic; }
+    .cv { color: #a0a1a7; font-style: italic; }
+    .wa { color: #e45649; font-weight: bold; }
+    .er { color: #e45649; font-weight: bold; }
+  }
+}

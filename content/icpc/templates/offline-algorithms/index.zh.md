@@ -2,7 +2,6 @@
 title: "Offline Algorithms"
 language: zh
 canonical: true
-translationKey: icpc-templates-offline-algorithms
 math: true
 toc: true
 draft: false

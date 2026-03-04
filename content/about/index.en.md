@@ -2,7 +2,6 @@
 title: "About"
 language: en
 canonical: false
-translationKey: about
 template: about
 ---
 

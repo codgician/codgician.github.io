@@ -3,7 +3,6 @@ title: "BZOJ 3817: Sum"
 date: 2018-10-28
 language: zh
 canonical: true
-translationKey: bzoj-3817
 tags:
   - icpc-solutions
   - algorithm

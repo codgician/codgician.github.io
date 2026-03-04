@@ -3,7 +3,6 @@ title: "浅谈匈牙利算法"
 date: 2018-03-09
 language: zh
 canonical: true
-translationKey: hungarian-algorithm
 tags:
   - icpc-notes
   - algorithm

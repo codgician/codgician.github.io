@@ -3,7 +3,6 @@ title: "CSAPP: Attack Lab"
 date: 2020-05-10
 language: zh
 canonical: true
-translationKey: csapp-attack-lab
 tags:
   - csapp
   - computer-science

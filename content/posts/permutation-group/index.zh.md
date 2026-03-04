@@ -3,7 +3,6 @@ title: "浅谈置换群计数"
 date: 2020-03-26
 language: zh
 canonical: true
-translationKey: permutation-group
 tags:
   - icpc-notes
 math: true

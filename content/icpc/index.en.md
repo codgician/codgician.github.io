@@ -2,7 +2,6 @@
 title: "Competitive Programming"
 language: en
 canonical: false
-translationKey: icpc
 math: false
 toc: false
 draft: false

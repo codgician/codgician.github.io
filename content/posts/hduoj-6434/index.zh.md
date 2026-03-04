@@ -3,7 +3,6 @@ title: "HDUOJ 6434: Count"
 date: 2018-08-23
 language: zh
 canonical: true
-translationKey: hduoj-6434
 tags:
   - icpc-solutions
   - algorithm
