@@ -40,7 +40,7 @@ PCRs don't store values directly. Instead, they use a one-way extension
 operation:
 
 ```
-new_PCR_value = hash(old_PCR_value || new_data)
+new_PCR_value = hash(old_PCR_value ‖ new_data)  # ‖ means concatenation
 ```
 
 This means:
@@ -214,7 +214,7 @@ To defend against volume confusion, we need a value that:
 We derive a fingerprint from ZFS's internal encryption metadata:
 
 ```bash
-fingerprint = hash(GUID || MAC)
+fingerprint = hash(GUID ‖ MAC)  # ‖ means concatenation
 ```
 
 Where:
@@ -250,7 +250,7 @@ flowchart TD
     C --> D["zfs-tpm-unlock.service"]
 
     subgraph unlock[" "]
-        D --> E["Compute fingerprint<br/>hash(GUID || MAC)"]
+        D --> E["Compute fingerprint<br/>hash(GUID ‖ MAC)"]
         E --> F["Extend PCR 15"]
         F --> G{"PCR 15 matches?"}
         G -->|Yes| H["systemd-creds decrypt<br/>(PCR 7 + 15)"]
