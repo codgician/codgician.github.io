@@ -61,6 +61,15 @@
           browser
         ];
 
+        # Fonts for mermaid-cli rendering (required for foreignObject text)
+        mermaidFonts = pkgs.makeFontsConf {
+          fontDirectories = [
+            pkgs.liberation_ttf    # Metric-compatible with Arial, Times, Courier
+            pkgs.freefont_ttf      # Free alternatives to common fonts
+            pkgs.dejavu_fonts      # DejaVu font family
+          ];
+        };
+
         # KaTeX dist path for CSS and fonts
         katexDist = "${pkgs.nodePackages.katex}/lib/node_modules/katex/dist";
 
@@ -85,6 +94,7 @@
               ./static
               ./config.yaml
               ./puppeteer-config.json
+              ./mermaid-config.json
             ];
           };
           nativeBuildInputs = [ siteBuilder ] ++ buildTools;
@@ -98,10 +108,14 @@
           MERMAID_VERSION = mermaidVersion;
           PUPPETEER_EXECUTABLE_PATH = browserPath;
           PUPPETEER_CONFIG = "./puppeteer-config.json";
+          MERMAID_CONFIG = "./mermaid-config.json";
 
           # Chromium crashpad workaround for sandboxed builds (Linux CI)
           XDG_CONFIG_HOME = "/tmp/.chromium";
           XDG_CACHE_HOME = "/tmp/.chromium";
+
+          # Fontconfig for mermaid-cli to find fonts during SVG rendering
+          FONTCONFIG_FILE = mermaidFonts;
 
 
           buildPhase = ''
@@ -174,6 +188,8 @@
           export MERMAID_VERSION="${mermaidVersion}"
           export PUPPETEER_EXECUTABLE_PATH="${browserPath}"
           export PUPPETEER_CONFIG="./puppeteer-config.json"
+          export MERMAID_CONFIG="./mermaid-config.json"
+          export FONTCONFIG_FILE="${mermaidFonts}"
           exec ${siteBuilder}/bin/site "$@"
         '';
 
@@ -196,6 +212,8 @@
           MERMAID_VERSION = mermaidVersion;
           PUPPETEER_EXECUTABLE_PATH = browserPath;
           PUPPETEER_CONFIG = "./puppeteer-config.json";
+          MERMAID_CONFIG = "./mermaid-config.json";
+          FONTCONFIG_FILE = mermaidFonts;
 
           # Symlink vendor assets into static/ for development
           shellHook = ''
