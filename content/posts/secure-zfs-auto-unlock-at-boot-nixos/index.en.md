@@ -61,15 +61,14 @@ defines standard purposes:
 | 0   | platform-code      | Core firmware (UEFI)                       |
 | 2   | external-code      | Option ROMs, external firmware             |
 | 7   | secure-boot-policy | Secure Boot state, enrolled certificates   |
-| 9   | kernel-initrd      | Kernel and initrd images (when using shim) |
+| 11  | kernel-image       | Kernel, initrd, cmdline (per UKI spec)     |
 | 15  | system-identity    | System identity — _more on this later_     |
 
 > **Note**: This table only shows a few relevant PCRs. The full registry defines
 > all 24 PCRs — see the complete specification for details.
 
 When you seal a secret to the TPM, you specify which PCRs must match. If an
-attacker modifies your bootloader, PCR 7 changes. If they swap your kernel, PCR
-9 changes. The TPM refuses to unseal your disk key.
+attacker modifies your bootloader, PCR 7 changes. The TPM refuses to unseal.
 
 Sounds secure, right? Unfortunately, there are gaps.
 
@@ -315,7 +314,7 @@ No single mechanism is foolproof. Our approach layers multiple defenses:
 | Volume confusion           | Pre-unlock fingerprint → PCR 15        |
 | Root credential replay     | Post-unlock zeros → PCR 15             |
 | Bootloader tampering       | PCR 7 (Secure Boot policy)             |
-| Kernel/initrd modification | PCR 9 (if using shim) or PCR 7 (UKI)   |
+| Kernel/initrd modification | Lanzaboote (hash verification in stub) |
 
 Even if one layer is bypassed, others remain. An attacker would need to:
 
@@ -343,7 +342,10 @@ NixOS systems with ZFS encryption.
 
 The full implementation lives in my
 [serenitea-pot](https://github.com/codgician/serenitea-pot) NixOS configuration,
-specifically in `modules/nixos/system/zfs-unlock/`. The
+specifically in `modules/nixos/system/zfs-unlock/`. It uses
+[Lanzaboote](https://github.com/nix-community/lanzaboote) for Secure Boot — a
+shimless approach that embeds SHA-256 hashes of the kernel and initrd in the
+signed UEFI stub, with measurements extended to PCR 11. The
 [mkcreds](https://github.com/codgician/mkcreds) tool is available as a
 standalone Nix flake.
 
