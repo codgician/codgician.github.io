@@ -6,7 +6,7 @@ canonical: true
 tags:
   - icpc-notes
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

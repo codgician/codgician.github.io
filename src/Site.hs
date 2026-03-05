@@ -2,7 +2,7 @@
 
 module Site (hakyllMain) where
 
-import Compiler.Pandoc (customPandocCompiler, slideCompiler)
+import Compiler.Pandoc (customPandocCompiler, customPandocCompilerWithToc, slideCompiler)
 import Config
 import Context
 import Control.Monad (filterM, forM_, unless)
@@ -151,12 +151,27 @@ blogPosts cfg = do
       lang <- currentLang
       slug <- slugFromPath <$> getUnderlying
       (enableMath, enableMermaid) <- getFeatureFlags
-      let ctx = allLangsCtx cfg lang ("/posts/" <> slug <> "/") <> postCtx cfg lang
-      customPandocCompiler enableMath enableMermaid
-        >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/post.html" ctx
-        >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= relativizeUrls
+      enableToc <- getTocFlag
+      let basePostCtx = allLangsCtx cfg lang ("/posts/" <> slug <> "/") <> postCtx cfg lang
+      if enableToc
+        then do
+          -- Use TOC-enabled compiler
+          (bodyItem, maybeToc) <- customPandocCompilerWithToc enableMath enableMermaid
+          -- Save TOC to separate snapshot for fallback posts (even if empty)
+          tocItem <- makeItem (fromMaybe "" maybeToc)
+          _ <- saveSnapshot "toc" tocItem
+          let ctx = tocCtx lang maybeToc <> basePostCtx
+          saveSnapshot "content" bodyItem
+            >>= loadAndApplyTemplate "templates/post.html" ctx
+            >>= loadAndApplyTemplate "templates/default.html" ctx
+            >>= relativizeUrls
+        else do
+          -- Use standard compiler (no TOC)
+          customPandocCompiler enableMath enableMermaid
+            >>= saveSnapshot "content"
+            >>= loadAndApplyTemplate "templates/post.html" basePostCtx
+            >>= loadAndApplyTemplate "templates/default.html" basePostCtx
+            >>= relativizeUrls
 
   -- Create fallback posts for missing translations
   postDep <- makePatternDependency "content/posts/*/index.*.md"
@@ -178,15 +193,26 @@ createFallbackPost cfg targetLang slug =
       case mSrcIdent of
         Nothing -> fail $ "No source found for post: " <> slug
         Just srcIdent -> do
+          -- Load content (Pandoc-rendered body)
           srcItem <- loadSnapshot srcIdent "content"
           srcMeta <- getMetadata srcIdent
+          -- Check if source post has TOC enabled and load it
+          let hasTocFlag = metaBool "toc" srcMeta
+          maybeToc <- if hasTocFlag
+            then do
+              tocStr <- itemBody <$> loadSnapshot srcIdent "toc"
+              pure $ if null tocStr then Nothing else Just tocStr
+            else pure Nothing
+          -- Build context with targetLang (not source lang)
           let ctx =
-                constField "date" (metaStr "date" srcMeta)
+                tocCtx targetLang maybeToc
+                  <> constField "date" (metaStr "date" srcMeta)
                   <> constField "title" (metaStr "title" srcMeta)
                   <> boolCtx "math" srcMeta
                   <> boolCtx "mermaid" srcMeta
                   <> allLangsCtx cfg targetLang ("/posts/" <> slug <> "/")
                   <> postCtx cfg targetLang
+          -- Apply templates with targetLang context
           makeItem (itemBody srcItem)
             >>= loadAndApplyTemplate "templates/post.html" ctx
             >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -415,6 +441,9 @@ getFeatureFlags :: Compiler (Bool, Bool)
 getFeatureFlags = do
   meta <- getUnderlying >>= getMetadata
   pure (metaBool "math" meta, metaBool "mermaid" meta)
+
+getTocFlag :: Compiler Bool
+getTocFlag = metaBool "toc" <$> (getUnderlying >>= getMetadata)
 
 navTitle :: SiteConfig -> String -> T.Text -> String
 navTitle cfg lang url = case filter ((== url) . navUrl) $ navigation cfg of

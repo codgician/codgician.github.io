@@ -9,7 +9,7 @@ tags:
   - competitive-programming
   - divide-and-conquer
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

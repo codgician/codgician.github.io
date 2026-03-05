@@ -2,6 +2,23 @@
   const nav = document.querySelector(".nav");
   if (!nav) return;
 
+  // ==========================================================================
+  // Active nav link detection
+  // ==========================================================================
+  const navLinks = nav.querySelectorAll(".nav-links a");
+  const currentPath = window.location.pathname;
+
+  navLinks.forEach((link) => {
+    // Use link.pathname to get the resolved absolute path
+    const linkPath = new URL(link.href).pathname;
+    // Check if current path starts with link path (but not just the language root)
+    // e.g., /en/posts/... matches /en/posts/, /en/slides/... matches /en/slides/
+    const isLangRoot = /^\/[a-z]{2}\/$/.test(linkPath);
+    if (linkPath && !isLangRoot && currentPath.startsWith(linkPath)) {
+      link.classList.add("active");
+    }
+  });
+
   let lastScrollY = window.scrollY;
   let ticking = false;
 

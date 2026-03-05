@@ -41,7 +41,7 @@ tags:
   - { tag1 }
   - { tag2 }
 math: false
-toc: false
+toc: true
 draft: true
 ---
 ```
