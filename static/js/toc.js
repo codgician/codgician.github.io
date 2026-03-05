@@ -4,7 +4,7 @@
  * - Toggle button: hides/shows TOC on desktop, scrolls to TOC on mobile
  * - Smooth expand/collapse animation for mobile TOC
  * Uses IntersectionObserver for performance
- * Compatible with Safari 12.1+ and Chrome 58+
+ * Compatible with modern browsers (2020+)
  */
 (function () {
   const tocDesktop = document.querySelector(".toc");
@@ -17,6 +17,15 @@
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
+
+  // ==========================================================================
+  // Shared helpers
+  // ==========================================================================
+
+  // Get nav bar offset for scroll calculations (nav height + padding)
+  function getNavOffset() {
+    return (document.querySelector(".nav")?.offsetHeight || 56) + 16;
+  }
 
   // ==========================================================================
   // Shared TOC visibility state (synced between mobile and desktop)
@@ -71,9 +80,8 @@
 
       // On mobile, also scroll to TOC and highlight
       if (isMobile() && tocMobile && tocVisible) {
-        const navHeight = document.querySelector(".nav")?.offsetHeight || 56;
         const tocPosition =
-          tocMobile.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+          tocMobile.getBoundingClientRect().top + window.scrollY - getNavOffset();
 
         window.scrollTo({
           top: tocPosition,
@@ -93,9 +101,8 @@
   // Shared helper: scroll to element with nav offset
   // ==========================================================================
   function scrollToElement(el) {
-    const navHeight = document.querySelector(".nav")?.offsetHeight || 56;
     const targetPosition =
-      el.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+      el.getBoundingClientRect().top + window.scrollY - getNavOffset();
 
     window.scrollTo({
       top: targetPosition,
@@ -144,6 +151,19 @@
 
   if (headings.length === 0) return;
 
+  // Find the last heading that has been scrolled past
+  function findLastPassedHeading(scrollTop) {
+    let lastPassed = null;
+    for (const heading of headings) {
+      if (heading.offsetTop <= scrollTop + 100) {
+        lastPassed = heading;
+      } else {
+        break;
+      }
+    }
+    return lastPassed;
+  }
+
   // Track which heading is currently "active"
   let currentActiveId = null;
 
@@ -180,17 +200,7 @@
           setActiveLink(visibleEntries[0].target.id);
         } else {
           // When scrolling up past all headings, find the last one we passed
-          const scrollTop = window.scrollY;
-          let lastPassedHeading = null;
-
-          for (const heading of headings) {
-            if (heading.offsetTop <= scrollTop + 100) {
-              lastPassedHeading = heading;
-            } else {
-              break;
-            }
-          }
-
+          const lastPassedHeading = findLastPassedHeading(window.scrollY);
           if (lastPassedHeading) {
             setActiveLink(lastPassedHeading.id);
           }
@@ -227,17 +237,7 @@
   });
 
   // Set initial active state based on scroll position
-  const scrollTop = window.scrollY;
-  let initialHeading = null;
-
-  for (const heading of headings) {
-    if (heading.offsetTop <= scrollTop + 100) {
-      initialHeading = heading;
-    } else {
-      break;
-    }
-  }
-
+  const initialHeading = findLastPassedHeading(window.scrollY);
   if (initialHeading) {
     setActiveLink(initialHeading.id);
   } else if (headings.length > 0) {
