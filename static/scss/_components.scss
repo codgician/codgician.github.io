@@ -116,11 +116,23 @@
 // Best practices: Consistent borders, clear visual hierarchy, proper spacing
 // =============================================================================
 .nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: space-between; // Logo left, actions right, links in middle
+  justify-content: space-between;
   padding: $space-md $content-padding;
   border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  transition: transform 0.3s ease;
+
+  // Hidden state (toggled by JS on scroll down)
+  &.nav--hidden {
+    transform: translateY(-100%);
+  }
 
   @include mobile {
     padding: $space-sm $space-md;
@@ -131,7 +143,7 @@
     font-size: 1.125rem;
     color: var(--color-text);
     text-decoration: none;
-    flex-shrink: 0; // Prevent logo from shrinking
+    flex-shrink: 0;
 
     @include mobile {
       font-size: 1rem;
@@ -146,10 +158,10 @@
     margin: 0;
     padding: 0;
     justify-content: center;
-    flex: 1; // Take available space, allowing centering
+    flex: 1;
 
     @include mobile {
-      gap: $space-md; // Tighter spacing on mobile
+      gap: $space-md;
     }
 
     a {
@@ -159,7 +171,7 @@
       transition: color 0.2s ease;
 
       @include mobile {
-        font-size: 0.875rem; // Slightly smaller on mobile for better fit
+        font-size: 0.875rem;
       }
 
       &:hover {
@@ -170,7 +182,7 @@
 
   // Actions: fixed to right side
   .actions {
-    flex-shrink: 0; // Prevent actions from shrinking
+    flex-shrink: 0;
   }
 }
 

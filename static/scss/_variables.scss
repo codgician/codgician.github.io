@@ -65,3 +65,7 @@ $bp-2xl: 1536px;
     @content;
   }
 }
+
+// Nav height (for fixed nav offset)
+$nav-height: 3.5rem;
+$nav-height-mobile: 2.75rem;

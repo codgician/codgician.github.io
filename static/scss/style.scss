@@ -42,6 +42,15 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  // Add padding for fixed nav (only when nav is present)
+  &:has(.nav) {
+    padding-top: $nav-height;
+
+    @include mobile {
+      padding-top: $nav-height-mobile;
+    }
+  }
 }
 
 // Links
