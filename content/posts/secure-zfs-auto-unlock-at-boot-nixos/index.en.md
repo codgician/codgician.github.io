@@ -56,13 +56,13 @@ The
 [Linux TPM PCR Registry](https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/)
 defines standard purposes:
 
-| PCR | Name               | What It Measures                           |
-| --- | ------------------ | ------------------------------------------ |
-| 0   | platform-code      | Core firmware (UEFI)                       |
-| 2   | external-code      | Option ROMs, external firmware             |
-| 7   | secure-boot-policy | Secure Boot state, enrolled certificates   |
-| 11  | kernel-image       | Kernel, initrd, cmdline (per UKI spec)     |
-| 15  | system-identity    | System identity — _more on this later_     |
+| PCR | Name               | What It Measures                         |
+| --- | ------------------ | ---------------------------------------- |
+| 0   | platform-code      | Core firmware (UEFI)                     |
+| 2   | external-code      | Option ROMs, external firmware           |
+| 7   | secure-boot-policy | Secure Boot state, enrolled certificates |
+| 11  | kernel-image       | Kernel, initrd, cmdline (per UKI spec)   |
+| 15  | system-identity    | System identity — _more on this later_   |
 
 > **Note**: This table only shows a few relevant PCRs. The full registry defines
 > all 24 PCRs — see the complete specification for details.

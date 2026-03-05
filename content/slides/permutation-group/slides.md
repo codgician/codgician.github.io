@@ -11,11 +11,10 @@ height: 768
 # 关系 { #relation }
 
 - 集合的**笛卡尔积 (Cartesian product)**：
-  $$
-  A \times B = \left\{ (a, b) \mid a \in A, b \in B \right\}
-  $$
-- 设 $A$ 是集合，集合 $A \times A$ 的每个子集 $R$ 叫做集合 $A$
-  上的一个**关系 (relation)**。
+$$
+A \times B = \left\{ (a, b) \mid a \in A, b \in B \right\}
+$$
+- 设 $A$ 是集合，集合 $A \times A$ 的每个子集 $R$ 叫做集合 $A$ 上的一个**关系 (relation)**。
 - 若 $(a, b) \in R$，则称 $a$ 和 $b$ 有关系 $R$，记作 $aRb$。
 
 ## 等价关系 { #equivalence-relation }
@@ -39,8 +38,7 @@ $$
 
 ## 等价类 { #equivalence-class }
 
-设 $\sim$ 是 $A$ 上的等价关系，$\forall a \in A$，$[a]$ 表示 $A$ 中与 $a$
-等价的全部元素构成的集合：
+设 $\sim$ 是 $A$ 上的等价关系，$\forall a \in A$，$[a]$ 表示 $A$ 中与 $a$ 等价的全部元素构成的集合：
 
 $$
 [a] = \{ b \sim a \mid b \in A \}
@@ -52,13 +50,14 @@ $$
 
 **若 $a, b \in A$ 且 $[a] \cap [b] \neq \emptyset$，则 $[a] = [b]$。**
 
+
 ::: { .fragment .fade-in-then-out style="height:0" }
 
 - 假设 $k_1 \in [a]$ 且 $k_1 \notin [b]$，$k_2 \in [a] \cap [b]$；
 - 则有 $k_1 \sim a, \ k_2 \sim a, \ k_2 \sim b$；
 - 由传递性得 $k_1 \sim b$，与假设不符。
 
-:::
+::: 
 
 ::: { .fragment }
 
@@ -72,24 +71,23 @@ $$
 
 ::: { .notes }
 
-关于 $R$，事实上是完全代表系，由等价类 $[a_i]$ 中选出一个元素构成，使得 $A$
-中每个元素都与 $R$ 中的某个元素等价，同时 $R$ 中的元素彼此不等价。
+关于 $R$，事实上是完全代表系，由等价类 $[a_i]$ 中选出一个元素构成，使得 $A$ 中每个元素都与 $R$ 中的某个元素等价，同时 $R$ 中的元素彼此不等价。
 
-对于划分的定义：若 $A$ 是它的某些子集 $\{ A_i | i \in I \}$ 之并，且 $A_i$
-两两不交，则称其为集合 $A$ 的一个划分（或分拆）。
+对于划分的定义：若 $A$ 是它的某些子集 $\{ A_i | i \in I \}$ 之并，且 $A_i$ 两两不交，则称其为集合 $A$ 的一个划分（或分拆）。 
 
 我们可以看到，引入等价类的意义就是为了对集合中的元素进行某种程度上的分类。后面要介绍的轨道、陪集等本质上都是基于等价关系的。
 
 :::
+
 
 # 群 $(G, \cdot)$ { #group }
 
 $G$ 是非空集合，且二元运算满足：
 
 - 结合律：$(a \cdot b) \cdot c = a \cdot (b \cdot c)$
-- 单位元 $e$：$\forall a \in G, \ ea = ae = a$
+- 单位元 $e$：$\forall a \in G, \ ea = ae = a$ 
 - 逆元：$\forall a \in G, \ \exist b \in G \text{ \ s.t. \ } ab = ba = e$
-
+  
 ::: { .fragment }
 
 若满足交换律，则称为**交换群**
@@ -106,7 +104,7 @@ $G$ 是非空集合，且二元运算满足：
 
 - 左右逆元相等：
   - 设 $x$ 是 $a$ 的左逆元，$y$ 是 $a$ 的右逆元，有：
-
+  
     $$
     x = xe = x(ay) = (xa)y = y
     $$
@@ -118,12 +116,11 @@ $G$ 是非空集合，且二元运算满足：
 
 只要逆元存在就满足消去律：两边都乘上 $a^{-1}$ 即可。
 
-:::
+:::  
 
 ## 子群 { #subgroup }
 
-设 $(G, \cdot)$ 为群，$H$ 是 $G$ 的子集，若 $(H, \cdot)$ 成群，则称 $H$ 为 $G$
-的**子群 (subgroup)**，记作 $H \le G$；
+设 $(G, \cdot)$ 为群，$H$ 是 $G$ 的子集，若 $(H, \cdot)$ 成群，则称 $H$ 为 $G$ 的**子群 (subgroup)**，记作 $H \le G$；
 
 ## 陪集 { #coset }
 
@@ -166,18 +163,15 @@ $$
 
 ::: { .notes }
 
-$x \sim y := x \in yH$ 是一个等价关系，这意味着我们可以借助陪集对群 $G$
-进行划分。
+$x \sim y := x \in yH$ 是一个等价关系，这意味着我们可以借助陪集对群 $G$ 进行划分。
 
 注意陪集不一定是 $G$ 的一个子群。
 
 💡 提示:
 
 1. 既然 $H$ 还是群，那么肯定有单位元；
-2. 既然 $H$ 中逆元存在，有 $y = x \cdot h$， 自然有 $x = y \cdot h^{-1}$ 且
-   $h^{-1} \in H$；
-3. $z = y \cdot h_1, \ y = x \cdot h_2 \Rightarrow z = x \cdot h_2h_1$，又
-   $h_2h_1 \in H$，自然得证。
+2. 既然 $H$ 中逆元存在，有 $y = x \cdot h$， 自然有 $x = y \cdot h^{-1}$ 且 $h^{-1} \in H$；
+3. $z = y \cdot h_1, \ y = x \cdot h_2 \Rightarrow z = x \cdot h_2h_1$，又 $h_2h_1 \in H$，自然得证。
 
 :::
 
@@ -185,7 +179,7 @@ $x \sim y := x \in yH$ 是一个等价关系，这意味着我们可以借助陪
 
 - 若 $xH \cap yH \neq \emptyset$，则 $xH = yH$；
 - 利用陪集可以对群 $G$ 进行划分（陪集分解）：
-
+  
   $$
   G = \bigcup\limits_{g \in R} gH \text{（两两不相交之并）}
   $$
@@ -194,10 +188,7 @@ $x \sim y := x \in yH$ 是一个等价关系，这意味着我们可以借助陪
 
 既然是等价关系，那么可以得到这里的推论。
 
-这里展现了对于群 $G$ 的左陪集分解，类似地 $R$ 称作 $G$ 对 $H$
-左陪集的代表元系。$R$ 由 $G$
-中的元素构成，并且这些用元素生成的左陪集彼此互不相同，与此同时这些左陪集的并集恰好为
-$G$。
+这里展现了对于群 $G$ 的左陪集分解，类似地 $R$ 称作 $G$ 对 $H$ 左陪集的代表元系。$R$ 由 $G$ 中的元素构成，并且这些用元素生成的左陪集彼此互不相同，与此同时这些左陪集的并集恰好为 $G$。
 
 :::
 
@@ -206,16 +197,15 @@ $G$。
 - 对于 $a, b \in H, g \in G$，由消去律 $a \neq b \Leftrightarrow ga \neq gb$；
 - 因此，$\forall g \in R, \ |gH| = |H|$:
   $$
-  |G| = \sum\limits_{g \in R} |gH|
-  = \sum\limits_{g \in R} |H|
+  |G| = \sum\limits_{g \in R} |gH| 
+  = \sum\limits_{g \in R} |H| 
   = |R| \cdot |H|
   $$
 
+
 ::: { .notes }
 
-利用群 $G$ 的一个子群 $H$，我们可以借助陪集对 $G$ 进行划分。换句话说，群 $G$
-一定可以表示成若干个 $H$
-的互不相交的左（右）陪集之并，同时这些陪集的大小都是相同的。
+利用群 $G$ 的一个子群 $H$，我们可以借助陪集对 $G$ 进行划分。换句话说，群 $G$ 一定可以表示成若干个 $H$ 的互不相交的左（右）陪集之并，同时这些陪集的大小都是相同的。
 
 把 $|R|$ 记作群 $H$ 对群 $G$ 的指数 $[G : H]$，就可以得到拉格朗日定理……
 
@@ -242,7 +232,7 @@ $$
 一个集合的**置换 (permutation)** 即从该集合映射至自身的双射。
 
 $$
-\sigma =
+\sigma = 
 \left(\begin{array}{cccc}
 1 & 2 & \dots & n \\
 \sigma(1) & \sigma(2) & \dots & \sigma(n)
@@ -266,9 +256,9 @@ $$
 ---
 
 $$
-\left(\begin{array}{cccccc}
-1 & 2 & 3 & 4 & 5 & 6 \\
-4 & 5 & 1 & 3 & 6 & 2
+\left(\begin{array}{cccccc} 
+1 & 2 & 3 & 4 & 5 & 6 \\ 
+4 & 5 & 1 & 3 & 6 & 2 
 \end{array}\right)
 $$
 
@@ -285,6 +275,7 @@ $$
 
 :::
 
+
 ::: { .notes }
 
 如果可以的话，这就意味着我们发现了一种能够更简单表示置换的方式（也就是后面要介绍的轮换表示法）。
@@ -293,7 +284,7 @@ $$
 
 ## 轮换表示法 { #cycle-notation }
 
-$$
+$$ 
 \left(\begin{array}{cccc}
 a_1 & a_2 & \dots & a_n \\
 a_2 & a_3 & \dots & a_1
@@ -303,9 +294,9 @@ $$
 ---
 
 $$
-\left(\begin{array}{cccccc}
-1 & 2 & 3 & 4 & 5 & 6 \\
-4 & 5 & 1 & 3 & 6 & 2
+\left(\begin{array}{cccccc} 
+1 & 2 & 3 & 4 & 5 & 6 \\ 
+4 & 5 & 1 & 3 & 6 & 2 
 \end{array}\right)
 = (1 \enspace 4 \enspace 3) \cdot (2 \enspace 5 \enspace 6)
 $$
@@ -318,8 +309,7 @@ $$
 
 ::: { .notes }
 
-显然不交的轮换在复合时是满足交换律的，但是如果两个轮换相交就不好说了，例如试试计算 (1
-2 3) _ (3 4) 是否等于 (3 4) _ (1 2 3)。
+显然不交的轮换在复合时是满足交换律的，但是如果两个轮换相交就不好说了，例如试试计算 (1 2 3) * (3 4) 是否等于 (3 4) * (1 2 3)。
 
 :::
 
@@ -335,7 +325,7 @@ $$
     $$
     是一个轮换。
 
----
+--- 
 
 - 对于每个这样的 $i$ 都如此操作即可构造出一个唯一的不相交轮换分解式：
   - 每个元素在分解式中恰好出现 $1$ 次；
@@ -398,22 +388,20 @@ $$
 
 - $\sigma^t(a_i) = a_{[(i + t) \bmod n]}$
 - 令 $k \in N^{*} \text{ \ s.t. \ } \sigma^{tk}(a_i) = a_i$：
-
+  
 ::: { .fragment .current-visible style="height:0" }
-
 $$
 i + tk \equiv i \pmod n
 $$
-
 :::
 
 ::: { .fragment }
-
 $$
 tk \equiv 0 \pmod n
 $$
 
-最小正整数解：$k = \frac{n}{\gcd(n, t)}$ :::
+最小正整数解：$k = \frac{n}{\gcd(n, t)}$
+:::
 
 ---
 
@@ -426,7 +414,8 @@ $$
 
   ::: { .fragment }
   - $a_i$ 所在轮换内元素下标模 $\gcd(n, t)$ 均为 $i$；
-  - $a_0, a_1, \dots a_{\gcd(n, t) - 1}$ 一定位于不同轮换。:::
+  - $a_0, a_1, \dots a_{\gcd(n, t) - 1}$ 一定位于不同轮换。
+  :::
 
 ::: { .notes }
 
@@ -434,15 +423,15 @@ $$
 
 💡 提示：
 
-1. $\because \gcd(n, t) \mid t, \ \therefore \ i + jt \equiv i \pmod {\gcd(n, t)}$
+1. $\because \gcd(n, t) \mid t, \ \therefore \ i + jt \equiv i \pmod {\gcd(n, t)}$ 
 2. 可看作上一条的推论。
 
 :::
 
+
 ## 置换群 { #permutation-group }
 
-$n$ 个元的所有置换，在复合运算 $\circ$ 下成群，称作 $n$ 元**对称群 (symmetric
-group)**，记作 $S_n$
+$n$ 个元的所有置换，在复合运算 $\circ$ 下成群，称作 $n$ 元**对称群 (symmetric group)**，记作 $S_n$
 
 - **结合律**：$(\sigma \circ \tau) \circ \phi = \sigma \circ (\tau \circ \phi)$
 - **单位元**：恒等置换 $\epsilon \circ x = x$；
@@ -469,8 +458,7 @@ $$
 
 ::: { .notes }
 
-$G$ 是一个群（这里我们就看成置换群），$M$ 是一个集合。如果存在这样的映射 $\phi$
-并且满足上述条件，那么我们称群 $G$ 在集合 $M$ 上有群作用。
+$G$ 是一个群（这里我们就看成置换群），$M$ 是一个集合。如果存在这样的映射 $\phi$ 并且满足上述条件，那么我们称群 $G$ 在集合 $M$ 上有群作用。
 
 根据 Cayley 定理，每个群均同构于某个置换群。有了这个前提可能会更好理解群在集合上的作用。但是今天碍于主题，我们主要探讨置换群对于集合的作用。
 
@@ -495,12 +483,11 @@ M & = \{ \text{不考虑同构时的染色方案} \}
 \end{aligned}
 $$
 
-:::
+::: 
 
 ::: { .fragment }
 
-![不考虑同构时的染色方案](./ga-example-2.png){ .plain
-style="background:transparent" }
+![不考虑同构时的染色方案](./ga-example-2.png){ .plain style="background:transparent" }
 
 :::
 
@@ -527,11 +514,8 @@ style="background:transparent" }
 ::: { .notes }
 
 - 图1：
-  - 可以看到 $G \times M$ 后并不会产生新的元素，也就是说 $G \times M$ 和 $M$
-    是一样大的。
-  - 存在单位置换（旋转
-    $0^\circ$）使得它与任何一个染色方案作用都不发生变化；多个旋转作用于染色方案也是满足结合律的。所以这里我们称
-    $G$ 对 $M$ 有群作用。
+  - 可以看到 $G \times M$ 后并不会产生新的元素，也就是说 $G \times M$ 和 $M$ 是一样大的。
+  - 存在单位置换（旋转 $0^\circ$）使得它与任何一个染色方案作用都不发生变化；多个旋转作用于染色方案也是满足结合律的。所以这里我们称 $G$ 对 $M$ 有群作用。
 - 图2：
   - 比如所有置换作用于第二个染色方案，我们实际上得到的就是与第二个方案等价的染色方案，并且我们得到的这些染色方案都是存在于原始集合里面的。
 
@@ -564,11 +548,9 @@ $$
 
 ::: { .notes }
 
-就比如刚刚对三角形着色的例子里，对于第二个染色方案分别用
-$0^\circ, 120^\circ, 240^\circ$ 的旋转作用于它，便可以得到过它的轨道。
+就比如刚刚对三角形着色的例子里，对于第二个染色方案分别用 $0^\circ, 120^\circ, 240^\circ$ 的旋转作用于它，便可以得到过它的轨道。
 
-其实本质上就是等价类…… 部分地方记作
-$\mathcal{O}_G(x)$，也有的地方直接用等价类的符号 $[x]$。
+其实本质上就是等价类…… 部分地方记作 $\mathcal{O}_G(x)$，也有的地方直接用等价类的符号 $[x]$。
 
 :::
 
@@ -584,8 +566,7 @@ $$
 
 - **自反性**：$x \in \text{orb}_G(x)$；
 - **对称性**：若 $y \in \text{orb}_G(x)$，则 $x \in \text{orb}_G(y)$；
-- **传递性**：若 $z \in \text{orb}_G(y), y \in \text{orb}_G(x)$，则
-  $z \in \text{orb}_G(x)$。
+- **传递性**：若 $z \in \text{orb}_G(y), y \in \text{orb}_G(x)$，则 $z \in \text{orb}_G(x)$。
 
 ::: { .notes }
 
@@ -595,23 +576,21 @@ $$
 
 1. 既然是置换群，必然有恒等置换；
 2. 既然置换群中逆元存在，有能把 x 变成 y 的置换则一定也有能把 y 变成 x 的置换；
-3. 既然置换群中的运算封闭，若有置换能使 x -> y，另一置换能使 y ->
-   z，则一定有一个置换能使 x -> z。
+3. 既然置换群中的运算封闭，若有置换能使 x -> y，另一置换能使 y -> z，则一定有一个置换能使 x -> z。
 
 :::
 
 ---
 
-- 若 $\text{orb}_G(x) \cap \text{orb}_G(y) \neq \emptyset$，则
-  $\text{orb}_G(x) = \text{orb}_G(y)$；
-- 在 $M$ 的每一条轨道上取一个元素组成 $M$ 的一个子集 $R$，称为 $M$
-  的**轨道的代表元集**，则：
+- 若 $\text{orb}_G(x) \cap \text{orb}_G(y) \neq \emptyset$，则 $\text{orb}_G(x) = \text{orb}_G(y)$；
+- 在 $M$ 的每一条轨道上取一个元素组成 $M$ 的一个子集 $R$，称为 $M$ 的**轨道的代表元集**，则：
 
   $$
   M = \bigcup\limits_{x \in R} \text{orb}_G(x)
   $$
 
   并且此中各 $\text{orb}_G(x)$ 互不相交。
+
 
 ## 稳定子 { #stabilizer }
 
@@ -631,8 +610,7 @@ $$
 
 ::: { .notes }
 
-稳定子里面的元素都是置换，集合 $M$
-里面某个元素的稳定子包含所有使它不发生变化的置换。
+稳定子里面的元素都是置换，集合 $M$ 里面某个元素的稳定子包含所有使它不发生变化的置换。
 
 又称固定子群、稳定子群、稳定化子…… 有的地方也写成 $G_m$ 或 $G^m$。
 
@@ -644,8 +622,7 @@ $$
 
 ::: { .notes }
 
-对于第一种和最后一种染色方案而言，其稳定子里面的元素就是三个置换，而对于其他染色方案稳定子都只有一个，就是旋转
-$0^\circ$ 的置换。
+对于第一种和最后一种染色方案而言，其稳定子里面的元素就是三个置换，而对于其他染色方案稳定子都只有一个，就是旋转 $0^\circ$ 的置换。
 
 :::
 
@@ -657,8 +634,7 @@ $$
 
 ::: { .fragment }
 
-- **封闭性**：$\forall \sigma, \tau \in \text{stab}_G(x)$，$\sigma \circ \tau \circ x = \sigma \circ x = x$，故
-  $(\sigma \circ \tau) \in \text{stab}_G(x)$；
+- **封闭性**：$\forall \sigma, \tau \in \text{stab}_G(x)$，$\sigma \circ \tau \circ x = \sigma \circ x = x$，故 $(\sigma \circ \tau) \in \text{stab}_G(x)$；
 - **结合律**：显然置换的复合满足结合律；
 - **单位元**：恒等置换 $\epsilon \circ x = x$；
 - **逆元**：$\forall \sigma \in \text{stab}_G(x)$，$\sigma^{-1} \circ x = \sigma^{-1} \circ (\sigma \circ x) = \epsilon(x) = x$。
@@ -671,7 +647,7 @@ $$
 \text{stab}_G(x) = \{ \sigma \circ x = x \mid \sigma \in G \} \le G
 $$
 
-::: { .fragment .current-visible style="height:0" data-fragment-index="1" }
+::: { .fragment .current-visible style="height:0" data-fragment-index="1"  }
 
 - 既然是子群，那可以用来对 $G$ 进行左陪集划分；
 
@@ -679,8 +655,7 @@ $$
 
 ::: { .fragment data-fragment-index="2" }
 
-- $\beta \text{stab}_G(x)$ 里的元素相当于作用于 $x$ 时 $G$ 中所有与 $\beta$
-  等价的置换：
+- $\beta \text{stab}_G(x)$ 里的元素相当于作用于 $x$ 时 $G$ 中所有与 $\beta$ 等价的置换：
 
 :::
 
@@ -748,19 +723,17 @@ $$
 
 ::: { .notes }
 
-稳定子是固定 $x$ 找 $\sigma$，而不动元是固定 $\sigma$ 找
-$m$，故对于下面的等式两边本质上只是换了一下遍历的顺序。
+稳定子是固定 $x$ 找 $\sigma$，而不动元是固定 $\sigma$ 找 $m$，故对于下面的等式两边本质上只是换了一下遍历的顺序。
 
 :::
 
 ---
 
-- 每个轨道对轨道数贡献为 $1$，故 $x \in M$ 对答案的贡献为
-  $\frac{1}{\mid \text{orb}_G(x) \mid}$：
+- 每个轨道对轨道数贡献为 $1$，故 $x \in M$ 对答案的贡献为 $\frac{1}{\mid \text{orb}_G(x) \mid}$：
 
 $$
   \begin{aligned}
-  | M/G |
+  | M/G | 
   & = \sum\limits_{x \in M} \frac{1}{ \mid \text{orb}_G(x) \mid } \\
   & = \sum\limits_{x \in M}\frac{ \mid \text{stab}_G(x) \mid }{ |G| } \text{（轨道-稳定子定理）} \\
   & = \frac{1}{|G|}\sum\limits_{\sigma \in G} \mid \text{fix}(\sigma) \mid
@@ -769,8 +742,7 @@ $$
 
 ---
 
-对正六边形的 $6$
-个顶点，一半涂黑一半涂白。若经旋转可得到的方案算相同方案，求方案数？
+对正六边形的 $6$ 个顶点，一半涂黑一半涂白。若经旋转可得到的方案算相同方案，求方案数？
 
 ::: { .fragment }
 
@@ -791,9 +763,9 @@ $$
 ### 旋转 $0^\circ$
 
 $$
-\left(\begin{array}{cccccc}
-A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\
-A_1 & A_2 & A_3 & A_4 & A_5 & A_6
+\left(\begin{array}{cccccc} 
+A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\ 
+A_1 & A_2 & A_3 & A_4 & A_5 & A_6 
 \end{array}\right)
 $$
 
@@ -804,9 +776,9 @@ $$
 ### 旋转 $60^\circ$
 
 $$
-\left(\begin{array}{cccccc}
-A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\
-A_6 & A_1 & A_2 & A_3 & A_4 & A_5
+\left(\begin{array}{cccccc} 
+A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\ 
+A_6 & A_1 & A_2 & A_3 & A_4 & A_5 
 \end{array}\right)
 $$
 
@@ -823,9 +795,9 @@ $$
 ### 旋转 $120^\circ$
 
 $$
-\left(\begin{array}{cccccc}
-A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\
-A_5 & A_6 & A_1 & A_2 & A_3 & A_4
+\left(\begin{array}{cccccc} 
+A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\ 
+A_5 & A_6 & A_1 & A_2 & A_3 & A_4 
 \end{array}\right)
 $$
 
@@ -842,9 +814,9 @@ $$
 ### 旋转 $180^\circ$
 
 $$
-\left(\begin{array}{cccccc}
-A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\
-A_4 & A_5 & A_6 & A_1 & A_2 & A_3
+\left(\begin{array}{cccccc} 
+A_1 & A_2 & A_3 & A_4 & A_5 & A_6 \\ 
+A_4 & A_5 & A_6 & A_1 & A_2 & A_3 
 \end{array}\right)
 $$
 
@@ -863,18 +835,18 @@ $$
 
 轨道数：$\frac{1}{6}(20 + 2 + 2) = 4$
 
+
+
 # Pólya 计数定理 { #polya-enumeration-theorem }
 
 - 将置换表示为若干轮换乘积，若轮换内元素颜色均相同即为不动元（这样才能保证每一个点变成新点后的颜色与原先一致）；
-- 记染色可选的颜色数为 $m$， $c(\sigma)$ 为置换 $\sigma$
-  被分解为不交轮换乘积的个数，则：
+- 记染色可选的颜色数为 $m$， $c(\sigma)$ 为置换 $\sigma$ 被分解为不交轮换乘积的个数，则：
 
   ::: { .fragment .current-visible style="height:0" }
-
+  
   $$
   \text{fix}(\sigma) = m^{c(\sigma)}
   $$
-
   :::
 
   ::: { .fragment }
@@ -887,9 +859,7 @@ $$
 
 ::: { .notes }
 
-前面讲到了置换 $\sigma$
-可以被拆成若干个长度相等的映射链，也就是若干个大小相等的轮换。考虑在原始的（不考虑同构）的染色方案集合里，什么样的元素会成为置换
-$\sigma$ 的下的不动元？
+前面讲到了置换 $\sigma$ 可以被拆成若干个长度相等的映射链，也就是若干个大小相等的轮换。考虑在原始的（不考虑同构）的染色方案集合里，什么样的元素会成为置换 $\sigma$ 的下的不动元？
 
 是不是只要每个轮换内的点我染的颜色都一样，那么是不是就成为不动元了…… 那么根据乘法原理就可以得到 Pólya 计数定理了。
 
@@ -897,17 +867,14 @@ $\sigma$ 的下的不动元？
 
 # 小结 { #a-breif-summary }
 
-- [关系](#relation) | [等价关系](#equivalence-relation) |
-  [等价类](#equivalence-class)
+- [关系](#relation) | [等价关系](#equivalence-relation) | [等价类](#equivalence-class)
   - 对集合分类：等价类 $[a]$ 内的元素都与存在 $a$ 等价关系；
 - [群](#group) | [子群](#subgroup) | [陪集](#coset)
   - 对群分类：陪集 $gH$ 里的所有元素都与 $g$ 存在等价关系；
 - [群在集合上的作用](#group-action)
   - [轨道](#orbit)：$M$ 的子集，在 $G$ 作用下与 $x$ 等价的元素；
   - [稳定子](#stabilizer)：$G$ 的子群，对于 $x$ 而言 $G$ 中等价的置换；
-  - [轨道-稳定子定理](#orbit-stabilizer-theorem) |
-    [Burnside 引理](#burnside-lemma) |
-    [Pólya 计数法](#polya-enumeration-theorem)
+  - [轨道-稳定子定理](#orbit-stabilizer-theorem) | [Burnside 引理](#burnside-lemma) | [Pólya 计数法](#polya-enumeration-theorem)
 
 # 项链染色 { #coloring-necklace }
 
@@ -951,43 +918,40 @@ $G$ 中复合运算封闭吗？
   \tau_a(i) =
   \begin{cases}
   i & i = a \text{ \ or \ } a \text{ 对面的点 } \\
-  (2a - i) \bmod n & \text{ otherwise }
+  (2a - i) \bmod n & \text{ otherwise } 
   \end{cases}
   $$
 
 ::: { .fragment .current-visible style="height:0" }
 
-- 注：若 $n$ 为偶数，则翻转对称轴可能同时过两条边的中点。这等同于共有 $2n$
-  个点且不考虑此类对称轴的情况，故下面暂不考虑这种对称轴。
+- 注：若 $n$ 为偶数，则翻转对称轴可能同时过两条边的中点。这等同于共有 $2n$ 个点且不考虑此类对称轴的情况，故下面暂不考虑这种对称轴。
 
 :::
 
 ::: { .fragment .current-visible style="height:0" }
 
 - 考虑 $i \neq a$ 的情况（$i = a$ 显然封闭），若 $2 \mid k$：
-  $$
-  \sigma_k \circ \tau_a \circ i = (2a - i + k) \bmod n = \tau_{(a + \frac{k}{2}) \bmod n}
-  $$
+$$
+\sigma_k \circ \tau_a \circ i = (2a - i + k) \bmod n = \tau_{(a + \frac{k}{2}) \bmod n}
+$$
 
 :::
 
 ::: { .fragment }
 
 - 考虑 $i \neq a$ 的情况（$i = a$ 显然封闭），若 $2 \nmid k$：
-  $$
-  \sigma_k \circ \tau_a \circ i = (2a - i + k) \bmod n = \tau_{(a + \frac{n + k}{2}) \bmod n}
-  $$
+$$
+\sigma_k \circ \tau_a \circ i = (2a - i + k) \bmod n = \tau_{(a + \frac{n + k}{2}) \bmod n}
+$$
 
 :::
+
 
 ::: { .notes }
 
 $n$ 为偶数时，对称轴过两个点；而 $n$ 为奇数时，对称轴过一个点和一条边。
 
-另外 对于 $n$
-为偶数时，由于对称轴可以同时过两条边，因此考虑的时候不妨在每条边中间再加一个点，即考虑
-$2n$
-个点围成的环只过点的对称轴…… （因为上面只说明了过点的对称轴，所以不妨这么理解qwq）。
+另外 对于 $n$ 为偶数时，由于对称轴可以同时过两条边，因此考虑的时候不妨在每条边中间再加一个点，即考虑 $2n$ 个点围成的环只过点的对称轴…… （因为上面只说明了过点的对称轴，所以不妨这么理解qwq）。
 
 可能有点不严密，大家自己推一推应该也能发现是正确的（逃
 
@@ -1007,8 +971,7 @@ $$
 
 ::: { .notes }
 
-旋转 $\frac{2\pi}{n}$
-时显然只能拆成一个轮换。回忆前面关于快速求轮换幂的相关内容。
+旋转 $\frac{2\pi}{n}$ 时显然只能拆成一个轮换。回忆前面关于快速求轮换幂的相关内容。
 
 然而现在复杂度是 $\mathcal{O}(N)$ 的，需要借助数论知识进一步优化……
 
@@ -1018,7 +981,7 @@ $$
 
 $$
 \begin{aligned}
-\sum\limits_{g \in G} \mid \text{fix}(\sigma) \mid
+\sum\limits_{g \in G} \mid \text{fix}(\sigma) \mid 
 & = \sum\limits_{i = 1}^{n} m^{\gcd(n, i)} \\
 & = \sum\limits_{d \mid n} m^d \sum\limits_{i = 1}^{n} [ \gcd(n, i) = d ] \\
 & =\sum\limits_{d \mid n} m^d \sum\limits_{i = 1}^{\frac{n}{d}} [ \gcd(\frac{n}{d}, i) = 1 ] \\
@@ -1034,10 +997,10 @@ $$
 - $n$ 为偶数：
   - $\frac{n}{2}$ 条过点的对称轴：$c(\tau) = \frac{n}{2} + 1$
   - $\frac{n}{2}$ 条过边的对称轴：$c(\tau) = \frac{n}{2}$
-    $$
-    \sum\limits_{\tau} \mid \text{fix}(\tau) \mid
-    = \frac{n}{2} \cdot m^{\frac{n}{2} + 1} + \frac{n}{2} \cdot m^{\frac{n}{2}}
-    $$
+$$
+\sum\limits_{\tau} \mid \text{fix}(\tau) \mid 
+= \frac{n}{2} \cdot m^{\frac{n}{2} + 1} + \frac{n}{2} \cdot m^{\frac{n}{2}} 
+$$
 
 ---
 
@@ -1045,8 +1008,8 @@ $$
   - $n$ 条 既过点又过边的对称轴：$c(\tau) = \frac{n + 1}{2}$
 
   $$
-  \sum\limits_{\tau} \mid \text{fix}(\tau) \mid
-  = n \cdot m^{\frac{n + 1}{2}}
+  \sum\limits_{\tau} \mid \text{fix}(\tau) \mid 
+= n \cdot m^{\frac{n + 1}{2}}
   $$
 
 ## 结论 { #cn-finale }
@@ -1066,16 +1029,13 @@ $$
 
 # 南昌 J. Summon { #icpc-2019-nanchang-j }
 
-现要从 $4$ 种不同的水晶中取 $n$ 个围成一个圈，但有 $m$
-个限制条件：每条限制条件要求某四种水晶不能在围成的圈中连续出现。通过旋转可互相得到的方案算作一种方案，问有多少种本质不同的方案？（结果模
-$998244353$）
+现要从 $4$ 种不同的水晶中取 $n$ 个围成一个圈，但有 $m$ 个限制条件：每条限制条件要求某四种水晶不能在围成的圈中连续出现。通过旋转可互相得到的方案算作一种方案，问有多少种本质不同的方案？（结果模 $998244353$）
 
 $n \le 10^5, m \le 256$
 
 ::: { .notes }
 
-这其实是去年老刘专题里面一道题的稍微加强版…… 原题是要求某两种不能连续，这里改成了某四种……（POJ
-2888）
+这其实是去年老刘专题里面一道题的稍微加强版…… 原题是要求某两种不能连续，这里改成了某四种……（POJ 2888）
 
 :::
 
@@ -1110,16 +1070,13 @@ $$
 
 ::: { .fragment }
 
-**对于旋转 $i \frac{2\pi}{n}$ 这一置换，只需确定前 $\gcd(n, i)$
-个元素的颜色即可知道该置换下不动元数量！**
+**对于旋转 $i \frac{2\pi}{n}$ 这一置换，只需确定前 $\gcd(n, i)$ 个元素的颜色即可知道该置换下不动元数量！**
 
 :::
 
 ::: { .notes }
 
-换句话说，前 $\gcd(n, i)$
-个元素一定是位于不同轮换内的。对于不动点而言，既然同一轮换内染色方案一致，那么整个染色方案完全就是由前
-$\gcd(n, i)$ 个元素一直往后复制这样生成的（逃
+换句话说，前 $\gcd(n, i)$ 个元素一定是位于不同轮换内的。对于不动点而言，既然同一轮换内染色方案一致，那么整个染色方案完全就是由前 $\gcd(n, i)$ 个元素一直往后复制这样生成的（逃
 
 可以考虑 DP。
 
@@ -1127,8 +1084,7 @@ $\gcd(n, i)$ 个元素一直往后复制这样生成的（逃
 
 ## DP 求不动元数量 { #ncj-dp }
 
-- 记 $\text{v} \langle a, b, c, d \rangle$ 代表是否允许 $a, b, c, d$
-  四种颜色相邻；
+- 记 $\text{v} \langle a, b, c, d \rangle$ 代表是否允许 $a, b, c, d$ 四种颜色相邻；
 
 $$
 \text{v} \langle a, b, c, d \rangle =
@@ -1140,8 +1096,7 @@ $$
 
 ---
 
-- 记 $\text{dp} \langle i, a, b, c \rangle$ 代表 $i$ 个元素排成一排，最后 $3$
-  个元素的颜色分别为 $a, b, c$ 的方案数：
+- 记 $\text{dp} \langle i, a, b, c \rangle$ 代表 $i$ 个元素排成一排，最后 $3$ 个元素的颜色分别为 $a, b, c$ 的方案数：
   $$
   \text{dp} \langle i, a, b, c \rangle = \sum\limits_{k} \text{v} \langle k, a, b, c \rangle \cdot \text{dp} \langle i - 1, k, a, b \rangle
   $$
@@ -1150,19 +1105,17 @@ $$
 
 - 枚举前 $3$ 个元素的颜色 $\langle a, b, c \rangle$：
   - 只初始化 $\text{dp} \langle 3, a, b, c \rangle = 1$；
-  - $\text{dp} \langle m + 3, a, b, c \rangle$ 即为 $m$
-    个元素围成环时不动元方案数。
+  - $\text{dp} \langle m + 3, a, b, c \rangle$ 即为 $m$ 个元素围成环时不动元方案数。
 
 :::
 
 ::: { .notes }
 
-对于环上的问题不方便考虑的话不妨先拆成链上的问题考虑（就不用考虑首尾是否满足条件）……
+对于环上的问题不方便考虑的话不妨先拆成链上的问题考虑（就不用考虑首尾是否满足条件）…… 
 
 最后要考虑首尾的情况的时候，不妨在尾多 DP 三个元素，然后只取首三个元素与末三个元素相同的方案。
 
-这样做一次 DP 复杂度是 $\mathcal{O}(64^3 N)$
-的…… 而且对于每一种置换都要做一次…… 显然复杂度不可以接受。
+这样做一次 DP 复杂度是 $\mathcal{O}(64^3 N)$ 的…… 而且对于每一种置换都要做一次…… 显然复杂度不可以接受。
 
 看看能不能用矩阵快速幂优化。
 
@@ -1212,8 +1165,7 @@ $$
 
 ::: { .notes }
 
-可以把后三个连续颜色 $<a, b, c>$ 看出一个可以用 $0 \sim 63$
-表示的一个状态，就更好理解了……
+可以把后三个连续颜色 $<a, b, c>$ 看出一个可以用 $0 \sim 63$ 表示的一个状态，就更好理解了……
 
 $T$ 中其余元素都是 $0$。
 
@@ -1222,33 +1174,33 @@ $T$ 中其余元素都是 $0$。
 ---
 
 - 枚举前三 $3$ 个元素的颜色 $\langle a, b, c \rangle$ 时，初始化：
-  $$
-  \begin{aligned}
-    \begin{bmatrix}
-      1 \\
-      0 \\
-      \vdots \\
-      0
-    \end{bmatrix}
-  \end{aligned},
-  \begin{aligned}
-    \begin{bmatrix}
-      0 \\
-      1 \\
-      \vdots \\
-      0
-    \end{bmatrix}
-  \end{aligned},
-  \dots,
-  \begin{aligned}
-    \begin{bmatrix}
-      0 \\
-      0 \\
-      \vdots \\
-      1
-    \end{bmatrix}
-  \end{aligned}
-  $$
+$$
+\begin{aligned}
+  \begin{bmatrix}
+    1 \\
+    0 \\
+    \vdots \\
+    0
+  \end{bmatrix}
+\end{aligned},
+\begin{aligned}
+  \begin{bmatrix}
+    0 \\
+    1 \\
+    \vdots \\
+    0
+  \end{bmatrix}
+\end{aligned},
+\dots, 
+\begin{aligned}
+  \begin{bmatrix}
+    0 \\
+    0 \\
+    \vdots \\
+    1
+  \end{bmatrix}
+\end{aligned}
+$$
 - 等价于 $T^{n}$ 直接乘上单位矩阵；
 - $T^{n}$ 主对角线元素之和即为所有不动元数量。
 
@@ -1271,17 +1223,17 @@ $T$ 中其余元素都是 $0$。
 
 $$
 \begin{aligned}
-\sum\limits_{\sigma \in G} \mid \text{fix}(\sigma) \mid
+\sum\limits_{\sigma \in G} \mid \text{fix}(\sigma) \mid 
 & = \sum\limits_{i = 1}^{n} f(\gcd(n, i)) \\
 & = \sum\limits_{d \mid n} f(d) \cdot \sum\limits_{i = 1}^{n} [\gcd(n, i) = d] \\
 & = \sum\limits_{d \mid n} f(d) \cdot \varphi(\frac{n}{d})
 \end{aligned}
 $$
 
-- 复杂度： $\mathcal{O}(d(n) \cdot 64^3\log{n})$，其中 $d(n)$ 代表 $n$
-  的约数个数。
+- 复杂度： $\mathcal{O}(d(n) \cdot 64^3\log{n})$，其中 $d(n)$ 代表 $n$ 的约数个数。
 
 :::
+
 
 # 无向图同构计数 { #coloring-undirected-graph }
 
@@ -1293,7 +1245,7 @@ $n \le 60, \ m \le 10^3$
 
 - 两张图若**对点重标号**后可以重合即为同构；
 - 把边的不存在当作一种颜色可将其推广至一般无向图同构。
-
+  
 :::
 
 ## 分析 { #cug-analysis }
@@ -1390,8 +1342,7 @@ $$
 $$
 
 - 若 $2 \nmid l$，则 $i \equiv j \pmod l$，无法构成边；
-- 若 $2 \mid l$，则 $i \equiv j \pmod {\frac{l}{2}}$，最小非负
-  $t = \frac{l}{2}$。
+- 若 $2 \mid l$，则 $i \equiv j \pmod {\frac{l}{2}}$，最小非负 $t = \frac{l}{2}$。
 
 :::
 
@@ -1410,15 +1361,13 @@ $$
 - 对于边 $\langle a_i, a_j \rangle$ 所在的边轮换：
   - 若 $2 \mid l$ 且 $\mid j - i \mid = \frac{l}{2}$，则其大小为 $\frac{l}{2}$；
   - 否则其大小为 $l$；
-- $\mid j - i \mid \bmod l$ 相同的边在同一边轮换内，故边轮换个数为
-  $\lfloor \frac{l}{2} \rfloor$。
+- $\mid j - i \mid \bmod l$ 相同的边在同一边轮换内，故边轮换个数为 $\lfloor \frac{l}{2} \rfloor$。
 
 ::: { .notes }
 
 换句话说：
 
-- 两点在相同且大小为 $l$ 的点轮换里的边共可构成 $\lfloor \frac{l}{2} \rfloor$
-  个边轮换，其中：
+- 两点在相同且大小为 $l$ 的点轮换里的边共可构成 $\lfloor \frac{l}{2} \rfloor$ 个边轮换，其中：
   - 若 $2 \nmid l$，则每个边轮换大小均为 $l$；
   - 若 $2 \mid l$，则一个边轮换大小为 $\frac{l}{2}$，其余边轮换大小为 $l$。
 
@@ -1453,8 +1402,7 @@ j + t \equiv j \pmod s
 \end{cases}
 $$
 
-- 每个边轮换大小为 $\text{lcm}(l, s)$，共
-  $\frac{ls}{\text{lcm}(l, s)} = \gcd(l, s)$ 个。
+- 每个边轮换大小为 $\text{lcm}(l, s)$，共 $\frac{ls}{\text{lcm}(l, s)} = \gcd(l, s)$ 个。
 
 :::
 
@@ -1514,19 +1462,19 @@ $$
 
 - 再考虑轮换内的顺序（圆排列）：
   - 比如 $(1 \enspace 2 \enspace 3)$ 和 $(1 \enspace 3 \enspace 2)$ 算不同的置换
-    $$
-    \frac{n!}{\prod\limits_{i = 1}^{k} l_i!} \cdot \prod\limits_{i = 1}^{k} (l_i - 1)!
-    $$
+  $$
+  \frac{n!}{\prod\limits_{i = 1}^{k} l_i!} \cdot \prod\limits_{i = 1}^{k} (l_i - 1)!
+  $$
 
 :::
 
 ::: { .fragment }
 
 - 对于长度相等的轮换，其之间的顺序不计。
-  - 记共有 $s$ 种不同长度的轮换，其中第 $i$ 种轮换的个数为 $q_i$，则：
-    $$
-    \frac{n!}{\prod\limits_{i = 1}^{k} l_i} \cdot \prod\limits_{i = 1}^{s} \frac{1}{q_i!}
-    $$
+  - 记共有 $s$ 种不同长度的轮换，其中第 $i$ 种轮换的个数为 $q_i$，则： 
+  $$
+  \frac{n!}{\prod\limits_{i = 1}^{k} l_i} \cdot \prod\limits_{i = 1}^{s} \frac{1}{q_i!}
+  $$
 
 :::
 
@@ -1550,15 +1498,12 @@ $$
 \end{aligned}
 $$
 
-- 复杂度
-  $\mathcal{O} \left( \sum\limits_{p \in \text{Partition}(n)} \text{len}^2(p) \cdot \log{n} \right)$
-- 其实题目数据范围内 $\text{Partition}(n)$ 大小不大…… 所以
-  $\mathcal{O}(\text{能过})$。
+- 复杂度 $\mathcal{O} \left( \sum\limits_{p \in \text{Partition}(n)} \text{len}^2(p) \cdot \log{n} \right)$
+- 其实题目数据范围内 $\text{Partition}(n)$ 大小不大…… 所以 $\mathcal{O}(\text{能过})$。
 
 ::: { .notes }
 
-$\text{Partition}(n)$ 指 $n$ 的拆分方案数，而 $\text{len}(p)$ 指拆分方案 $p$
-的长度（即拆成了多少个点轮换）
+$\text{Partition}(n)$ 指 $n$ 的拆分方案数，而 $\text{len}(p)$ 指拆分方案 $p$ 的长度（即拆成了多少个点轮换） 
 
 :::
 
@@ -1571,6 +1516,7 @@ $\text{Partition}(n)$ 指 $n$ 的拆分方案数，而 $\text{len}(p)$ 指拆分
 - 点轮换和边轮换之间的关系？
 - 只关心边轮换个数，其只与点轮换的大小情况有关，枚举点轮换的大小情况……
 
+  
 # 谢谢大家 { #finale }
 
 ## 相关题目 #1 { #probset-1 }
