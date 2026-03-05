@@ -19,6 +19,7 @@ module Context
     homeCtx,
     postMetaCtx,
     dateCtx,
+    tocCtx,
 
     -- * List contexts
     friendsCtx,
@@ -123,6 +124,20 @@ dateCtx =
   dateField "date" "%B %e, %Y"
     <> dateField "dateShort" "%b %d"
     <> dateField "dateYear" "%Y"
+
+-- | Table of contents context (optional)
+-- Pass the TOC HTML and language; provides toc, hasToc, and tocTitle fields
+tocCtx :: String -> Maybe String -> Context String
+tocCtx _ Nothing = mempty
+tocCtx lang (Just tocHtml) =
+  constField "toc" tocHtml
+    <> constField "hasToc" "true"
+    <> constField "tocTitle" (tocTitleForLang lang)
+
+-- | Get localized TOC title
+tocTitleForLang :: String -> String
+tocTitleForLang "zh" = "目录"
+tocTitleForLang _ = "Table of Contents"
 
 -- ============================================================================
 -- List Contexts

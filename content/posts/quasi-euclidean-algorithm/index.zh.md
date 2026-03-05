@@ -11,7 +11,7 @@ tags:
   - number-theory
   - quasi-euclidean-algorithm
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

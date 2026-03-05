@@ -13,8 +13,26 @@
     </div>
     $endif$
   </header>
-  <div class="post-content">
-    $body$
+  $if(hasToc)$
+  <details class="toc-mobile">
+    <summary class="toc-mobile-toggle">$tocTitle$</summary>
+    <nav class="toc-mobile-nav">
+      $toc$
+    </nav>
+  </details>
+  $endif$
+  <div class="post-body$if(hasToc)$ post-body--with-toc$endif$">
+    <div class="post-content">
+      $body$
+    </div>
+    $if(hasToc)$
+    <aside class="toc" aria-label="Table of Contents">
+      <h2 class="toc-title">$tocTitle$</h2>
+      <nav class="toc-nav">
+        $toc$
+      </nav>
+    </aside>
+    $endif$
   </div>
   <footer class="post-footer">
     $if(prev)$

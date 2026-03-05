@@ -47,6 +47,13 @@
       color: var(--color-primary);
       border-color: var(--color-primary);
     }
+
+    // Active state for toggle buttons (e.g., TOC hidden)
+    &--active {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      background: var(--color-surface);
+    }
   }
 
   &-lang {
@@ -123,7 +130,7 @@
   z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  // No justify-content - let items flow naturally from left
   padding: $space-md $content-padding;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-bg);
@@ -150,18 +157,19 @@
     }
   }
 
-  // Navigation links: centered between logo and actions
+  // Navigation links: left-aligned after logo
+  // (not centered, to avoid layout shift when action buttons change)
   &-links {
     display: flex;
     gap: $space-lg;
     list-style: none;
     margin: 0;
     padding: 0;
-    justify-content: center;
-    flex: 1;
+    margin-left: $space-xl;
 
     @include mobile {
       gap: $space-md;
+      margin-left: $space-lg;
     }
 
     a {
@@ -177,12 +185,19 @@
       &:hover {
         color: var(--color-primary);
       }
+
+      // Active nav link (current section)
+      &.active {
+        color: var(--color-text);
+        font-weight: 600;
+      }
     }
   }
 
-  // Actions: fixed to right side
+  // Actions: push to right side with auto margin
   .actions {
     flex-shrink: 0;
+    margin-left: auto;
   }
 }
 
@@ -487,6 +502,279 @@
         margin-left: 0;
       }
     }
+  }
+}
+
+// =============================================================================
+// Post body with TOC (grid layout for content + TOC sidebar)
+// =============================================================================
+.post-body {
+  // Default: just the content
+  display: block;
+
+  // With TOC: side-by-side layout on desktop
+  &--with-toc {
+    @media (min-width: $bp-xl) {
+      display: grid;
+      // minmax(0, 1fr) prevents content from overflowing the grid
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: $space-xl;
+      align-items: start;
+      transition: grid-template-columns 0.2s ease;
+
+      // When TOC is hidden, center the content by collapsing TOC column
+      &:has(.toc--hidden) {
+        grid-template-columns: minmax(0, 1fr) 0;
+        gap: 0;
+      }
+    }
+
+    @media (min-width: $bp-2xl) {
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: $space-2xl;
+
+      &:has(.toc--hidden) {
+        grid-template-columns: minmax(0, 1fr) 0;
+        gap: 0;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// Table of Contents (TOC)
+// Non-distractive sticky sidebar with smooth scroll highlighting
+// =============================================================================
+.toc {
+  // Hidden on mobile and smaller screens
+  display: none;
+
+  @media (min-width: $bp-xl) {
+    display: block;
+    position: sticky;
+    top: calc($nav-height + $space-xl);
+    max-height: calc(100vh - $nav-height - $space-2xl);
+    overflow-y: auto;
+    padding-right: $space-sm;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+
+    // Subtle scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 2px;
+    }
+
+    // Hidden state (toggled via JS)
+    &--hidden {
+      opacity: 0;
+      transform: translateX(20px);
+      pointer-events: none;
+      visibility: hidden;
+      // Delay visibility until after opacity/transform finish
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+    }
+
+    // Visible state - no delay on visibility so it shows immediately
+    &:not(&--hidden) {
+      opacity: 1;
+      transform: translateX(0);
+      visibility: visible;
+      // No delay - visibility becomes visible immediately, then fades in
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s;
+    }
+  }
+}
+
+// When TOC is hidden, expand content to full width
+// Note: We don't change grid-template-columns when TOC is hidden
+// because that would cause instant layout shift. The TOC space remains
+// but the TOC fades out smoothly.
+
+// Mobile TOC: Collapsible at top of post with CSS-only animation
+// Uses interpolate-size for modern browsers (Chrome 129+, progressive enhancement)
+.toc-mobile {
+  // Enable animating to height: auto (progressive enhancement)
+  interpolate-size: allow-keywords;
+  
+  display: block;
+  margin-bottom: $space-lg;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  // Highlight animation when toggled from navbar
+  &--highlight {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.15);
+    animation: toc-pulse 1s ease;
+  }
+
+  // Hide on desktop (where sidebar TOC is shown)
+  @media (min-width: $bp-xl) {
+    display: none;
+  }
+}
+
+@keyframes toc-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-primary);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.toc-mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-md;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  cursor: pointer;
+  list-style: none;
+
+  // Remove default marker
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  // Custom chevron indicator
+  &::after {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid var(--color-secondary);
+    border-bottom: 2px solid var(--color-secondary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+  }
+
+  // Rotate chevron when open
+  details[open] > &::after {
+    transform: rotate(45deg);
+  }
+}
+
+.toc-mobile-nav {
+  // Animate height from 0 to auto using interpolate-size
+  height: 0;
+  overflow: clip;
+  transition: height 0.2s ease;
+
+  // When open, expand to natural height
+  details[open] > & {
+    height: auto;
+  }
+}
+
+.toc-mobile-nav .toc-list {
+  margin: 0;
+  padding: 0 $space-md $space-md;
+  list-style: none;
+  font-size: 0.875rem;
+  line-height: 1.6;
+
+  ul {
+    margin: 0;
+    padding-left: $space-md;
+    list-style: none;
+  }
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    display: block;
+    padding: $space-xs 0;
+    color: var(--color-secondary);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+}
+
+.toc-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-secondary);
+  margin: 0 0 $space-sm 0;
+  opacity: 0.7;
+}
+
+.toc-nav {
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  // Nested lists (h3 under h2)
+  ul {
+    list-style: none;
+    margin: 0;
+    padding-left: $space-md;
+  }
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    display: block;
+    padding: $space-xs 0;
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      font-weight 0.2s ease,
+      opacity 0.2s ease;
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    // Active state (set via JS scroll spy)
+    // Bold like Apple Music lyrics, no color change
+    &.toc-active {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+  }
+
+  // Apple Music lyrics-like dimming effect:
+  // When any link is active, dim the non-active ones
+  &:has(.toc-active) a:not(.toc-active) {
+    opacity: 0.5;
+  }
+
+  // Restore opacity on hover for better UX
+  &:has(.toc-active) a:not(.toc-active):hover {
+    opacity: 1;
   }
 }
 

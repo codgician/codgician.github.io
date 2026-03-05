@@ -2,12 +2,14 @@
 
 module Compiler.Pandoc
   ( customPandocCompiler,
+    customPandocCompilerWithToc,
     slideCompiler,
   )
 where
 
 import Compiler.KaTeX (cachedKaTeX)
 import Compiler.Mermaid (cachedMermaidDual)
+import Compiler.Toc (generateToc)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -30,6 +32,25 @@ customPandocCompiler enableMath enableMermaid =
     defaultHakyllReaderOptions
     defaultHakyllWriterOptions
     (transform enableMath enableMermaid)
+
+-- | Custom Pandoc compiler that also returns TOC HTML
+-- Returns (body, Maybe tocHtml)
+customPandocCompilerWithToc :: Bool -> Bool -> Compiler (Item String, Maybe String)
+customPandocCompilerWithToc enableMath enableMermaid = do
+  -- Read and parse the document
+  body <- getResourceBody
+  pandocDoc <- readPandocWith defaultHakyllReaderOptions body
+
+  -- Transform the AST (math, mermaid)
+  pandocDoc' <- transform enableMath enableMermaid (itemBody pandocDoc)
+
+  -- Generate TOC before writing
+  let tocHtml = fmap T.unpack $ generateToc pandocDoc'
+
+  -- Write HTML
+  let htmlItem = writePandocWith defaultHakyllWriterOptions (pandocDoc' <$ pandocDoc)
+
+  pure (htmlItem, tocHtml)
 
 -- | Slide compiler using Pandoc's reveal.js writer
 slideCompiler :: Bool -> Compiler (Item String)

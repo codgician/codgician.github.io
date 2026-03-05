@@ -29,6 +29,7 @@ library
       Compiler.KaTeX
       Compiler.Mermaid
       Compiler.Pandoc
+      Compiler.Toc
       Config
       Context
       Feed

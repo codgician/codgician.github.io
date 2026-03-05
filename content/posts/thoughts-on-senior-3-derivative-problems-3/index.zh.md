@@ -6,7 +6,7 @@ canonical: true
 tags:
   - math
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

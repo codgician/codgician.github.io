@@ -6,7 +6,7 @@ canonical: true
 tags:
   - functional-programming
 math: true
-toc: false
+toc: true
 draft: false
 ---
 
