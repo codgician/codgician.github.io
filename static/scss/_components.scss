@@ -231,6 +231,15 @@
   @include mobile {
     padding: $space-lg $space-md;
   }
+
+  // Progressively wider content on larger screens
+  @media (min-width: $bp-xl) {
+    max-width: $content-width-lg;
+  }
+
+  @media (min-width: $bp-2xl) {
+    max-width: $content-width-xl;
+  }
 }
 
 // =============================================================================
