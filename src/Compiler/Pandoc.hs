@@ -45,7 +45,7 @@ customPandocCompilerWithToc enableMath enableMermaid = do
   pandocDoc' <- transform enableMath enableMermaid (itemBody pandocDoc)
 
   -- Generate TOC before writing
-  let tocHtml = fmap T.unpack $ generateToc pandocDoc'
+  let tocHtml = T.unpack <$> generateToc pandocDoc'
 
   -- Write HTML
   let htmlItem = writePandocWith defaultHakyllWriterOptions (pandocDoc' <$ pandocDoc)
