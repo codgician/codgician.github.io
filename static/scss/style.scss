@@ -51,6 +51,17 @@ body {
       padding-top: $nav-height-mobile;
     }
   }
+
+  // Timeline page: constrain body to viewport height
+  &:has(.timeline) {
+    height: 100vh;
+    overflow: hidden;
+
+    @include mobile {
+      height: auto;
+      overflow: visible;
+    }
+  }
 }
 
 // Links
