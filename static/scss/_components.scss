@@ -557,7 +557,18 @@
     max-height: calc(100vh - $nav-height - $space-2xl);
     overflow-y: auto;
     padding-right: $space-sm;
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    transition:
+      top 0.2s ease,
+      max-height 0.2s ease,
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0.2s;
+
+    // Shift up when navbar is hidden
+    body:has(.nav--hidden) & {
+      top: $space-xl;
+      max-height: calc(100vh - $space-2xl);
+    }
 
     // Scroll fade indicator - only shown when content overflows (via JS class)
     // Uses mask-image to fade bottom edge when scrollable
