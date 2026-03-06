@@ -229,8 +229,9 @@
     vertical-align: -0.125em;
   }
 
-  // Home page footer positioning
-  .home + & {
+  // Home page and timeline page footer positioning
+  .home + &,
+  .timeline + & {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -779,76 +780,196 @@
 }
 
 // =============================================================================
-// Post list (blog index)
+// Timeline Page (blog index with year navigation)
+// Full viewport layout like homepage - footer always visible
 // =============================================================================
-.post-list {
-  &-year {
-    display: grid;
-    grid-template-columns: 5rem 1fr;
+
+// Container that replaces .main for timeline pages
+.timeline {
+  display: grid;
+  grid-template-columns: clamp(100px, 12vw, 140px) 1fr;
+  gap: $space-xl;
+  padding: $space-xl $content-padding;
+  padding-bottom: calc($space-xl + 80px);
+  max-width: $content-width-xl;
+  margin: 0 auto;
+  width: 100%;
+  height: calc(100vh - $nav-height);
+  max-height: calc(100vh - $nav-height);
+  overflow: hidden;
+
+  @include mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0;  // No gap on mobile - elements manage their own spacing
+    padding: 0;
+    padding-bottom: 0;
+    height: auto;
+    max-height: none;
+    min-height: calc(100vh - $nav-height-mobile - 60px);
+    overflow: visible;
+  }
+}
+
+// Timeline navigation (left sidebar) - years act as title when active
+.timeline-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space-sm;
+  padding-top: $space-md;  // Align with first post's inner padding
+
+  // Dimming effect for non-active years
+  &:has(.timeline-year--active) .timeline-year:not(.timeline-year--active) {
+    opacity: 0.35;
+  }
+
+  &:has(.timeline-year--active) .timeline-year:not(.timeline-year--active):hover {
+    opacity: 0.7;
+  }
+
+  @include mobile {
+    position: sticky;
+    top: $nav-height-mobile;
+    flex-direction: row;
+    align-items: center;
     gap: $space-md;
-    margin-bottom: $space-xl;
+    padding: $space-md $space-md $space-sm;  // More top padding for breathing room
+    background: var(--color-bg);
+    border-bottom: none;  // Cleaner look - avoid double border with nav
+    overflow-x: auto;
+    z-index: 100;
+    transition: top 0.3s ease;
+
+    // When navbar is hidden, move timeline to top
+    body:has(.nav--hidden) & {
+      top: 0;
+    }
+
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.timeline-year {
+  color: var(--color-secondary);
+  text-decoration: none;
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  // Active year becomes the title - large and bold
+  &--active {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+  }
+
+  @include mobile {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 1rem;
+
+    &--active {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Scrollable content area (right side)
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: $space-sm;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+  }
+
+  @include mobile {
+    padding: 0 $space-md;  // No top padding, horizontal only
+    overflow: visible;
+  }
+}
+
+// Post list
+.timeline-posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  // Add padding at bottom so last year can scroll to top
+  padding-bottom: 60vh;
+}
+
+.timeline-post {
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // First post of each year group - add spacing (except the very first)
+  &--year-start:not(:first-child) {
+    margin-top: $space-lg;
+    padding-top: $space-md;
+    border-top: 1px solid var(--color-border);
+  }
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: $space-md 0;
+    text-decoration: none;
+    gap: $space-md;
+    transition: color 0.15s ease;
 
     @include mobile {
-      grid-template-columns: 1fr;
-      gap: $space-sm;
+      flex-direction: column;
+      gap: $space-xs;
     }
 
-    &-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--color-secondary);
-      margin: 0;
-      padding-top: $space-md;
-
-      @include mobile {
-        padding-top: 0;
-        margin-bottom: $space-xs;
-      }
+    &:hover .timeline-post-title {
+      color: var(--color-primary);
     }
   }
+}
 
-  &-items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+.timeline-post-title {
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.4;
+}
 
-  &-item {
-    border-bottom: 1px solid var(--color-border);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    a {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: $space-md 0;
-      text-decoration: none;
-      gap: $space-md;
-
-      @include mobile {
-        flex-direction: column;
-        gap: $space-xs;
-      }
-
-      &:hover .post-list-title {
-        color: var(--color-primary);
-      }
-    }
-  }
-
-  &-title {
-    color: var(--color-text);
-    font-size: 1rem;
-  }
-
-  &-date {
-    color: var(--color-secondary);
-    font-size: 0.875rem;
-    flex-shrink: 0;
-  }
+.timeline-post-date {
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+  flex-shrink: 0;
 }
 
 // =============================================================================
