@@ -559,26 +559,22 @@
     padding-right: $space-sm;
     transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
 
-    // Scroll fade indicator - shows when content overflows
+    // Scroll fade indicator - only shown when content overflows (via JS class)
     // Uses mask-image to fade bottom edge when scrollable
-    --scroll-fade-size: 24px;
-    mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black calc(100% - var(--scroll-fade-size)),
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black calc(100% - var(--scroll-fade-size)),
-      transparent 100%
-    );
-
-    // Remove fade when scrolled to bottom (via JS class)
-    &.toc--scrolled-bottom {
-      mask-image: none;
-      -webkit-mask-image: none;
+    &.toc--has-overflow:not(.toc--scrolled-bottom) {
+      --scroll-fade-size: 24px;
+      mask-image: linear-gradient(
+        to bottom,
+        black 0%,
+        black calc(100% - var(--scroll-fade-size)),
+        transparent 100%
+      );
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        black 0%,
+        black calc(100% - var(--scroll-fade-size)),
+        transparent 100%
+      );
     }
 
     // Subtle scrollbar
@@ -747,7 +743,7 @@
 }
 
 .toc-nav {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.4;
 }
 
