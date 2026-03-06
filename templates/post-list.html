@@ -1,23 +1,37 @@
-<header class="page-header">
-  <h1 class="page-title">$title$</h1>
-</header>
-
-<div class="post-list">
-  $for(yearGroups)$
-  <section class="post-list-year">
-    <h2 class="post-list-year-title">$year$</h2>
-    <ul class="post-list-items">
-      $for(posts)$
-      <li class="post-list-item">
-        <a href="$url$">
-          <span class="post-list-title">$title$</span>
-          <span class="post-list-date">$dateShort$</span>
-        </a>
-      </li>
+<!DOCTYPE html>
+<html lang="$lang$" data-theme="dark">
+<head>
+  $partial("templates/partials/head.html")$
+</head>
+<body>
+  $partial("templates/partials/nav.html")$
+  <div class="timeline">
+    <!-- Timeline navigation (left sidebar / top on mobile) -->
+    <nav class="timeline-nav" aria-label="Year navigation">
+      $for(yearGroups)$
+      <a href="#year-$year$" class="timeline-year" data-year="$year$">$year$</a>
       $endfor$
-    </ul>
-  </section>
-  $endfor$
-</div>
+    </nav>
 
-$partial("templates/partials/pagination.html")$
+    <!-- Scrollable post list -->
+    <div class="timeline-content">
+      <ul class="timeline-posts">
+        $for(yearGroups)$
+        $for(posts)$
+        <li class="timeline-post$if(first)$ timeline-post--year-start$endif$" data-year="$dateYear$">
+          <a href="$url$">
+            <span class="timeline-post-title">$title$</span>
+            <span class="timeline-post-date">$dateShort$</span>
+          </a>
+        </li>
+        $endfor$
+        $endfor$
+      </ul>
+    </div>
+  </div>
+  $partial("templates/partials/footer.html")$
+  <script src="/js/theme.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/timeline.js"></script>
+</body>
+</html>

@@ -237,38 +237,19 @@ postList cfg = do
   rulesExtraDependencies [postDep] $
     forM_ (languages cfg) $ \lang -> do
       let ls = langStr lang
-          perPage = postsPerPage cfg
-
-      allFiles <- getMatches "content/posts/*/index.*.md"
-      let numPosts = length $ nubOrd $ map slugFromPath allFiles
-          numPages = max 1 $ (numPosts + perPage - 1) `div` perPage
-
-      forM_ [1 .. numPages] $ \pageNum ->
-        create [fromFilePath $ pagePath ls pageNum] $ do
-          route idRoute
-          compile $ do
-            posts <- loadAllPostsForLang cfg ls
-            let pagePosts = take perPage $ drop ((pageNum - 1) * perPage) posts
-            yearGroups <- groupByYear pagePosts
-            let ctx =
-                  constField "title" (navTitle cfg ls "posts/")
-                    <> listField "yearGroups" (yearGroupsCtx $ postListItemCtx ls) (pure $ map toItem yearGroups)
-                    <> paginationCtx' ls pageNum numPages
-                    <> allLangsCtx cfg ls "/posts/"
-                    <> baseCtx cfg ls
-            makeItem ""
-              >>= loadAndApplyTemplate "templates/post-list.html" ctx
-              >>= loadAndApplyTemplate "templates/default.html" ctx
-              >>= relativizeUrls
-  where
-    pagePath lang n = if n == 1 then lang </> "posts/index.html" else lang </> "posts/page" </> show n </> "index.html"
-    paginationCtx' lang cur total =
-      constField "hasPagination" "true"
-        <> constField "currentPageNum" (show cur)
-        <> constField "numPages" (show total)
-        <> (if cur > 1 then constField "previousPageUrl" (prevUrl lang cur) else mempty)
-        <> (if cur < total then constField "nextPageUrl" ("/" <> lang <> "/posts/page/" <> show (cur + 1) <> "/") else mempty)
-    prevUrl lang cur = if cur == 2 then "/" <> lang <> "/posts/" else "/" <> lang <> "/posts/page/" <> show (cur - 1) <> "/"
+      create [fromFilePath $ ls </> "posts/index.html"] $ do
+        route idRoute
+        compile $ do
+          posts <- loadAllPostsForLang cfg ls
+          yearGroups <- groupByYear posts
+          let ctx =
+                constField "title" (navTitle cfg ls "posts/")
+                  <> listField "yearGroups" (yearGroupsCtx $ postListItemCtx ls) (pure $ map toItem yearGroups)
+                  <> allLangsCtx cfg ls "/posts/"
+                  <> baseCtx cfg ls
+          makeItem ""
+            >>= loadAndApplyTemplate "templates/post-list.html" ctx
+            >>= relativizeUrls
 
 rssFeeds :: SiteConfig -> Rules ()
 rssFeeds cfg = do
