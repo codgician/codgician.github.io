@@ -7,41 +7,13 @@ on:
 permissions:
   contents: read
 jobs:
-  hlint:
-    name: HLint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v31
-      - name: Run HLint
-        run: nix develop --command hlint src/ app/ test/
-  ormolu:
-    name: Ormolu
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v31
-      - name: Check formatting
-        run: |
-          nix develop --command ormolu --mode check \
-            src/**/*.hs \
-            app/*.hs \
-            test/*.hs
-  build:
-    name: Build (with -Werror)
+  check:
+    name: Nix Flake Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
       - uses: cachix/install-nix-action@v31
-      - name: Build site
-        run: nix build
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: cachix/install-nix-action@v31
-      - name: Run tests
-        run: nix develop --command cabal test
+      - name: Run flake checks
+        run: nix flake check
