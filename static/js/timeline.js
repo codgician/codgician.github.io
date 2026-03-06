@@ -13,10 +13,14 @@
   const yearLinks = timelineNav?.querySelectorAll(".timeline-year");
   const posts = document.querySelectorAll(".timeline-post");
 
-  if (!yearLinks || yearLinks.length === 0 || posts.length === 0) return;
+  // Guard: require all critical elements
+  if (!timelineNav || !timelineContent || !yearLinks || yearLinks.length === 0 || posts.length === 0) return;
 
-  // Build year -> first post mapping
+  // Build year -> first post mapping and year -> link mapping
   const yearToFirstPost = new Map();
+  const yearToLink = new Map();
+  const validYears = new Set();
+
   posts.forEach((post) => {
     const year = post.dataset.year;
     if (year && !yearToFirstPost.has(year)) {
@@ -24,9 +28,20 @@
     }
   });
 
+  yearLinks.forEach((link) => {
+    const year = link.dataset.year;
+    if (year) {
+      yearToLink.set(year, link);
+      validYears.add(year);
+    }
+  });
+
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
+
+  // Cache nav element for offset calculations
+  const navElement = document.querySelector(".nav");
 
   // ==========================================================================
   // Helpers
@@ -38,8 +53,7 @@
 
   function getScrollOffset() {
     if (window.innerWidth < 768) {
-      const nav = document.querySelector(".nav");
-      return (nav?.offsetHeight || 44) + (timelineNav?.offsetHeight || 40) + 16;
+      return (navElement?.offsetHeight || 44) + (timelineNav?.offsetHeight || 40) + 16;
     }
     return 16;
   }
@@ -73,9 +87,8 @@
     yearLinks.forEach((link) => link.classList.remove("timeline-year--active"));
     
     if (year) {
-      const activeLink = timelineNav.querySelector(
-        `.timeline-year[data-year="${year}"]`
-      );
+      // Use precomputed map instead of querySelector with interpolated string
+      const activeLink = yearToLink.get(year);
       if (activeLink) {
         activeLink.classList.add("timeline-year--active");
 
@@ -115,6 +128,22 @@
     }
 
     return activeYear || posts[0]?.dataset.year;
+  }
+
+  // ==========================================================================
+  // Year navigation (DRY helper)
+  // ==========================================================================
+
+  function goToYear(year, updateHash = false) {
+    const firstPost = yearToFirstPost.get(year);
+    if (!firstPost) return false;
+
+    scrollToPost(firstPost);
+    if (updateHash) {
+      history.pushState(null, "", `#${year}`);
+    }
+    setActiveYear(year);
+    return true;
   }
 
   // ==========================================================================
@@ -161,13 +190,7 @@
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const year = link.dataset.year;
-      const firstPost = yearToFirstPost.get(year);
-
-      if (firstPost) {
-        scrollToPost(firstPost);
-        history.pushState(null, "", `#${year}`);
-        setActiveYear(year);
-      }
+      goToYear(year, true);
     });
   });
 
@@ -177,26 +200,21 @@
 
   function getYearFromHash() {
     const hash = window.location.hash.slice(1);
-    const validYears = Array.from(yearLinks).map((l) => l.dataset.year);
-    if (validYears.includes(hash)) {
+    // Use precomputed validYears Set
+    if (validYears.has(hash)) {
       return hash;
     }
+    // Support legacy #year-XXXX format
     if (hash.startsWith("year-")) {
       const year = hash.replace("year-", "");
-      if (validYears.includes(year)) return year;
+      if (validYears.has(year)) return year;
     }
     return null;
   }
 
   const initialYear = getYearFromHash();
   if (initialYear) {
-    const firstPost = yearToFirstPost.get(initialYear);
-    if (firstPost) {
-      setTimeout(() => {
-        scrollToPost(firstPost);
-        setActiveYear(initialYear);
-      }, 100);
-    }
+    setTimeout(() => goToYear(initialYear), 100);
   } else {
     setActiveYear(findActiveYear());
   }
@@ -204,11 +222,7 @@
   window.addEventListener("hashchange", () => {
     const year = getYearFromHash();
     if (year) {
-      const firstPost = yearToFirstPost.get(year);
-      if (firstPost) {
-        scrollToPost(firstPost);
-        setActiveYear(year);
-      }
+      goToYear(year);
     }
   });
 })();
