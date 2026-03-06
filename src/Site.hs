@@ -165,7 +165,7 @@ blogPosts cfg = do
             >>= loadAndApplyTemplate "templates/post.html" ctx
             >>= loadAndApplyTemplate "templates/default.html" ctx
             >>= relativizeUrls
-        else do
+        else
           -- Use standard compiler (no TOC)
           customPandocCompiler enableMath enableMermaid
             >>= saveSnapshot "content"
@@ -198,11 +198,12 @@ createFallbackPost cfg targetLang slug =
           srcMeta <- getMetadata srcIdent
           -- Check if source post has TOC enabled and load it
           let hasTocFlag = metaBool "toc" srcMeta
-          maybeToc <- if hasTocFlag
-            then do
-              tocStr <- itemBody <$> loadSnapshot srcIdent "toc"
-              pure $ if null tocStr then Nothing else Just tocStr
-            else pure Nothing
+          maybeToc <-
+            if hasTocFlag
+              then do
+                tocStr <- itemBody <$> loadSnapshot srcIdent "toc"
+                pure $ if null tocStr then Nothing else Just tocStr
+              else pure Nothing
           -- Build context with targetLang (not source lang)
           let ctx =
                 tocCtx targetLang maybeToc
@@ -431,7 +432,6 @@ safeInit xs = case reverse xs of
 -- | O(n log n) nub using Set (faster than Data.List.nub which is O(n²))
 nubOrd :: (Ord a) => [a] -> [a]
 nubOrd = Set.toList . Set.fromList
-
 
 -- | Get language code as String (convenience for routes)
 langStr :: Language -> String
