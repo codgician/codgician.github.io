@@ -27,6 +27,22 @@
     return (document.querySelector(".nav")?.offsetHeight || 56) + 16;
   }
 
+  // Update scroll fade indicator on desktop TOC
+  // Removes bottom fade when scrolled to bottom
+  function updateScrollFade() {
+    if (!tocDesktop) return;
+    const isAtBottom =
+      tocDesktop.scrollHeight - tocDesktop.scrollTop <= tocDesktop.clientHeight + 2;
+    tocDesktop.classList.toggle("toc--scrolled-bottom", isAtBottom);
+  }
+
+  // Listen for scroll on desktop TOC
+  if (tocDesktop) {
+    tocDesktop.addEventListener("scroll", updateScrollFade, { passive: true });
+    // Initial check
+    updateScrollFade();
+  }
+
   // ==========================================================================
   // Shared TOC visibility state (synced between mobile and desktop)
   // ==========================================================================

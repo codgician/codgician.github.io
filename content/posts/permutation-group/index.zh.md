@@ -24,7 +24,7 @@ $8$ 种（事实上只有 $4$
 
 本文大致分为三个部分：第一部分会首先对证明 Burnside 引理所需要的基本抽象代数知识进行介绍；第二部分会引入文章的主题 ——
 Burnside 引理和基础的 Pólya 计数法；最后会浅谈一下 Burnside 引理在算法竞赛中的几类常见题型。同时，本文某种程度上也可以作为之前在集训队内做过的讲座
-[浅谈置换群](https://codgician.me/pgslides) 的讲义。
+[浅谈置换群](/zh/slides/permutation-group/) 的讲义。
 
 另外，我的水平也有限，所以本文中的部分用语可能不太严谨…… 欢迎大家提出指正 QwQ。
 
@@ -668,14 +668,14 @@ $$
 
 # 常见题型
 
-Hmm... 感觉这一部分的当时[幻灯片](https://codgician.me/pgslides/)说的还是比较清楚的，这里就不额外补充了（犯懒qwq）……
+Hmm... 感觉这一部分的当时[幻灯片](/zh/slides/permutation-group/)说的还是比较清楚的，这里就不额外补充了（犯懒qwq）……
 
-- [项链染色](https://codgician.me/pgslides/#/coloring-necklace) |
+- [项链染色](/zh/slides/permutation-group/#/coloring-necklace) |
   [洛谷 P4980：Pólya定理](https://www.luogu.com.cn/problem/P4980)（这道题里只有旋转）|
   [参考代码](https://github.com/codgician/Competitive-Programming/blob/master/Luogu/P4980/polya_enumeration_theorem.cpp)
-- [带限制的项链染色](https://codgician.me/pgslides/#/icpc-2019-nanchang-j) |
+- [带限制的项链染色](/zh/slides/permutation-group/#/icpc-2019-nanchang-j) |
   [ICPC 2019 南昌 J: Summon](https://nanti.jisuanke.com/t/42585) |
   [参考代码](https://github.com/codgician/Competitive-Programming/blob/master/Jisuanke/42585/burnside_theorem_dp_matrix_fast_pow.cpp)
-- [无向图染色](https://codgician.me/pgslides/#/coloring-undirected-graph) |
+- [无向图染色](/zh/slides/permutation-group/#/coloring-undirected-graph) |
   [SHOI 2006: 有色图](https://www.luogu.com.cn/problem/P4128) |
   [参考代码](https://github.com/codgician/Competitive-Programming/blob/master/Luogu/P4128/polya_enumeration_theorem.cpp)
