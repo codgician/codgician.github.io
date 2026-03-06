@@ -68,10 +68,6 @@
       tocMobile.open = visible;
     }
 
-    // Update toggle button state
-    if (tocToggle) {
-      tocToggle.classList.toggle("actions-btn--active", !visible);
-    }
 
     isUpdating = false;
   }
