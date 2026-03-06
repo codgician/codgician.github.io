@@ -28,19 +28,21 @@
   }
 
   // Update scroll fade indicator on desktop TOC
-  // Removes bottom fade when scrolled to bottom
+  // Only shows fade when content overflows and not scrolled to bottom
   function updateScrollFade() {
     if (!tocDesktop) return;
+    const hasOverflow = tocDesktop.scrollHeight > tocDesktop.clientHeight;
     const isAtBottom =
       tocDesktop.scrollHeight - tocDesktop.scrollTop <= tocDesktop.clientHeight + 2;
+    tocDesktop.classList.toggle("toc--has-overflow", hasOverflow);
     tocDesktop.classList.toggle("toc--scrolled-bottom", isAtBottom);
   }
 
   // Listen for scroll on desktop TOC
   if (tocDesktop) {
     tocDesktop.addEventListener("scroll", updateScrollFade, { passive: true });
-    // Initial check
-    updateScrollFade();
+    // Initial check (after layout settles)
+    requestAnimationFrame(updateScrollFade);
   }
 
   // ==========================================================================
