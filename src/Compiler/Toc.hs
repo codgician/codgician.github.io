@@ -38,8 +38,8 @@ extractHeadings = filter (not . T.null . tocId) . query getHeading
 generateToc :: Pandoc -> Maybe Text
 generateToc doc =
   let headings = extractHeadings doc
-      -- Only include h2 and h3 for cleaner TOC
-      filtered = filter (\h -> tocLevel h >= 2 && tocLevel h <= 3) headings
+      -- Include h1, h2 and h3 in TOC
+      filtered = filter (\h -> tocLevel h >= 1 && tocLevel h <= 3) headings
    in if null filtered
         then Nothing
         else Just $ renderToc filtered
