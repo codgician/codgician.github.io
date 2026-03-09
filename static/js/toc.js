@@ -48,7 +48,8 @@
   // ==========================================================================
   // Shared TOC visibility state (synced between mobile and desktop)
   // ==========================================================================
-  let tocVisible = true;
+  // Initialize from actual DOM state - mobile TOC starts closed, desktop starts visible
+  let tocVisible = tocMobile ? tocMobile.open : true;
   let isUpdating = false; // Guard against re-entrancy from toggle events
 
   // Apply visibility state to both TOCs
