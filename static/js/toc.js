@@ -55,11 +55,14 @@
   let tocVisible = !isMobile();
 
   // Apply visibility state to DOM
+  // Only applies to the TOC that's currently active based on viewport
   function applyTocState() {
     if (tocDesktop) {
       tocDesktop.classList.toggle("toc--hidden", !tocVisible);
     }
-    if (tocMobile) {
+    // Only sync mobile TOC state if we're on mobile viewport
+    // This prevents desktop from setting mobile open state
+    if (tocMobile && isMobile()) {
       tocMobile.open = tocVisible;
     }
   }
@@ -76,10 +79,12 @@
   // Sync state when mobile TOC is toggled directly (user clicks summary)
   if (tocMobile) {
     tocMobile.addEventListener("toggle", () => {
-      // Only sync if state actually differs (prevents loops)
-      if (tocMobile.open !== tocVisible) {
-        tocVisible = tocMobile.open;
-        applyTocState();
+      // Sync our state variable with the native details state
+      // Don't call applyTocState() to avoid fighting with native behavior
+      tocVisible = tocMobile.open;
+      // Also sync desktop TOC if it exists
+      if (tocDesktop) {
+        tocDesktop.classList.toggle("toc--hidden", !tocVisible);
       }
     });
   }
