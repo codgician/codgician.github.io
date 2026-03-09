@@ -632,17 +632,29 @@
 // but the TOC fades out smoothly.
 
 // Mobile TOC: Collapsible at top of post with CSS-only animation
-// Uses interpolate-size for modern browsers (Chrome 129+, progressive enhancement)
+// Uses ::details-content and calc-size for smooth height animation (Chrome 131+)
 .toc-mobile {
-  // Enable animating to height: auto (progressive enhancement)
-  interpolate-size: allow-keywords;
-  
   display: block;
   margin-bottom: $space-lg;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  // Animate the details content wrapper
+  &::details-content {
+    display: block;
+    overflow: clip;
+    height: 0;
+    transition:
+      height 0.2s ease,
+      content-visibility 0.2s ease allow-discrete;
+  }
+
+  // When open, expand to natural height
+  &[open]::details-content {
+    height: calc-size(auto, size);
+  }
 
   // Highlight animation when toggled from navbar
   &--highlight {
@@ -703,15 +715,8 @@
 }
 
 .toc-mobile-nav {
-  // Animate height from 0 to auto using interpolate-size
-  height: 0;
-  overflow: clip;
-  transition: height 0.2s ease;
-
-  // When open, expand to natural height
-  details[open] > & {
-    height: auto;
-  }
+  // Padding handled here, animation handled by ::details-content
+  padding: 0 $space-md $space-md;
 }
 
 .toc-mobile-nav .toc-list {

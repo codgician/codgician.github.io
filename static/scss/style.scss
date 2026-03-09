@@ -9,6 +9,10 @@
 // Theme setup
 :root {
   @include theme-colors(dark);
+
+  // Enable animating to height: auto (Chrome 129+)
+  // Used for mobile TOC expand/collapse animation
+  interpolate-size: allow-keywords;
 }
 
 :root[data-theme="light"] {
