@@ -4,10 +4,10 @@ date: 2018-03-09
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - algorithm
   - bipartite-matching
-  - competitive-programming
+  - icpc
   - graph-theory
   - hungarian-algorithm
 math: true
@@ -511,7 +511,7 @@ int hungarian() {
 - Renfei Song -
   [二分图的最大匹配、完美匹配和匈牙利算法](https://www.renfei.org/blog/bipartite-matching.html)
 - liam0205 -
-  [二分图最大匹配问题与匈牙利算法的核心思想](https://liam0205.me/2016/04/03/icpc-notes/hungarian-algorithm-in-the-maximum-matching-problem-of-bigraph/)
+  [二分图最大匹配问题与匈牙利算法的核心思想](https://liam0205.me/2016/04/03/icpc/hungarian-algorithm-in-the-maximum-matching-problem-of-bigraph/)
 - Dark_Scope -
   [趣写算法系列之--匈牙利算法](http://blog.csdn.net/dark_scope/article/details/8880547)
 - SixDayCoder -

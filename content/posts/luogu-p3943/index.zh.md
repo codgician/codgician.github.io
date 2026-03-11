@@ -6,7 +6,7 @@ canonical: true
 tags:
   - icpc-solutions
   - algorithm
-  - competitive-programming
+  - icpc
   - dynamic-programming
   - graph-theory
   - luogu

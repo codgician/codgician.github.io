@@ -4,7 +4,7 @@ date: 2020-03-26
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
 math: true
 toc: true
 draft: false

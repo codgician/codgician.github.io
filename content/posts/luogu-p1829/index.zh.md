@@ -7,9 +7,9 @@ tags:
   - icpc-solutions
   - algorithm
   - arithmetic-function
-  - competitive-programming
+  - icpc
   - luogu
-  - mathematics
+  - math
   - number-theory
 math: true
 toc: false

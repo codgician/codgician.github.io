@@ -7,8 +7,8 @@ tags:
   - icpc-solutions
   - algorithm
   - bzoj
-  - competitive-programming
-  - mathematics
+  - icpc
+  - math
   - number-theory
   - quasi-euclidean-algorithm
 math: true

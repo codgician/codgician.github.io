@@ -6,9 +6,9 @@ canonical: true
 tags:
   - icpc-solutions
   - algorithm
-  - competitive-programming
+  - icpc
   - hduoj
-  - mathematics
+  - math
   - number-theory
   - quasi-euclidean-algorithm
 math: true

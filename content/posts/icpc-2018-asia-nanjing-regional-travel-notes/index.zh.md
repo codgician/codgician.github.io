@@ -5,7 +5,7 @@ language: zh
 canonical: true
 tags:
   - life
-  - competitive-programming
+  - icpc
   - travel
 math: true
 toc: true

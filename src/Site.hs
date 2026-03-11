@@ -7,7 +7,7 @@ import Config
 import Context
 import Control.Monad (filterM, forM_, unless)
 import Data.Char (toLower)
-import Data.List (groupBy, sortBy)
+import Data.List (groupBy, intercalate, sortBy)
 import Data.Maybe (catMaybes, fromMaybe, listToMaybe)
 import Data.Ord (Down (..), comparing)
 import qualified Data.Set as Set
@@ -207,6 +207,7 @@ createFallbackPost cfg targetLang slug =
           -- Build context with targetLang (not source lang)
           let ctx =
                 tocCtx targetLang maybeToc
+                  <> tagsFieldFromMeta targetLang srcMeta
                   <> constField "date" (metaStr "date" srcMeta)
                   <> constField "title" (metaStr "title" srcMeta)
                   <> boolCtx "math" srcMeta
@@ -354,16 +355,20 @@ slideList cfg = do
 -- ============================================================================
 
 postCtx :: SiteConfig -> String -> Context String
-postCtx cfg lang = baseCtx cfg lang <> postMetaCtx
+postCtx cfg lang = postTagsField lang <> baseCtx cfg lang <> postMetaCtx
 
 pageCtx :: SiteConfig -> String -> String -> Context String
 pageCtx cfg lang "about" = baseCtx cfg lang <> friendsCtx cfg
 pageCtx cfg lang _ = baseCtx cfg lang
 
 postListItemCtx :: String -> Context String
-postListItemCtx lang = field "url" makeUrl <> dateCtx <> defaultContext
+postListItemCtx lang = field "url" makeUrl <> field "tagsStr" getTagsStr <> dateCtx <> defaultContext
   where
     makeUrl item = pure $ "/" <> lang <> "/posts/" <> slugFromPath (itemIdentifier item) <> "/"
+    getTagsStr item = do
+      meta <- getMetadata (itemIdentifier item)
+      let tags = fromMaybe [] $ lookupStringList "tags" meta
+      pure $ intercalate "," tags
 
 allLangsCtx :: SiteConfig -> String -> String -> Context String
 allLangsCtx cfg curLang urlSuffix =

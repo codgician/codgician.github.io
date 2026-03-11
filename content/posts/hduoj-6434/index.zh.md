@@ -6,9 +6,9 @@ canonical: true
 tags:
   - icpc-solutions
   - algorithm
-  - competitive-programming
+  - icpc
   - hduoj
-  - mathematics
+  - math
   - number-theory
 math: true
 toc: false

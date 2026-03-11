@@ -8,10 +8,10 @@ tags:
   - algorithm
   - arithmetic-function
   - binary-indexed-tree
-  - competitive-programming
+  - icpc
   - data-structure
   - hduoj
-  - mathematics
+  - math
   - number-theory
 math: true
 toc: false

@@ -4,13 +4,13 @@ date: 2019-08-06
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - abstract-algebra
   - algorithm
   - arithmetic-function
-  - competitive-programming
+  - icpc
   - dirichlet-convolution
-  - mathematics
+  - math
   - number-theory
 math: true
 toc: false

@@ -4,10 +4,10 @@ date: 2018-10-18
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - algorithm
-  - competitive-programming
-  - mathematics
+  - icpc
+  - math
   - number-theory
   - quasi-euclidean-algorithm
 math: true
