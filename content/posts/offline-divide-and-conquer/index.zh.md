@@ -4,9 +4,9 @@ date: 2019-07-22
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - algorithm
-  - competitive-programming
+  - icpc
   - divide-and-conquer
 math: true
 toc: true

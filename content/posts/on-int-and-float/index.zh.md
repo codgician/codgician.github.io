@@ -4,7 +4,7 @@ date: 2017-08-18
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - computer-organization
 math: true
 toc: true

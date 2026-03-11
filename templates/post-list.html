@@ -15,10 +15,14 @@
 
     <!-- Scrollable post list -->
     <div class="timeline-content">
+      <div class="tag-filter" id="tag-filter" style="display: none;">
+        <span class="tag-filter-label"></span>
+        <button class="tag-filter-clear" aria-label="Clear filter">&times;</button>
+      </div>
       <ul class="timeline-posts">
         $for(yearGroups)$
         $for(posts)$
-        <li class="timeline-post$if(first)$ timeline-post--year-start$endif$" data-year="$dateYear$">
+        <li class="timeline-post" data-year="$dateYear$" data-tags="$tagsStr$">
           <a href="$url$">
             <span class="timeline-post-title">$title$</span>
             <span class="timeline-post-date">$dateShort$</span>

@@ -4,9 +4,9 @@ date: 2017-08-19
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - computational-thinking
-  - mathematics
+  - math
 math: true
 toc: false
 draft: false

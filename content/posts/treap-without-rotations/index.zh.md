@@ -4,9 +4,9 @@ date: 2018-07-28
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - algorithm-
-  - competitive-programming
+  - icpc
   - data-structure
   - treap
 math: true

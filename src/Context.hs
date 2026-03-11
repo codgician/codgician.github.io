@@ -20,6 +20,8 @@ module Context
     postMetaCtx,
     dateCtx,
     tocCtx,
+    postTagsField,
+    tagsFieldFromMeta,
 
     -- * List contexts
     friendsCtx,
@@ -37,6 +39,7 @@ where
 
 import Config
 import Data.List (intercalate)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Hakyll
 
@@ -138,6 +141,28 @@ tocCtx lang (Just tocHtml) =
 tocTitleForLang :: String -> String
 tocTitleForLang "zh" = "目录"
 tocTitleForLang _ = "Table of Contents"
+
+-- | Tags field that reads from metadata and provides a list for iteration
+-- Usage in templates: $if(tags)$...$for(tags)$<a href="...">$tag$</a>$endfor$...$endif$
+-- Only provides the field when tags are present (so $if(tags)$ works correctly)
+postTagsField :: String -> Context String
+postTagsField lang = Context $ \key _ item -> do
+  meta <- getMetadata (itemIdentifier item)
+  let tagList = fromMaybe [] $ lookupStringList "tags" meta
+  if key == "tags" && not (null tagList)
+    then do
+      let tagCtx = field "tag" (pure . itemBody) <> constField "lang" lang
+      unContext (listField "tags" tagCtx (pure $ map toItem tagList)) key [] item
+    else noResult $ "No field " ++ key
+
+-- | Tags field from explicit metadata (for fallback posts)
+tagsFieldFromMeta :: String -> Metadata -> Context String
+tagsFieldFromMeta lang meta =
+  case lookupStringList "tags" meta of
+    Just tagList@(_ : _) ->
+      let tagCtx = field "tag" (pure . itemBody) <> constField "lang" lang
+       in listField "tags" tagCtx (pure $ map toItem tagList)
+    _ -> mempty
 
 -- ============================================================================
 -- List Contexts

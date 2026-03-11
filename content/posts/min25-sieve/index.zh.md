@@ -4,11 +4,11 @@ date: 2019-09-01
 language: zh
 canonical: true
 tags:
-  - icpc-notes
+  - icpc
   - algorithm
   - arithmetic-function
-  - competitive-programming
-  - mathematics
+  - icpc
+  - math
   - number-theory
 math: true
 toc: true

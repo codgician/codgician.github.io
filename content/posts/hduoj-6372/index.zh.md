@@ -7,9 +7,9 @@ tags:
   - icpc-solutions
   - algorithm
   - combinatorics
-  - competitive-programming
+  - icpc
   - hduoj
-  - mathematics
+  - math
 math: true
 toc: false
 draft: false
