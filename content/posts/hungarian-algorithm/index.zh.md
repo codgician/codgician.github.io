@@ -11,7 +11,7 @@ tags:
   - graph-theory
   - hungarian-algorithm
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

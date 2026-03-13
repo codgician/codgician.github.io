@@ -7,7 +7,7 @@ tags:
   - life
   - hello
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

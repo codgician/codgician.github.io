@@ -4,7 +4,6 @@ date: 2019-02-05
 language: zh
 canonical: true
 tags:
-  - icpc-solutions
   - algorithm
   - icpc
   - dynamic-programming

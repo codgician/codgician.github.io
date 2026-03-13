@@ -4,7 +4,6 @@ date: 2018-11-24
 language: zh
 canonical: true
 tags:
-  - icpc-solutions
   - algorithm
   - arithmetic-function
   - binary-indexed-tree
@@ -14,7 +13,7 @@ tags:
   - math
   - number-theory
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

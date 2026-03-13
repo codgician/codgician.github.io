@@ -220,22 +220,28 @@
         # Checks for CI (run with `nix flake check`)
         checks = {
           # HLint check
-          hlint = pkgs.runCommand "hlint-check" {
-            nativeBuildInputs = [ hPkgs.hlint ];
-          } ''
-            cd ${builderSrc}
-            hlint src/ app/ test/
-            touch $out
-          '';
+          hlint =
+            pkgs.runCommand "hlint-check"
+              {
+                nativeBuildInputs = [ hPkgs.hlint ];
+              }
+              ''
+                cd ${builderSrc}
+                hlint src/ app/ test/
+                touch $out
+              '';
 
           # Ormolu formatting check
-          ormolu = pkgs.runCommand "ormolu-check" {
-            nativeBuildInputs = [ hPkgs.ormolu ];
-          } ''
-            cd ${builderSrc}
-            ormolu --mode check $(find src app test -name '*.hs')
-            touch $out
-          '';
+          ormolu =
+            pkgs.runCommand "ormolu-check"
+              {
+                nativeBuildInputs = [ hPkgs.ormolu ];
+              }
+              ''
+                cd ${builderSrc}
+                ormolu --mode check $(find src app test -name '*.hs')
+                touch $out
+              '';
 
           # Haskell tests (run via cabal)
           tests = siteBuilder;

@@ -13,7 +13,7 @@ tags:
   - math
   - number-theory
 math: true
-toc: false
+toc: true
 draft: false
 ---
 
