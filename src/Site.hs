@@ -262,7 +262,8 @@ rssFeeds cfg = do
         route idRoute
         compile $ do
           posts <- take (feedItemsCount $ feed cfg) <$> loadAllPostsForLang cfg ls
-          renderAtom (feedConfiguration cfg ls) (feedCtxForLang ls) posts
+          let emptyBodyPosts = map (itemSetBody "") posts
+          renderAtom (feedConfiguration cfg ls) (feedCtxForLang ls) emptyBodyPosts
 
 -- ============================================================================
 -- Sitemap
