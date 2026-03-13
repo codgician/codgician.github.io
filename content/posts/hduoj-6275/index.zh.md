@@ -61,7 +61,7 @@ $$
 $$
 
 我们发现这个式子非常类似于类欧几里德可解决的 $f$
-式子（有一点不一样，但是后文会通过一些变换使其一样）。有关类欧几里德算法的相关内容可参考我的另一篇博客：[浅谈类欧几里德算法](https://codgician.me/zh-hans/posts/2018/10/quasi-euclidean-algorithm/)。
+式子（有一点不一样，但是后文会通过一些变换使其一样）。有关类欧几里得算法的相关内容可参考我的另一篇博客：[浅谈类欧几里得算法](../quasi-euclidean-algorithm/)。
 
 至于 $\left\lfloor \frac{n}{i} \right\rfloor$，我们可以对其进行整除分块。
 
