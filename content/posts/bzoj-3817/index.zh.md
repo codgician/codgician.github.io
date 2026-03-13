@@ -71,7 +71,7 @@ $\left\lfloor \frac{\left\lfloor n \right\rfloor}{2} \right\rfloor = \left\lfloo
 后两项均可记作 $\sum\limits_{d = 1}^{n} \left\lfloor k \cdot d \right\rfloor$
 的形式，其中 $k = \frac{at + b}{c}$（$a, b, c$ 均为整数，而 $t = \sqrt{r}$
 是无理数）。这就显得跟类欧几里得可解决的问题很相似了。我们尝试仿照之前一篇博文
-[浅谈类欧几里德算法](https://codgician.me/zh-hans/posts/2018/10/quasi-euclidean-algorithm/)
+[浅谈类欧几里得算法](../quasi-euclidean-algorithm/)
 里的推导方法对下面的式子进行推导（为了符合一般习惯下面一段中把 $d$ 写作 $i$）：
 
 $$
