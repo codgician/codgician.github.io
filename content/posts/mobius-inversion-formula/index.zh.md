@@ -22,7 +22,7 @@ draft: false
 本文会从初等数论角度介绍 _莫比乌斯反演公式 (Mobius inversion
 formula)_，不过如果我们借助一点抽象代数知识引入 _狄利克雷卷积 (Dirichlet
 convolution)_
-的话便能得到更加优雅的推导~ 因此强烈安利另一篇姊妹博文：[数论函数与狄利克雷卷积](/zh-hans/posts/2019/08/arithmetic-function-and-dirichlet-convolution/)。
+的话便能得到更加优雅的推导~ 因此强烈安利另一篇姊妹博文：[数论函数与狄利克雷卷积](/zh/posts/arithmetic-function-and-dirichlet-convolution/)。
 
 # 莫比乌斯函数
 
