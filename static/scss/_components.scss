@@ -815,13 +815,14 @@
     &.toc-active {
       color: var(--color-text);
       font-weight: 600;
+      opacity: 0.9;
     }
   }
 
   // Apple Music lyrics-like dimming effect:
   // When any link is active, dim the non-active ones
   &:has(.toc-active) a:not(.toc-active) {
-    opacity: 0.5;
+    opacity: 0.7;
   }
 
   // Restore opacity on hover for better UX

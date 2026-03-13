@@ -449,12 +449,7 @@ PASS: Would have posted the following:
 _面向返回编程 (ROP, Return Oriented Programming)_ 的核心思想。
 
 我们将由 `ret`
-指令结尾的的若干指令称作一个 gadget。将多个 gadget 组合起来依次执行便可能达到目的。将 gadget 的地址存放在栈中，并且让
-`%rsp` 指向 gadget #1 的地址。在这种状态下，如果程序执行到了 `ret`
-指令，则会跳转到 gadget #1 处执行（`%rsp` 指向返回地址），同时 `%rsp`
-会向上移动（将返回地址弹栈）并恰好指向栈中 gadget #2 的地址。这样一来，当 gadget
-#1 执行完 `ret` 后便会跳转到 gadget
-#2，依次类推…… 这样便将多段汇编代码像链表一样串了起来。
+指令结尾的的若干指令称作一个 gadget。将多个 gadget 组合起来依次执行便可能达到目的。将 gadget 的地址存放在栈中，并且让 `%rsp` 指向 gadget #1 的地址。在这种状态下，如果程序执行到了 `ret` 指令，则会跳转到 gadget #1 处执行（`%rsp` 指向返回地址），同时 `%rsp` 会向上移动（将返回地址弹栈）并恰好指向栈中 gadget #2 的地址。这样一来，当 gadget #1 执行完 `ret` 后便会跳转到 gadget #2，依次类推…… 这样便将多段汇编代码像链表一样串了起来。
 
 接下来的两个实验将会展示 ROP 的实际应用。
 

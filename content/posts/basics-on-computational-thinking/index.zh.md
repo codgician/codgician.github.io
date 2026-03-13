@@ -8,7 +8,7 @@ tags:
   - computational-thinking
   - math
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

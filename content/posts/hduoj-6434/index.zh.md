@@ -4,14 +4,13 @@ date: 2018-08-23
 language: zh
 canonical: true
 tags:
-  - icpc-solutions
   - algorithm
   - icpc
   - hduoj
   - math
   - number-theory
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

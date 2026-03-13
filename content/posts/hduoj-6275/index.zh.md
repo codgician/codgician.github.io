@@ -4,7 +4,6 @@ date: 2018-10-25
 language: zh
 canonical: true
 tags:
-  - icpc-solutions
   - algorithm
   - icpc
   - hduoj
@@ -12,7 +11,7 @@ tags:
   - number-theory
   - quasi-euclidean-algorithm
 math: true
-toc: false
+toc: true
 draft: false
 ---
 

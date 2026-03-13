@@ -4,7 +4,6 @@ date: 2018-11-21
 language: zh
 canonical: true
 tags:
-  - icpc-solutions
   - algorithm
   - arithmetic-function
   - icpc
@@ -12,7 +11,7 @@ tags:
   - math
   - number-theory
 math: true
-toc: false
+toc: true
 draft: false
 ---
 
