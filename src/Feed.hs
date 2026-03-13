@@ -29,7 +29,7 @@ feedConfiguration cfg lang =
 -- Overrides URL to point to the target language path, regardless of source language
 feedCtxForLang :: String -> Context String
 feedCtxForLang targetLang =
-  bodyField "description"
+  constField "description" ""
     <> dateField "date" "%Y-%m-%d"
     <> urlFieldForLang targetLang
     <> defaultContext
