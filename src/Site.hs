@@ -7,7 +7,7 @@ import Config
 import Context
 import Control.Monad (filterM, forM_, unless)
 import Data.Char (toLower)
-import Data.List (groupBy, intercalate, sortBy)
+import Data.List (groupBy, intercalate, isPrefixOf, sortBy)
 import Data.Maybe (catMaybes, fromMaybe, listToMaybe)
 import Data.Ord (Down (..), comparing)
 import qualified Data.Set as Set
@@ -16,6 +16,7 @@ import Data.Time.Format (defaultTimeLocale, formatTime)
 import Feed (feedConfiguration, feedCtxForLang)
 import Hakyll
 import Paginate (makePageId, paginationCtx)
+import Skylighting (Style, backgroundColor, breezeDark, defaultColor, fromColor, kate, styleToCss)
 import System.FilePath (joinPath, splitDirectories, takeFileName, (</>))
 
 -- ============================================================================
@@ -49,6 +50,7 @@ rules = do
   -- Static files (no config dependency needed)
   staticFiles
   scssCompilation
+  syntaxHighlightingCss
   templates
   errorPage
 
@@ -94,6 +96,41 @@ scssCompilation = do
       _ <- loadAll "static/scss/_*.scss" :: Compiler [Item String]
       path <- toFilePath <$> getUnderlying
       makeItem ("" :: String) >>= withItemBody (const $ unixFilter "sass" ["--load-path=static/scss", "--style=compressed", path] "")
+
+syntaxHighlightingCss :: Rules ()
+syntaxHighlightingCss = create ["css/syntax.css"] $ do
+  route idRoute
+  compile $ makeItem $ syntaxCssWithThemes
+
+syntaxCssWithThemes :: String
+syntaxCssWithThemes =
+  unlines
+    [ "/* Light theme (kate) - default */",
+      styleToCss kate,
+      "/* Dark theme (breezeDark) - applied via system preference or manual override */",
+      "@media (prefers-color-scheme: dark) {",
+      "  :root:not([data-theme=\"light\"]) div.sourceCode { " ++ darkBgCss ++ " }",
+      extractTokenStyles breezeDark ":root:not([data-theme=\"light\"])",
+      "}",
+      ":root[data-theme=\"dark\"] div.sourceCode { " ++ darkBgCss ++ " }",
+      extractTokenStyles breezeDark ":root[data-theme=\"dark\"]"
+    ]
+  where
+    darkBgCss = bgColorCss breezeDark ++ fgColorCss breezeDark
+
+bgColorCss :: Style -> String
+bgColorCss style = maybe "" (\c -> "background-color: " ++ fromColor c ++ "; ") (backgroundColor style)
+
+fgColorCss :: Style -> String
+fgColorCss style = maybe "" (\c -> "color: " ++ fromColor c ++ "; ") (defaultColor style)
+
+extractTokenStyles :: Style -> String -> String
+extractTokenStyles style prefix =
+  unlines
+    [ prefix ++ " " ++ line
+    | line <- lines (styleToCss style),
+      "code span" `isPrefixOf` line
+    ]
 
 templates :: Rules ()
 templates = do

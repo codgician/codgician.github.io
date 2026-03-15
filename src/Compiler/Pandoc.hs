@@ -16,8 +16,8 @@ import qualified Data.Text as T
 import qualified Data.Version as V
 import Hakyll
 import qualified Paths_builder as Meta
+import Skylighting (breezeDark)
 import Text.Pandoc
-import Text.Pandoc.Highlighting (pygments)
 import Text.Pandoc.Walk (walkM)
 import Text.Read (readMaybe)
 
@@ -133,7 +133,7 @@ slideWriterOptions slideLevel =
   defaultHakyllWriterOptions
     { writerSlideLevel = Just slideLevel,
       writerSectionDivs = True,
-      writerHighlightStyle = Just pygments,
+      writerHighlightStyle = Just breezeDark,
       writerExtensions =
         writerExtensions defaultHakyllWriterOptions
           <> extensionsFromList

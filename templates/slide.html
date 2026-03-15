@@ -15,13 +15,13 @@ $endif$
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   
   <!-- Reveal.js CSS -->
-  <link rel="stylesheet" href="/vendor/reveal.js/dist/reset.css">
-  <link rel="stylesheet" href="/vendor/reveal.js/dist/reveal.css">
-  <link rel="stylesheet" href="/vendor/reveal.js/dist/theme/$if(theme)$$theme$$else$black$endif$.css" id="theme">
+  <link rel="stylesheet" href="/vendor/reveal.js/reset.css">
+  <link rel="stylesheet" href="/vendor/reveal.js/reveal.css">
+  <link rel="stylesheet" href="/vendor/reveal.js/theme/$if(theme)$$theme$$else$black$endif$.css" id="theme">
   
   <!-- Syntax highlighting -->
-  <link rel="stylesheet" href="/vendor/reveal.js/plugin/highlight/monokai.css">
-  
+  <link rel="stylesheet" href="/css/syntax.css">
+
 $if(math)$
   <!-- KaTeX CSS for math -->
   <link rel="stylesheet" href="/vendor/katex/katex.min.css">
@@ -53,11 +53,10 @@ $body$
     </div>
   </div>
 
-  <script src="/vendor/reveal.js/dist/reveal.js"></script>
-  <script src="/vendor/reveal.js/plugin/notes/notes.js"></script>
-  <script src="/vendor/reveal.js/plugin/search/search.js"></script>
-  <script src="/vendor/reveal.js/plugin/zoom/zoom.js"></script>
-  <script src="/vendor/reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="/vendor/reveal.js/reveal.js"></script>
+  <script src="/vendor/reveal.js/plugin/notes.js"></script>
+  <script src="/vendor/reveal.js/plugin/search.js"></script>
+  <script src="/vendor/reveal.js/plugin/zoom.js"></script>
 
   <script>
     Reveal.initialize({
@@ -69,8 +68,7 @@ $body$
       plugins: [
         RevealNotes,
         RevealSearch,
-        RevealZoom,
-        RevealHighlight
+        RevealZoom
       ]
     });
   </script>

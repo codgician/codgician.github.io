@@ -372,6 +372,21 @@
       margin: $space-lg auto;
     }
 
+    figure {
+      margin: $space-lg 0;
+      text-align: center;
+
+      img {
+        margin: 0 auto $space-sm;
+      }
+
+      figcaption {
+        font-size: 0.875rem;
+        color: var(--color-secondary);
+        font-style: italic;
+      }
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
