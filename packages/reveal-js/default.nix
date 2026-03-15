@@ -1,23 +1,18 @@
 {
   lib,
-  fetchzip,
+  runCommand,
+  sources,
 }:
 
-let
-  version = "5.2.1";
-in
-fetchzip {
-  pname = "reveal-js";
-  inherit version;
-
-  url = "https://registry.npmjs.org/reveal.js/-/reveal.js-${version}.tgz";
-  hash = "sha256-zvqQZqO7wyitV5fTVnzwgQbtZaXUgY2UypMmVTdb96M=";
-  stripRoot = true;
-
+runCommand "reveal-js-${sources.reveal-js.version}" {
+  inherit (sources.reveal-js) src;
   meta = {
     description = "The HTML Presentation Framework";
     homepage = "https://revealjs.com/";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ codgician ];
   };
-}
+} ''
+  mkdir -p $out
+  tar -xzf $src --strip-components=1 -C $out
+''

@@ -1,0 +1,32 @@
+{
+    "lucide-static": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "lucide-static",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-HllQo6cErmXKSz1um4JOH59G1GT87NCxbmHVypgtamw=",
+            "type": "url",
+            "url": "https://registry.npmjs.org/lucide-static/-/lucide-static-0.577.0.tgz"
+        },
+        "version": "0.577.0"
+    },
+    "reveal-js": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "reveal-js",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "name": null,
+            "sha256": "sha256-dGg/zZCis+XAxriRBB4Ig09sSM+nkYLATmVo6j7AvZY=",
+            "type": "url",
+            "url": "https://registry.npmjs.org/reveal.js/-/reveal.js-6.0.0.tgz"
+        },
+        "version": "6.0.0"
+    }
+}
