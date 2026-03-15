@@ -1,0 +1,10 @@
+# nvfetcher configuration for auto-updating package sources
+# Run: nvfetcher
+
+[lucide-static]
+src.cmd = "curl -s https://registry.npmjs.org/lucide-static/latest | jq -r .version"
+fetch.url = "https://registry.npmjs.org/lucide-static/-/lucide-static-$ver.tgz"
+
+[reveal-js]
+src.cmd = "curl -s https://registry.npmjs.org/reveal.js/latest | jq -r .version"
+fetch.url = "https://registry.npmjs.org/reveal.js/-/reveal.js-$ver.tgz"

@@ -1,0 +1,37 @@
+name: evergreen
+permissions:
+  contents: write
+on:
+  schedule:
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+jobs:
+  evergreen:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+
+      - uses: cachix/install-nix-action@v31
+
+      - name: Run nvfetcher
+        run: nix run nixpkgs#nvfetcher
+
+      - name: Update nix flake
+        run: nix flake update >> $GITHUB_STEP_SUMMARY
+
+      - name: Push changes
+        run: |
+          if [[ `git status _sources flake.lock --porcelain` ]]; then
+            git config user.name github-actions[bot]
+            git config user.email github-actions[bot]@users.noreply.github.com
+            git add _sources flake.lock
+            git commit -m "bot: evergreen"
+            git push
+          else
+            echo "No changes to commit"
+          fi

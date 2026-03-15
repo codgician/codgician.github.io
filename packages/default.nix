@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, sources, ... }:
 
 with pkgs.lib;
 
 let
-  callPackage = callPackageWith (pkgs // mypkgs);
+  callPackage = callPackageWith (pkgs // mypkgs // { inherit sources; });
   mypkgs = pipe (builtins.readDir ./.) [
     (filterAttrs (_: type: type == "directory"))
     (mapAttrs (name: _: callPackage ./${name} { }))

@@ -22,8 +22,11 @@
         lib = pkgs.lib;
         hPkgs = pkgs.haskellPackages;
 
+        # nvfetcher-generated sources
+        sources = pkgs.callPackage ./_sources/generated.nix { };
+
         # Local packages (manually packaged dependencies)
-        localPkgs = import ./packages { inherit pkgs; };
+        localPkgs = import ./packages { inherit pkgs sources; };
 
         # Source files for the site builder
         builderSrc = lib.fileset.toSource {
@@ -124,8 +127,7 @@
 
             # Copy reveal.js for slides
             mkdir -p static/vendor/reveal.js
-            cp -r ${revealJs}/dist static/vendor/reveal.js/
-            cp -r ${revealJs}/plugin static/vendor/reveal.js/
+            cp -r ${revealJs}/dist/* static/vendor/reveal.js/
 
             site build
             runHook postBuild
@@ -168,6 +170,7 @@
           hPkgs.hlint
           pkgs.pkg-config
           pkgs.zlib
+          pkgs.nvfetcher
         ]
         ++ buildTools;
 
@@ -176,7 +179,7 @@
           mkdir -p static/vendor
           ln -sfn ${katexDist} static/vendor/katex
           ln -sfn ${lucideFont} static/vendor/lucide
-          ln -sfn ${revealJs} static/vendor/reveal.js
+          ln -sfn ${revealJs}/dist static/vendor/reveal.js
           export KATEX_VERSION="${katexVersion}"
           export MERMAID_VERSION="${mermaidVersion}"
           export PUPPETEER_EXECUTABLE_PATH="${browserPath}"
@@ -213,7 +216,7 @@
             mkdir -p static/vendor
             ln -sfn ${katexDist} static/vendor/katex
             ln -sfn ${lucideFont} static/vendor/lucide
-            ln -sfn ${revealJs} static/vendor/reveal.js
+          ln -sfn ${revealJs}/dist static/vendor/reveal.js
           '';
         };
 
