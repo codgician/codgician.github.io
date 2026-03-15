@@ -52,6 +52,7 @@ library
     , pandoc >=3.0
     , pandoc-types >=1.23
     , process
+    , skylighting
     , temporary
     , text
     , time

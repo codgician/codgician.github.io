@@ -15,15 +15,11 @@ jobs:
         with:
           fetch-depth: 1
           persist-credentials: true
-
       - uses: cachix/install-nix-action@v31
-
       - name: Run nvfetcher
         run: nix run nixpkgs#nvfetcher
-
       - name: Update nix flake
         run: nix flake update >> $GITHUB_STEP_SUMMARY
-
       - name: Push changes
         run: |
           if [[ `git status _sources flake.lock --porcelain` ]]; then

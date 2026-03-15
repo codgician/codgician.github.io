@@ -262,7 +262,7 @@ $$
 - A *derivation*'s build inputs are also managed in Nix Store.
 - Nix store paths made unique with cryptographic hash:
 
-  ```
+  ```text
   /nix/store/zrwzkd3szh13zd3wrlzj0kdkgiv1xzjn-hello.drv
   /nix/store/rq6w0k38h7kbh2s9snwpysk5yph2fqbf-hello
   ```

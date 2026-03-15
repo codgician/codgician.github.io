@@ -42,6 +42,7 @@ library:
     - hakyll >= 4.16
     - pandoc >= 3.0
     - pandoc-types >= 1.23
+    - skylighting
     - text
     - filepath
     - directory

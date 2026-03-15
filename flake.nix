@@ -146,6 +146,7 @@
           ps.hakyll
           ps.pandoc
           ps.pandoc-types
+          ps.skylighting
           ps.text
           ps.bytestring
           ps.filepath
@@ -213,10 +214,10 @@
 
           # Symlink vendor assets into static/ for development
           shellHook = ''
-            mkdir -p static/vendor
-            ln -sfn ${katexDist} static/vendor/katex
-            ln -sfn ${lucideFont} static/vendor/lucide
-          ln -sfn ${revealJs}/dist static/vendor/reveal.js
+              mkdir -p static/vendor
+              ln -sfn ${katexDist} static/vendor/katex
+              ln -sfn ${lucideFont} static/vendor/lucide
+            ln -sfn ${revealJs}/dist static/vendor/reveal.js
           '';
         };
 
