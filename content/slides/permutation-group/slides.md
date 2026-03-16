@@ -50,8 +50,9 @@ $$
 
 **若 $a, b \in A$ 且 $[a] \cap [b] \neq \emptyset$，则 $[a] = [b]$。**
 
+::: { .r-stack }
 
-::: { .fragment .fade-in-then-out style="height:0" }
+::: { .fragment .fade-out data-fragment-index="0" }
 
 - 假设 $k_1 \in [a]$ 且 $k_1 \notin [b]$，$k_2 \in [a] \cap [b]$；
 - 则有 $k_1 \sim a, \ k_2 \sim a, \ k_2 \sim b$；
@@ -59,13 +60,15 @@ $$
 
 ::: 
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 
 - 集合 $A$ 可看作一些两两不相交的等价类的并：
   $$
   A = \bigcup\limits_{a \in R} [a] \text{（两两不相交之并）}
   $$
 - $A$ 上的每个等价关系给出集合 $A$ 的一个**划分 (partition)**。
+
+:::
 
 :::
 
@@ -333,7 +336,9 @@ $$
 
 ## 轮换的幂运算 { #power-of-cycle }
 
-::: { .fragment .current-visible style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 $$
 (1 \enspace 2 \enspace 3 \enspace 4 \enspace 5 \enspace 6)
@@ -341,13 +346,7 @@ $$
 
 :::
 
-::: { .notes }
-
-既然任意置换都可以被分解成若干不交轮换之积，那么如果轮换的幂运算能够快速进行，我们就可以快速地对任意置换进行幂运算。
-
-:::
-
-::: { .fragment .fade-in-then-out style="height:0" }
+::: { .fragment .fade-in-then-out data-fragment-index="0" }
 
 $$
 \begin{aligned}
@@ -358,7 +357,7 @@ $$
 
 :::
 
-::: { .fragment .fade-in-then-out style="height:0" }
+::: { .fragment .fade-in-then-out data-fragment-index="1" }
 
 $$
 \begin{aligned}
@@ -369,7 +368,7 @@ $$
 
 :::
 
-::: { .fragment .fade-in-then-out style="height:0" }
+::: { .fragment data-fragment-index="2" }
 
 $$
 \begin{aligned}
@@ -377,6 +376,14 @@ $$
 & = (1 \enspace 5 \enspace 3) \cdot (2 \enspace 6 \enspace 4)
 \end{aligned}
 $$
+
+:::
+
+:::
+
+::: { .notes }
+
+既然任意置换都可以被分解成若干不交轮换之积，那么如果轮换的幂运算能够快速进行，我们就可以快速地对任意置换进行幂运算。
 
 :::
 
@@ -388,19 +395,23 @@ $$
 
 - $\sigma^t(a_i) = a_{[(i + t) \bmod n]}$
 - 令 $k \in N^{*} \text{ \ s.t. \ } \sigma^{tk}(a_i) = a_i$：
-  
-::: { .fragment .current-visible style="height:0" }
+
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 $$
 i + tk \equiv i \pmod n
 $$
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 $$
 tk \equiv 0 \pmod n
 $$
 
 最小正整数解：$k = \frac{n}{\gcd(n, t)}$
+:::
+
 :::
 
 ---
@@ -468,13 +479,15 @@ $G$ 是一个群（这里我们就看成置换群），$M$ 是一个集合。如
 
 用黑白两色对等边三角形顶点染色，若可通过旋转得到的方案算相同方案，求方案数？
 
-::: { .fragment .fade-in-then-out style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 ![在旋转意义下同构](./ga-example-1.png){ .plain style="background:transparent" }
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 
 $$
 \begin{aligned}
@@ -483,31 +496,33 @@ M & = \{ \text{不考虑同构时的染色方案} \}
 \end{aligned}
 $$
 
-::: 
-
-::: { .fragment }
-
 ![不考虑同构时的染色方案](./ga-example-2.png){ .plain style="background:transparent" }
+
+:::
 
 :::
 
 ---
 
-::: { .fragment .fade-out style="height:0" data-fragment-index="1" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 ![$G \times M$](ga-example-3.png){ .plain style="background:transparent" }
 
 :::
 
-::: { .fragment .current-visible style="height:0" data-fragment-index="1" }
+::: { .fragment .fade-in-then-out data-fragment-index="0" }
 
 ![等价类？](ga-example-4.png){ .plain style="background:transparent" }
 
 :::
 
-::: { .fragment .current-visible style="height:0" data-fragment-index="2" }
+::: { .fragment data-fragment-index="1" }
 
 ![等价类？](ga-example-5.png){ .plain style="background:transparent" }
+
+:::
 
 :::
 
@@ -647,27 +662,21 @@ $$
 \text{stab}_G(x) = \{ \sigma \circ x = x \mid \sigma \in G \} \le G
 $$
 
-::: { .fragment .current-visible style="height:0" data-fragment-index="1"  }
+::: { .incremental  }
 
 - 既然是子群，那可以用来对 $G$ 进行左陪集划分；
-
-:::
-
-::: { .fragment data-fragment-index="2" }
-
 - $\beta \text{stab}_G(x)$ 里的元素相当于作用于 $x$ 时 $G$ 中所有与 $\beta$ 等价的置换：
 
-:::
+::: { .r-stack }
 
-::: { .fragment .current-visible style="height:0" data-fragment-index="2" }
+::: { .fade-out .fragment data-fragment-index="0" }
 
 $$
 \beta \text{stab}_G(x) = \{ (\beta \circ \sigma) \circ x = \beta \circ x \mid \sigma \in G \}
 $$
-
 :::
 
-::: { .fragment data-fragment-index="3" }
+::: { .fade-in-then-out .fragment data-fragment-index="0" }
 
 $$
 \beta \text{stab}_G(x) = \{ \tau \circ x = \beta \circ x \mid \tau \in G \}
@@ -675,7 +684,7 @@ $$
 
 :::
 
-::: { .fragment data-fragment-index="4" }
+::: { .fade-in-then-out .fragment data-fragment-index="0" }
 
 $$
 |G| = |\text{stab}_G(x)| \cdot [G:\text{stab}_G(x)]
@@ -683,6 +692,10 @@ $$
 
 - $|\text{orb}_G(x)|$：对 $x$ 而言，$G$ 中所有本质不同置换种数。
   - 也就是不同的上述陪集的种数！
+
+:::
+
+:::
 
 :::
 
@@ -760,7 +773,7 @@ $$
 
 ---
 
-### 旋转 $0^\circ$
+## 旋转 $0^\circ$
 
 $$
 \left(\begin{array}{cccccc} 
@@ -773,7 +786,7 @@ $$
 
 ---
 
-### 旋转 $60^\circ$
+## 旋转 $60^\circ$
 
 $$
 \left(\begin{array}{cccccc} 
@@ -792,7 +805,7 @@ $$
 
 ---
 
-### 旋转 $120^\circ$
+## 旋转 $120^\circ$
 
 $$
 \left(\begin{array}{cccccc} 
@@ -811,7 +824,7 @@ $$
 
 ---
 
-### 旋转 $180^\circ$
+## 旋转 $180^\circ$
 
 $$
 \left(\begin{array}{cccccc} 
@@ -842,20 +855,25 @@ $$
 - 将置换表示为若干轮换乘积，若轮换内元素颜色均相同即为不动元（这样才能保证每一个点变成新点后的颜色与原先一致）；
 - 记染色可选的颜色数为 $m$， $c(\sigma)$ 为置换 $\sigma$ 被分解为不交轮换乘积的个数，则：
 
-  ::: { .fragment .current-visible style="height:0" }
-  
-  $$
-  \text{fix}(\sigma) = m^{c(\sigma)}
-  $$
-  :::
+::: { .r-stack }
 
-  ::: { .fragment }
+::: { .fade-out .fragment data-fragment-index="0" }
 
-  $$
-  | M/G | = \frac{1}{|G|} \sum\limits_{\sigma \in G} m^{c(\sigma)}
-  $$
+$$
+\text{fix}(\sigma) = m^{c(\sigma)}
+$$
 
-  :::
+:::
+
+::: { .fragment data-fragment-index="0" }
+
+$$
+| M/G | = \frac{1}{|G|} \sum\limits_{\sigma \in G} m^{c(\sigma)}
+$$
+
+:::
+
+:::
 
 ::: { .notes }
 
@@ -922,13 +940,15 @@ $G$ 中复合运算封闭吗？
   \end{cases}
   $$
 
-::: { .fragment .current-visible style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 - 注：若 $n$ 为偶数，则翻转对称轴可能同时过两条边的中点。这等同于共有 $2n$ 个点且不考虑此类对称轴的情况，故下面暂不考虑这种对称轴。
 
 :::
 
-::: { .fragment .current-visible style="height:0" }
+::: { .fragment .fade-in-then-out data-fragment-index="0" }
 
 - 考虑 $i \neq a$ 的情况（$i = a$ 显然封闭），若 $2 \mid k$：
 $$
@@ -937,12 +957,14 @@ $$
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="1" }
 
 - 考虑 $i \neq a$ 的情况（$i = a$ 显然封闭），若 $2 \nmid k$：
 $$
 \sigma_k \circ \tau_a \circ i = (2a - i + k) \bmod n = \tau_{(a + \frac{n + k}{2}) \bmod n}
 $$
+
+:::
 
 :::
 
@@ -1147,7 +1169,9 @@ $$
 \end{aligned}
 $$
 
-::: { .fragment .current-visible style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 $$
 \text{dp} \langle i, a, b, c \rangle = \sum\limits_{\langle j, k, l \rangle} T[a, b, c][j, k, l] \cdot \text{dp} \langle i - 1, j, k, l \rangle
@@ -1155,11 +1179,13 @@ $$
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 
 $$
 T[ a, b, c ][ k, a, b ] = \text{v} \langle k, a, b, c \rangle
 $$
+
+:::
 
 :::
 
@@ -1212,14 +1238,16 @@ $$
 
 ## 结论 { #ncj-finale }
 
-::: { .fragment .fade-out data-fragment-index="1" style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 - 记 $T^i$ 对角线元素之和为 $f(i)$
 - 旋转 $i \frac{2\pi}{n}$ 下不动元个数为 $f(\gcd(n, i))$
 
 :::
 
-::: { .fragment data-fragment-index="1" }
+::: { .fragment data-fragment-index="0" }
 
 $$
 \begin{aligned}
@@ -1231,6 +1259,8 @@ $$
 $$
 
 - 复杂度： $\mathcal{O}(d(n) \cdot 64^3\log{n})$，其中 $d(n)$ 代表 $n$ 的约数个数。
+
+:::
 
 :::
 
@@ -1274,7 +1304,7 @@ $$
 \sigma = (1 \enspace 3 \enspace 5 \enspace 6) \cdot (2 \enspace 4)
 $$
 
-::: { .fragment .current-visible style="height:0" }
+::: { .fragment }
 
 - 对于两端点位于同一点轮换内的边：
   - $\langle 1, 3 \rangle \rightarrow \langle 3 ,5 \rangle \rightarrow \langle 5, 6 \rangle \rightarrow \langle 6, 1 \rangle$
@@ -1293,7 +1323,9 @@ $$
 \langle a_i, a_j \rangle \rightarrow \langle a_{(i + 1) \bmod l}, a_{(j + 1) \bmod l} \rangle \rightarrow \dots
 $$
 
-::: { .fragment .current-visible style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 $$
 \begin{cases}
@@ -1304,13 +1336,15 @@ $$
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 
 $$
 t \equiv 0 \pmod l
 $$
 
 最小正整数解 $t = l$，则边轮换长度至多为 $l$。
+
+:::
 
 :::
 
@@ -1324,7 +1358,9 @@ $$
 \langle a_i, a_j \rangle \rightarrow \langle a_{(i + 1) \bmod l}, a_{(j + 1) \bmod l} \rangle \rightarrow \dots
 $$
 
-::: { .fragment .current-visible style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 $$
 \begin{cases}
@@ -1335,7 +1371,7 @@ $$
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 
 $$
 2i \equiv 2j \pmod l
@@ -1343,6 +1379,8 @@ $$
 
 - 若 $2 \nmid l$，则 $i \equiv j \pmod l$，无法构成边；
 - 若 $2 \mid l$，则 $i \equiv j \pmod {\frac{l}{2}}$，最小非负 $t = \frac{l}{2}$。
+
+:::
 
 :::
 
@@ -1417,17 +1455,21 @@ $$
   \sum\limits_{i = 1}^{k} \left\lfloor \frac{l_i}{2} \right\rfloor + \sum\limits_{i = 1}^{k}\sum\limits_{j = i + 1}^{k} \gcd(l_i, l_j)
   $$
 
-::: { .fragment .current-visible style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 - 不动元？每个边轮换内的边染色情况应当相同；
 - $\mid S_n \mid = n!$，没办法枚举每一个置换……
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="0" }
 
 - 边轮换的个数只跟每个点轮换的大小有关系；
 - 枚举点轮换大小的情况（$n$ 的拆分方案）？
+
+:::
 
 :::
 
@@ -1449,7 +1491,9 @@ $$
 
 ---
 
-::: { .fragment .fade-out data-fragment-index="1" style="height:0" }
+::: { .r-stack }
+
+::: { .fragment .fade-out data-fragment-index="0" }
 
 - $n$ 个点分配到轮换内（多重组合数）：
   $$
@@ -1458,7 +1502,7 @@ $$
 
 :::
 
-::: { .fragment .current-visible data-fragment-index="1" style="height:0" }
+::: { .fragment .fade-in-then-out data-fragment-index="0" }
 
 - 再考虑轮换内的顺序（圆排列）：
   - 比如 $(1 \enspace 2 \enspace 3)$ 和 $(1 \enspace 3 \enspace 2)$ 算不同的置换
@@ -1468,13 +1512,15 @@ $$
 
 :::
 
-::: { .fragment }
+::: { .fragment data-fragment-index="1" }
 
 - 对于长度相等的轮换，其之间的顺序不计。
   - 记共有 $s$ 种不同长度的轮换，其中第 $i$ 种轮换的个数为 $q_i$，则： 
   $$
   \frac{n!}{\prod\limits_{i = 1}^{k} l_i} \cdot \prod\limits_{i = 1}^{s} \frac{1}{q_i!}
   $$
+
+:::
 
 :::
 
@@ -1509,7 +1555,7 @@ $\text{Partition}(n)$ 指 $n$ 的拆分方案数，而 $\text{len}(p)$ 指拆分
 
 ---
 
-### 思路回顾
+## 思路回顾
 
 - 置换是对点的置换，均可分解成点轮换之积；
 - 染色对边染色，同一边轮换内边染色方案相同；

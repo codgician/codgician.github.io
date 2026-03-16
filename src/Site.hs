@@ -100,7 +100,7 @@ scssCompilation = do
 syntaxHighlightingCss :: Rules ()
 syntaxHighlightingCss = create ["css/syntax.css"] $ do
   route idRoute
-  compile $ makeItem $ syntaxCssWithThemes
+  compile $ makeItem syntaxCssWithThemes
 
 syntaxCssWithThemes :: String
 syntaxCssWithThemes =
