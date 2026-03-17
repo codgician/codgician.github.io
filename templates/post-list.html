@@ -31,6 +31,18 @@
         $endfor$
         $endfor$
       </ul>
+      <script>
+        // Inline: apply year-start classes before first paint to prevent layout shift
+        (function() {
+          var lastYear = null;
+          document.querySelectorAll('.timeline-post').forEach(function(post, i) {
+            if (i > 0 && post.dataset.year !== lastYear) {
+              post.classList.add('timeline-post--year-start');
+            }
+            lastYear = post.dataset.year;
+          });
+        })();
+      </script>
     </div>
   </div>
   $partial("templates/partials/footer.html")$

@@ -359,10 +359,8 @@
   const initialTag = getTagFromUrl();
   if (initialTag) {
     filterByTag(initialTag);
-  } else {
-    // No filter - just set up grouping classes
-    updateGroupingClasses();
   }
+  // No else needed: inline script in template already set year-start classes
 
   const initialYear = getYearFromHash();
   if (initialYear) {
