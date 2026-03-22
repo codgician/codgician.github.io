@@ -1,6 +1,6 @@
 {
     "lucide-static": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "lucide-static",
@@ -15,7 +15,7 @@
         "version": "0.577.0"
     },
     "reveal-js": {
-        "cargoLocks": null,
+        "cargoLock": null,
         "date": null,
         "extract": null,
         "name": "reveal-js",
