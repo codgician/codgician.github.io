@@ -8,10 +8,10 @@
 {
   lucide-static = {
     pname = "lucide-static";
-    version = "0.577.0";
+    version = "1.7.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/lucide-static/-/lucide-static-0.577.0.tgz";
-      sha256 = "sha256-HllQo6cErmXKSz1um4JOH59G1GT87NCxbmHVypgtamw=";
+      url = "https://registry.npmjs.org/lucide-static/-/lucide-static-1.7.0.tgz";
+      sha256 = "sha256-8G4A93Q7j8MQv2CVLmF6odcrYIRt8/YyIOWCVodp6+w=";
     };
   };
   reveal-js = {
