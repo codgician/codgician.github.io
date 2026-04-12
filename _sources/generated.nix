@@ -8,18 +8,18 @@
 {
   lucide-static = {
     pname = "lucide-static";
-    version = "1.7.0";
+    version = "1.8.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/lucide-static/-/lucide-static-1.7.0.tgz";
-      sha256 = "sha256-8G4A93Q7j8MQv2CVLmF6odcrYIRt8/YyIOWCVodp6+w=";
+      url = "https://registry.npmjs.org/lucide-static/-/lucide-static-1.8.0.tgz";
+      sha256 = "sha256-3SMidHnvtbL2mS2UdP5bfkfyjf3XeKFpWPB9Q8iFAJk=";
     };
   };
   reveal-js = {
     pname = "reveal-js";
-    version = "6.0.0";
+    version = "6.0.1";
     src = fetchurl {
-      url = "https://registry.npmjs.org/reveal.js/-/reveal.js-6.0.0.tgz";
-      sha256 = "sha256-dGg/zZCis+XAxriRBB4Ig09sSM+nkYLATmVo6j7AvZY=";
+      url = "https://registry.npmjs.org/reveal.js/-/reveal.js-6.0.1.tgz";
+      sha256 = "sha256-ejvFCWxDW4k/10iP9ETBwcIy4eaYe23mhpbnBkN9Ck8=";
     };
   };
 }
