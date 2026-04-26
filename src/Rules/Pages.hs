@@ -91,9 +91,10 @@ standalonePages cfg = do
         meta <- getMetadata ident
         let enableMath = metadataBool "math" meta
             enableMermaid = metadataBool "mermaid" meta
+            enableTikZ = metadataBool "tikz" meta
             tpl = templateFromMetadata meta
             ctx = langsCtx' <> pageCtx cfg lang tpl
-        customPandocCompiler enableMath enableMermaid
+        customPandocCompiler enableMath enableMermaid enableTikZ
           >>= saveSnapshot "content"
           >>= loadAndApplyTemplate (fromFilePath $ "templates/" <> tpl <> ".html") ctx
           >>= loadAndApplyTemplate "templates/default.html" ctx

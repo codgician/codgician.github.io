@@ -31,6 +31,7 @@ library:
     - Compiler.KaTeX
     - Compiler.Mermaid
     - Compiler.Pandoc
+    - Compiler.TikZ
     - Compiler.Toc
     - Config
     - Content.Fallback
@@ -91,3 +92,4 @@ tests:
       - hspec
       - containers
       - aeson
+      - text

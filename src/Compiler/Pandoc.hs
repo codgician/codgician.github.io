@@ -9,6 +9,7 @@ where
 
 import Compiler.KaTeX (cachedKaTeX)
 import Compiler.Mermaid (cachedMermaidDual)
+import Compiler.TikZ (cachedTikZ)
 import Compiler.Toc (generateToc)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
@@ -26,23 +27,23 @@ filterVersion :: Text
 filterVersion = T.pack $ V.showVersion Meta.version
 
 -- | Custom Pandoc compiler with KaTeX and Mermaid transforms
-customPandocCompiler :: Bool -> Bool -> Compiler (Item String)
-customPandocCompiler enableMath enableMermaid =
+customPandocCompiler :: Bool -> Bool -> Bool -> Compiler (Item String)
+customPandocCompiler enableMath enableMermaid enableTikZ =
   pandocCompilerWithTransformM
     defaultHakyllReaderOptions
     defaultHakyllWriterOptions
-    (transform enableMath enableMermaid)
+    (transform enableMath enableMermaid enableTikZ)
 
 -- | Custom Pandoc compiler that also returns TOC HTML
 -- Returns (body, Maybe tocHtml)
-customPandocCompilerWithToc :: Bool -> Bool -> Compiler (Item String, Maybe String)
-customPandocCompilerWithToc enableMath enableMermaid = do
+customPandocCompilerWithToc :: Bool -> Bool -> Bool -> Compiler (Item String, Maybe String)
+customPandocCompilerWithToc enableMath enableMermaid enableTikZ = do
   -- Read and parse the document
   body <- getResourceBody
   pandocDoc <- readPandocWith defaultHakyllReaderOptions body
 
   -- Transform the AST (math, mermaid)
-  pandocDoc' <- transform enableMath enableMermaid (itemBody pandocDoc)
+  pandocDoc' <- transform enableMath enableMermaid enableTikZ (itemBody pandocDoc)
 
   -- Generate TOC before writing
   let tocHtml = T.unpack <$> generateToc pandocDoc'
@@ -53,8 +54,8 @@ customPandocCompilerWithToc enableMath enableMermaid = do
   pure (htmlItem, tocHtml)
 
 -- | Slide compiler using Pandoc's reveal.js writer
-slideCompiler :: Bool -> Compiler (Item String)
-slideCompiler enableMath = do
+slideCompiler :: Bool -> Bool -> Compiler (Item String)
+slideCompiler enableMath enableTikZ = do
   metadata <- getUnderlying >>= getMetadata
   let slideLevel = fromMaybe 2 $ lookupString "slide-level" metadata >>= readMaybe
 
@@ -69,7 +70,7 @@ slideCompiler enableMath = do
       Right doc -> pure doc
 
   -- Apply math transform
-  pandocDoc' <- transform enableMath False pandocDoc
+  pandocDoc' <- transform enableMath False enableTikZ pandocDoc
 
   -- Write to reveal.js format with title slide template
   let writerOpts = slideWriterOptions slideLevel
@@ -145,10 +146,11 @@ slideWriterOptions slideLevel =
     }
 
 -- | Transform Pandoc AST
-transform :: Bool -> Bool -> Pandoc -> Compiler Pandoc
-transform enableMath enableMermaid doc = unsafeCompiler $ do
+transform :: Bool -> Bool -> Bool -> Pandoc -> Compiler Pandoc
+transform enableMath enableMermaid enableTikZ doc = unsafeCompiler $ do
   doc' <- if enableMath then walkM transformMath doc else pure doc
-  if enableMermaid then walkM transformMermaid doc' else pure doc'
+  doc'' <- if enableMermaid then walkM transformMermaid doc' else pure doc'
+  if enableTikZ then walkM transformTikZ doc'' else pure doc''
 
 -- | Transform Math to rendered HTML
 transformMath :: Inline -> IO Inline
@@ -169,3 +171,11 @@ transformMermaid (CodeBlock (_, classes, _) content)
         RawBlock (Format "html") $
           "<div class=\"mermaid\">" <> html <> "</div>"
 transformMermaid x = pure x
+
+-- | Transform TikZ code blocks to inline SVG.
+transformTikZ :: Block -> IO Block
+transformTikZ (CodeBlock (_, classes, _) content)
+  | "tikz" `elem` classes = do
+      html <- cachedTikZ filterVersion content
+      pure $ RawBlock (Format "html") html
+transformTikZ x = pure x

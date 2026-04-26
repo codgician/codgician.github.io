@@ -37,6 +37,7 @@ featuresFromMetadata meta =
   RenderFeatures
     { renderMath = metadataBool "math" meta,
       renderMermaid = metadataBool "mermaid" meta,
+      renderTikZ = metadataBool "tikz" meta,
       renderToc = metadataBool "toc" meta
     }
 

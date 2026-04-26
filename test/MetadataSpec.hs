@@ -23,8 +23,8 @@ spec = describe "Content.Metadata" $ do
 
   describe "featuresFromMetadata" $
     it "reads render feature flags" $
-      featuresFromMetadata (metadata [("math", String "true"), ("mermaid", String "true"), ("toc", String "false")])
-        `shouldBe` RenderFeatures True True False
+      featuresFromMetadata (metadata [("math", String "true"), ("mermaid", String "true"), ("tikz", String "true"), ("toc", String "false")])
+        `shouldBe` RenderFeatures True True True False
 
   describe "templateFromMetadata" $
     it "defaults to page" $

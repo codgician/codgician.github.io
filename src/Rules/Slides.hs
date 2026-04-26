@@ -57,8 +57,10 @@ slidePages cfg = match "content/slides/*/slides.md" $
           slideSlugFromIdentifier i
       compile $ do
         ident <- getUnderlying
-        enableMath <- metadataBool "math" <$> getMetadata ident
-        slideCompiler enableMath
+        meta <- getMetadata ident
+        let enableMath = metadataBool "math" meta
+            enableTikZ = metadataBool "tikz" meta
+        slideCompiler enableMath enableTikZ
           >>= saveSnapshot "content"
           >>= loadAndApplyTemplate "templates/slide.html" defaultContext
           >>= relativizeUrls

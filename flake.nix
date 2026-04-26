@@ -60,11 +60,21 @@
           else
             "${lib.getExe browser}";
 
+        tikzTexLive = pkgs.texlive.combine {
+          inherit (pkgs.texlive)
+            scheme-small
+            standalone
+            pgf
+            dvisvgm
+            ;
+        };
+
         # External tools needed for building
         buildTools = [
           pkgs.dart-sass
           pkgs.katex
           pkgs.mermaid-cli
+          tikzTexLive
           browser
         ];
 
@@ -89,6 +99,7 @@
         # Tool versions for cache key (required by site builder)
         katexVersion = pkgs.katex.version;
         mermaidVersion = pkgs.mermaid-cli.version;
+        tikzVersion = "texlive-2025";
 
         # The final website derivation
         website = pkgs.stdenv.mkDerivation {
@@ -113,6 +124,7 @@
 
           KATEX_VERSION = katexVersion;
           MERMAID_VERSION = mermaidVersion;
+          TIKZ_VERSION = tikzVersion;
           PUPPETEER_EXECUTABLE_PATH = browserPath;
           PUPPETEER_CONFIG = "./puppeteer-config.json";
           MERMAID_CONFIG = "./mermaid-config.json";
@@ -194,6 +206,7 @@
           ln -sfn ${revealJs}/dist static/vendor/reveal.js
           export KATEX_VERSION="${katexVersion}"
           export MERMAID_VERSION="${mermaidVersion}"
+          export TIKZ_VERSION="${tikzVersion}"
           export PUPPETEER_EXECUTABLE_PATH="${browserPath}"
           export PUPPETEER_CONFIG="./puppeteer-config.json"
           export MERMAID_CONFIG="./mermaid-config.json"
@@ -218,6 +231,7 @@
 
           KATEX_VERSION = katexVersion;
           MERMAID_VERSION = mermaidVersion;
+          TIKZ_VERSION = tikzVersion;
           PUPPETEER_EXECUTABLE_PATH = browserPath;
           PUPPETEER_CONFIG = "./puppeteer-config.json";
           MERMAID_CONFIG = "./mermaid-config.json";

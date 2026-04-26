@@ -29,6 +29,7 @@ library
       Compiler.KaTeX
       Compiler.Mermaid
       Compiler.Pandoc
+      Compiler.TikZ
       Compiler.Toc
       Config
       Content.Fallback
@@ -90,6 +91,7 @@ test-suite builder-test
       MetadataSpec
       PaginateSpec
       RoutesSpec
+      TikZSpec
       VendorIconsSpec
       Paths_builder
   hs-source-dirs:
@@ -102,4 +104,5 @@ test-suite builder-test
     , containers
     , hakyll >=4.16
     , hspec
+    , text
   default-language: Haskell2010

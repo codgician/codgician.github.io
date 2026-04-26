@@ -47,6 +47,7 @@ data LocalizedRef = LocalizedRef
 data RenderFeatures = RenderFeatures
   { renderMath :: Bool,
     renderMermaid :: Bool,
+    renderTikZ :: Bool,
     renderToc :: Bool
   }
   deriving (Eq, Show)

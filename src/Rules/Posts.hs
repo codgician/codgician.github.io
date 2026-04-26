@@ -82,14 +82,14 @@ blogPosts cfg = do
       ident <- getUnderlying
       lang <- routeOrFail $ langFromIndexIdentifier ident
       slug <- routeOrFail $ postSlugFromIdentifier ident
-      (enableMath, enableMermaid) <- getFeatureFlags
+      (enableMath, enableMermaid, enableTikZ) <- getFeatureFlags
       enableToc <- getTocFlag
       let basePostCtx =
             allLangsCtx cfg lang (`postUrl` slug)
               <> postCtx cfg lang
       if enableToc
         then do
-          (bodyItem, maybeToc) <- customPandocCompilerWithToc enableMath enableMermaid
+          (bodyItem, maybeToc) <- customPandocCompilerWithToc enableMath enableMermaid enableTikZ
           tocItem <- makeItem (fromMaybe "" maybeToc)
           _ <- saveSnapshot "toc" tocItem
           let ctx = tocCtx lang maybeToc <> basePostCtx
@@ -98,7 +98,7 @@ blogPosts cfg = do
             >>= loadAndApplyTemplate "templates/default.html" ctx
             >>= relativizeUrls
         else
-          customPandocCompiler enableMath enableMermaid
+          customPandocCompiler enableMath enableMermaid enableTikZ
             >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/post.html" basePostCtx
             >>= loadAndApplyTemplate "templates/default.html" basePostCtx
@@ -149,6 +149,7 @@ renderFallbackPost cfg requestedLang slug sourceIdentifier = do
           <> constField "title" (metaStr "title" srcMeta)
           <> boolCtx "math" srcMeta
           <> boolCtx "mermaid" srcMeta
+          <> boolCtx "tikz" srcMeta
           <> allLangsCtx cfg requestedLang (`postUrl` slug)
           <> postCtx cfg requestedLang
   makeItem (itemBody srcItem)
@@ -244,10 +245,10 @@ boolCtx k m = if metadataBool k m then constField k "true" else mempty
 -- Internal: compiler helpers
 -- ============================================================================
 
-getFeatureFlags :: Compiler (Bool, Bool)
+getFeatureFlags :: Compiler (Bool, Bool, Bool)
 getFeatureFlags = do
   meta <- getUnderlying >>= getMetadata
-  pure (metadataBool "math" meta, metadataBool "mermaid" meta)
+  pure (metadataBool "math" meta, metadataBool "mermaid" meta, metadataBool "tikz" meta)
 
 getTocFlag :: Compiler Bool
 getTocFlag = metadataBool "toc" <$> (getUnderlying >>= getMetadata)
