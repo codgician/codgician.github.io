@@ -45,14 +45,20 @@
         siteBuilder = hPkgs.callCabal2nix "builder" builderSrc { };
 
         # Browser for mermaid-cli (platform-aware)
-        browser = if pkgs.stdenv.isDarwin then pkgs.google-chrome else pkgs.chromium;
+        # On Darwin, use Chromium from playwright-driver because nixpkgs'
+        # google-chrome derivation can fail to chmod the .app bundle under the
+        # Nix daemon sandbox.
+        browser = if pkgs.stdenv.isDarwin then pkgs.playwright-driver.browsers else pkgs.chromium;
         browserPath =
-          if pkgs.stdenv.isDarwin then "${browser}/bin/google-chrome-stable" else "${lib.getExe browser}";
+          if pkgs.stdenv.isDarwin then
+            "${browser}/chromium-1208/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+          else
+            "${lib.getExe browser}";
 
         # External tools needed for building
         buildTools = [
           pkgs.dart-sass
-          pkgs.nodePackages.katex
+          pkgs.katex
           pkgs.mermaid-cli
           browser
         ];
@@ -67,7 +73,7 @@
         };
 
         # KaTeX dist path for CSS and fonts
-        katexDist = "${pkgs.nodePackages.katex}/lib/node_modules/katex/dist";
+        katexDist = "${pkgs.katex}/lib/node_modules/katex/dist";
 
         # Lucide icons (icon font with CSS)
         lucideFont = "${localPkgs.lucide-static}/font";
@@ -76,7 +82,7 @@
         revealJs = localPkgs.reveal-js;
 
         # Tool versions for cache key (required by site builder)
-        katexVersion = pkgs.nodePackages.katex.version;
+        katexVersion = pkgs.katex.version;
         mermaidVersion = pkgs.mermaid-cli.version;
 
         # The final website derivation
@@ -259,7 +265,7 @@
           runtimeInputs = with pkgs; [
             treefmt
             nixfmt
-            nodePackages.prettier
+            prettier
             yamlfmt
             hPkgs.ormolu
           ];
