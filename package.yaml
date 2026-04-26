@@ -33,9 +33,19 @@ library:
     - Compiler.Pandoc
     - Compiler.Toc
     - Config
+    - Content.Fallback
+    - Content.Metadata
+    - Content.Types
     - Context
     - Feed
     - Paginate
+    - Routes
+    - Rules.Feeds
+    - Rules.Pages
+    - Rules.Posts
+    - Rules.Sitemap
+    - Rules.Slides
+    - Rules.Static
     - Site
   dependencies:
     - base >= 4.7 && < 5
@@ -80,3 +90,4 @@ tests:
       - hakyll >= 4.16
       - hspec
       - containers
+      - aeson

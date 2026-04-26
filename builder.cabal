@@ -31,9 +31,19 @@ library
       Compiler.Pandoc
       Compiler.Toc
       Config
+      Content.Fallback
+      Content.Metadata
+      Content.Types
       Context
       Feed
       Paginate
+      Routes
+      Rules.Feeds
+      Rules.Pages
+      Rules.Posts
+      Rules.Sitemap
+      Rules.Slides
+      Rules.Static
       Site
   other-modules:
       Paths_builder
@@ -77,13 +87,16 @@ test-suite builder-test
   main-is: Spec.hs
   other-modules:
       ConfigSpec
+      MetadataSpec
       PaginateSpec
+      RoutesSpec
       Paths_builder
   hs-source-dirs:
       test
   ghc-options: -Werror -Wall -Wcompat -Widentities -Wredundant-constraints -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wmissing-export-lists -Wmissing-home-modules -Wunused-packages -Wunused-type-patterns -Wduplicate-exports -Wmissing-signatures -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , builder
     , containers
     , hakyll >=4.16
