@@ -16,9 +16,10 @@ module Paginate
   )
 where
 
+import Content.Types (LangCode, Section)
 import qualified Data.Map as Map
 import Hakyll
-import System.FilePath ((</>))
+import Routes (sectionPageIdentifier)
 
 -- | Generate page identifiers with clean URLs.
 --
@@ -27,16 +28,12 @@ import System.FilePath ((</>))
 --
 -- Example:
 -- @
--- makePageId "en" "posts" 1  -- "en/posts/index.html"
--- makePageId "en" "posts" 2  -- "en/posts/page/2/index.html"
--- makePageId "zh" "slides" 3 -- "zh/slides/page/3/index.html"
+-- makePageId (LangCode "en") Posts 1  -- "en/posts/index.html"
+-- makePageId (LangCode "en") Posts 2  -- "en/posts/page/2/index.html"
+-- makePageId (LangCode "zh") Slides 3 -- "zh/slides/page/3/index.html"
 -- @
-makePageId :: String -> String -> PageNumber -> Identifier
-makePageId lang section n =
-  fromFilePath $
-    if n == 1
-      then lang </> section </> "index.html"
-      else lang </> section </> "page" </> show n </> "index.html"
+makePageId :: LangCode -> Section -> PageNumber -> Identifier
+makePageId = sectionPageIdentifier
 
 -- | Pagination context with hasPagination boolean for templates.
 --

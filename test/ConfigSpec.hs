@@ -3,46 +3,47 @@
 module ConfigSpec (spec) where
 
 import Config
+import Content.Types (LangCode (..))
 import qualified Data.Map.Strict as Map
 import Test.Hspec
 
 spec :: Spec
 spec = describe "Config" $ do
   describe "getTrans" $ do
-    let langs = [Language "en" "English", Language "zh" "中文"]
+    let langs = [Language (LangCode "en") "English", Language (LangCode "zh") "中文"]
     let translated = Translated $ Map.fromList [("en", "Hello"), ("zh", "你好")]
 
     it "returns translation for requested language" $ do
-      getTrans langs "en" translated `shouldBe` "Hello"
-      getTrans langs "zh" translated `shouldBe` "你好"
+      getTrans langs (LangCode "en") translated `shouldBe` "Hello"
+      getTrans langs (LangCode "zh") translated `shouldBe` "你好"
 
     it "falls back to default language when translation missing" $ do
       let partial = Translated $ Map.fromList [("en", "Hello")]
-      getTrans langs "zh" partial `shouldBe` "Hello"
+      getTrans langs (LangCode "zh") partial `shouldBe` "Hello"
 
     it "returns empty string when no translations available" $ do
       let empty = Translated Map.empty
-      getTrans langs "en" empty `shouldBe` ""
+      getTrans langs (LangCode "en") empty `shouldBe` ""
 
   describe "getTransList" $ do
-    let langs = [Language "en" "English", Language "zh" "中文"]
+    let langs = [Language (LangCode "en") "English", Language (LangCode "zh") "中文"]
     let phrases = TranslatedList $ Map.fromList [("en", ["Hi", "Hello"]), ("zh", ["嗨", "你好"])]
 
     it "returns list for requested language" $ do
-      getTransList langs "en" phrases `shouldBe` ["Hi", "Hello"]
-      getTransList langs "zh" phrases `shouldBe` ["嗨", "你好"]
+      getTransList langs (LangCode "en") phrases `shouldBe` ["Hi", "Hello"]
+      getTransList langs (LangCode "zh") phrases `shouldBe` ["嗨", "你好"]
 
     it "falls back to default language when missing" $ do
       let partial = TranslatedList $ Map.fromList [("en", ["Hi"])]
-      getTransList langs "zh" partial `shouldBe` ["Hi"]
+      getTransList langs (LangCode "zh") partial `shouldBe` ["Hi"]
 
   describe "defaultLang" $ do
     it "returns first language code" $ do
-      let langs = [Language "zh" "中文", Language "en" "English"]
-      defaultLang langs `shouldBe` "zh"
+      let langs = [Language (LangCode "zh") "中文", Language (LangCode "en") "English"]
+      defaultLang langs `shouldBe` LangCode "zh"
 
     it "returns 'en' for empty list" $
-      defaultLang [] `shouldBe` "en"
+      defaultLang [] `shouldBe` LangCode "en"
 
   describe "postsPerPage" $ do
     it "returns configured value" $ do
@@ -73,7 +74,7 @@ minimalConfig =
             copyright = Translated Map.empty,
             license = Nothing
           },
-      languages = [Language "en" "English"],
+      languages = [Language (LangCode "en") "English"],
       author = AuthorConfig "Test" Nothing,
       navigation = [],
       social = [],

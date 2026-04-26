@@ -27,6 +27,7 @@ module Config
   )
 where
 
+import Content.Types (LangCode (..))
 import Data.Aeson
 import Data.Aeson.Key (toText)
 import Data.Aeson.KeyMap (toList)
@@ -61,31 +62,31 @@ instance FromJSON TranslatedList where
         ts <- parseJSON val
         pure (toText k, ts)
 
-getTrans :: [Language] -> String -> Translated -> Text
+getTrans :: [Language] -> LangCode -> Translated -> Text
 getTrans langs lang (Translated m) =
-  let langText = T.pack lang
-      defLang = defaultLang langs
+  let langText = unLangCode lang
+      defLang = unLangCode $ defaultLang langs
    in case Map.lookup langText m of
         Just t -> t
         Nothing -> Map.findWithDefault "" defLang m
 
 -- | Get translated string as String (convenience wrapper)
-transStr :: [Language] -> String -> Translated -> String
+transStr :: [Language] -> LangCode -> Translated -> String
 transStr langs lang = T.unpack . getTrans langs lang
 
-getTransList :: [Language] -> String -> TranslatedList -> [Text]
+getTransList :: [Language] -> LangCode -> TranslatedList -> [Text]
 getTransList langs lang (TranslatedList m) =
-  let langText = T.pack lang
-      defLang = defaultLang langs
+  let langText = unLangCode lang
+      defLang = unLangCode $ defaultLang langs
    in case Map.lookup langText m of
         Just ts -> ts
         Nothing -> Map.findWithDefault [] defLang m
 
-defaultLang :: [Language] -> Text
-defaultLang [] = "en"
+defaultLang :: [Language] -> LangCode
+defaultLang [] = LangCode "en"
 defaultLang (l : _) = langCode l
 
-langCodes :: SiteConfig -> [Text]
+langCodes :: SiteConfig -> [LangCode]
 langCodes = map langCode . languages
 
 data SiteConfig = SiteConfig
@@ -101,14 +102,14 @@ data SiteConfig = SiteConfig
   deriving (Show, Generic)
 
 data Language = Language
-  { langCode :: Text,
+  { langCode :: LangCode,
     langLabel :: Text
   }
   deriving (Show, Generic)
 
 instance FromJSON Language where
   parseJSON = withObject "Language" $ \v ->
-    Language <$> v .: "code" <*> v .: "label"
+    Language . LangCode <$> v .: "code" <*> v .: "label"
 
 data SiteInfo = SiteInfo
   { title :: Translated,
