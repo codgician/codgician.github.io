@@ -90,6 +90,7 @@ test-suite builder-test
       MetadataSpec
       PaginateSpec
       RoutesSpec
+      VendorIconsSpec
       Paths_builder
   hs-source-dirs:
       test
