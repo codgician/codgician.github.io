@@ -39,21 +39,25 @@ navigation:
       zh: 关于
 social:
   - url: "https://github.com/codgician"
-    icon: github
+    icon: brand-github
     label:
       en: GitHub
   - url: "https://x.com/codgician"
-    icon: twitter
+    icon: brand-x
     label:
       en: X
   - url: "https://t.me/codgician"
-    icon: send
+    icon: brand-telegram
     label:
       en: Telegram
   - url: "https://www.linkedin.com/in/codgician"
-    icon: linkedin
+    icon: brand-linkedin
     label:
       en: LinkedIn
+  - url: "https://paypal.me/codgician"
+    icon: brand-paypal
+    label:
+      en: PayPal
 friends:
   - name: "Anduin Xue"
     url: "https://anduin.aiursoft.com"
