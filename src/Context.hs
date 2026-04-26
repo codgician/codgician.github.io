@@ -23,10 +23,21 @@ module Context
     postTagsField,
     tagsFieldFromMeta,
 
+    -- * Post contexts
+    postCtx,
+    pageCtx,
+    postListItemCtx,
+
+    -- * Language switcher contexts
+    allLangsCtx,
+    availableLangsCtx,
+
     -- * List contexts
     friendsCtx,
-    availableLangsCtx,
     yearGroupsCtx,
+
+    -- * Navigation helpers
+    navTitle,
 
     -- * Utilities
     toItem,
@@ -38,10 +49,12 @@ module Context
 where
 
 import Config
+import Content.Metadata (metadataStringList)
+import Content.Types (LangCode (..), langCodeString)
 import Data.List (intercalate)
-import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Hakyll
+import Routes (postSlugFromIdentifier, postUrl, routeOrFail)
 
 -- ============================================================================
 -- Types
@@ -67,7 +80,7 @@ data YearGroup = YearGroup
 
 -- | Minimal base context with essential site-wide fields.
 -- Includes: siteTitle, copyright, license, authorName, lang, navigation, defaultContext
-baseCtx :: SiteConfig -> String -> Context String
+baseCtx :: SiteConfig -> LangCode -> Context String
 baseCtx cfg lang =
   constField "siteTitle" (trans $ title $ site cfg)
     <> constField "copyright" (trans $ Config.copyright $ site cfg)
@@ -80,8 +93,8 @@ baseCtx cfg lang =
     trans = transStr (languages cfg) lang
 
 -- | Language field context
-langCtx :: String -> Context String
-langCtx = constField "lang"
+langCtx :: LangCode -> Context String
+langCtx = constField "lang" . langCodeString
 
 -- ============================================================================
 -- Page-Specific Contexts
@@ -89,7 +102,7 @@ langCtx = constField "lang"
 
 -- | Homepage context with social links and typewriter effect.
 -- Composes baseCtx with homepage-specific fields.
-homeCtx :: SiteConfig -> String -> Context String
+homeCtx :: SiteConfig -> LangCode -> Context String
 homeCtx cfg lang =
   constField "siteSubtitle" (trans $ subtitle $ site cfg)
     <> constField "typewriterPhrases" (phrasesStr $ typewriterPhrases $ site cfg)
@@ -130,7 +143,7 @@ dateCtx =
 
 -- | Table of contents context (optional)
 -- Pass the TOC HTML and language; provides toc, hasToc, and tocTitle fields
-tocCtx :: String -> Maybe String -> Context String
+tocCtx :: LangCode -> Maybe String -> Context String
 tocCtx _ Nothing = mempty
 tocCtx lang (Just tocHtml) =
   constField "toc" tocHtml
@@ -138,49 +151,95 @@ tocCtx lang (Just tocHtml) =
     <> constField "tocTitle" (tocTitleForLang lang)
 
 -- | Get localized TOC title
-tocTitleForLang :: String -> String
-tocTitleForLang "zh" = "目录"
+tocTitleForLang :: LangCode -> String
+tocTitleForLang (LangCode "zh") = "目录"
 tocTitleForLang _ = "Table of Contents"
 
 -- | Tags field that reads from metadata and provides a list for iteration
 -- Usage in templates: $if(tags)$...$for(tags)$<a href="...">$tag$</a>$endfor$...$endif$
 -- Only provides the field when tags are present (so $if(tags)$ works correctly)
-postTagsField :: String -> Context String
+postTagsField :: LangCode -> Context String
 postTagsField lang = Context $ \key _ item -> do
   meta <- getMetadata (itemIdentifier item)
-  let tagList = fromMaybe [] $ lookupStringList "tags" meta
+  let tagList = metadataStringList "tags" meta
   if key == "tags" && not (null tagList)
     then do
-      let tagCtx = field "tag" (pure . itemBody) <> constField "lang" lang
+      let tagCtx = field "tag" (pure . itemBody) <> langCtx lang
       unContext (listField "tags" tagCtx (pure $ map toItem tagList)) key [] item
     else noResult $ "No field " ++ key
 
 -- | Tags field from explicit metadata (for fallback posts)
-tagsFieldFromMeta :: String -> Metadata -> Context String
+tagsFieldFromMeta :: LangCode -> Metadata -> Context String
 tagsFieldFromMeta lang meta =
   case lookupStringList "tags" meta of
     Just tagList@(_ : _) ->
-      let tagCtx = field "tag" (pure . itemBody) <> constField "lang" lang
+      let tagCtx = field "tag" (pure . itemBody) <> langCtx lang
        in listField "tags" tagCtx (pure $ map toItem tagList)
     _ -> mempty
+
+-- ============================================================================
+-- Post Contexts
+-- ============================================================================
+
+-- | Full post context (tags + base + post metadata)
+postCtx :: SiteConfig -> LangCode -> Context String
+postCtx cfg lang = postTagsField lang <> baseCtx cfg lang <> postMetaCtx
+
+-- | Page context, specialised by page slug (e.g. about page adds friends list)
+pageCtx :: SiteConfig -> LangCode -> String -> Context String
+pageCtx cfg lang "about" = baseCtx cfg lang <> friendsCtx cfg
+pageCtx cfg lang _ = baseCtx cfg lang
+
+-- | Lightweight context for post list items (url, tagsStr, date)
+postListItemCtx :: LangCode -> Context String
+postListItemCtx lang = field "url" makeUrl <> field "tagsStr" getTagsStr <> dateCtx <> defaultContext
+  where
+    makeUrl item = routeOrFail $ postUrl lang <$> postSlugFromIdentifier (itemIdentifier item)
+    getTagsStr item = do
+      meta <- getMetadata (itemIdentifier item)
+      pure $ intercalate "," $ metadataStringList "tags" meta
+
+-- ============================================================================
+-- Language Switcher Contexts
+-- ============================================================================
+
+-- | Language switcher context for a given page URL suffix
+allLangsCtx :: SiteConfig -> LangCode -> (LangCode -> String) -> Context String
+allLangsCtx cfg curLang makeUrl =
+  availableLangsCtx
+    [ AvailableLang (langCodeString $ langCode l) (T.unpack $ langLabel l) (makeUrl $ langCode l) (langCode l == curLang)
+    | l <- languages cfg
+    ]
+
+-- | Available languages context for language switcher
+availableLangsCtx :: [AvailableLang] -> Context String
+availableLangsCtx langs =
+  listField "availableLangs" itemCtx (pure $ map toItem langs)
+    <> boolField "hasMultipleLangs" (const $ length langs > 1)
+  where
+    itemCtx =
+      field "code" (pure . alCode . itemBody)
+        <> field "label" (pure . alLabel . itemBody)
+        <> field "url" (pure . alUrl . itemBody)
+        <> boolField "active" (alActive . itemBody)
 
 -- ============================================================================
 -- List Contexts
 -- ============================================================================
 
 -- | Navigation links context
-navCtx :: SiteConfig -> String -> Context String
+navCtx :: SiteConfig -> LangCode -> Context String
 navCtx cfg lang =
   listField "navigation" itemCtx (pure $ map toItem $ navigation cfg)
   where
     itemCtx =
       field "name" (pure . trans . navLabel . itemBody)
         <> field "url" (pure . T.unpack . navUrl . itemBody)
-        <> constField "lang" lang -- Include lang in each nav item for template access
+        <> constField "lang" (langCodeString lang) -- Include lang in each nav item for template access
     trans = transStr (languages cfg) lang
 
 -- | Social links context
-socialCtx :: SiteConfig -> String -> Context String
+socialCtx :: SiteConfig -> LangCode -> Context String
 socialCtx cfg lang =
   listField "social" itemCtx (pure $ map toItem $ social cfg)
   where
@@ -200,23 +259,21 @@ friendsCtx cfg =
       field "name" (pure . T.unpack . friendName . itemBody)
         <> field "url" (pure . T.unpack . friendUrl . itemBody)
 
--- | Available languages context for language switcher
-availableLangsCtx :: [AvailableLang] -> Context String
-availableLangsCtx langs =
-  listField "availableLangs" itemCtx (pure $ map toItem langs)
-    <> boolField "hasMultipleLangs" (const $ length langs > 1)
-  where
-    itemCtx =
-      field "code" (pure . alCode . itemBody)
-        <> field "label" (pure . alLabel . itemBody)
-        <> field "url" (pure . alUrl . itemBody)
-        <> boolField "active" (alActive . itemBody)
-
 -- | Year groups context for post archives
 yearGroupsCtx :: Context String -> Context YearGroup
 yearGroupsCtx postCtx' =
   field "year" (pure . ygYear . itemBody)
     <> listFieldWith "posts" postCtx' (pure . ygPosts . itemBody)
+
+-- ============================================================================
+-- Navigation Helpers
+-- ============================================================================
+
+-- | Get the navigation title for a URL (falls back to URL text if not found)
+navTitle :: SiteConfig -> LangCode -> T.Text -> String
+navTitle cfg lang url = case filter ((== url) . navUrl) $ navigation cfg of
+  (n : _) -> T.unpack $ getTrans (languages cfg) lang $ navLabel n
+  [] -> T.unpack url
 
 -- ============================================================================
 -- Utilities
