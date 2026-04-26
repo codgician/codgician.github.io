@@ -1,18 +1,18 @@
 {
-    "lucide-static": {
+    "tabler-icons-webfont": {
         "cargoLock": null,
         "date": null,
         "extract": null,
-        "name": "lucide-static",
+        "name": "tabler-icons-webfont",
         "passthru": null,
         "pinned": false,
         "src": {
             "name": null,
-            "sha256": "sha256-3GJSVIitFXvOF5nptyxmR+tLJojv84Kyib6geAHyiZM=",
+            "sha256": "sha256-fzvzyJqWq6SAk7kG/QHrE5uxEhpf9oqEmA0BJ/va9OE=",
             "type": "url",
-            "url": "https://registry.npmjs.org/lucide-static/-/lucide-static-1.11.0.tgz"
+            "url": "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.41.1.tgz"
         },
-        "version": "1.11.0"
+        "version": "3.41.1"
     },
     "reveal-js": {
         "cargoLock": null,

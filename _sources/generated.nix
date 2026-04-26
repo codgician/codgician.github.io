@@ -6,12 +6,12 @@
   dockerTools,
 }:
 {
-  lucide-static = {
-    pname = "lucide-static";
-    version = "1.11.0";
+  tabler-icons-webfont = {
+    pname = "tabler-icons-webfont";
+    version = "3.41.1";
     src = fetchurl {
-      url = "https://registry.npmjs.org/lucide-static/-/lucide-static-1.11.0.tgz";
-      sha256 = "sha256-3GJSVIitFXvOF5nptyxmR+tLJojv84Kyib6geAHyiZM=";
+      url = "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.41.1.tgz";
+      sha256 = "sha256-fzvzyJqWq6SAk7kG/QHrE5uxEhpf9oqEmA0BJ/va9OE=";
     };
   };
   reveal-js = {
