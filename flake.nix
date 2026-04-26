@@ -35,8 +35,13 @@
             ./src
             ./app
             ./test
+            ./templates
+            ./static/js
+            ./config.yaml
             ./package.yaml
             ./builder.cabal
+            ./flake.nix
+            ./nvfetcher.toml
             ./LICENSE
           ];
         };
@@ -75,8 +80,8 @@
         # KaTeX dist path for CSS and fonts
         katexDist = "${pkgs.katex}/lib/node_modules/katex/dist";
 
-        # Lucide icons (icon font with CSS)
-        lucideFont = "${localPkgs.lucide-static}/font";
+        # Tabler Icons webfont assets
+        tablerIconsWebfont = "${localPkgs.tabler-icons-webfont}/dist";
 
         # Reveal.js for slides
         revealJs = localPkgs.reveal-js;
@@ -126,10 +131,10 @@
             cp ${katexDist}/katex.min.css static/vendor/katex/
             cp -r ${katexDist}/fonts static/vendor/katex/
 
-            # Copy Lucide icon font CSS and webfonts
-            mkdir -p static/vendor/lucide
-            cp ${lucideFont}/lucide.css static/vendor/lucide/
-            cp ${lucideFont}/lucide.woff2 static/vendor/lucide/
+            # Copy Tabler Icons webfont CSS and fonts
+            mkdir -p static/vendor/tabler-icons
+            cp ${tablerIconsWebfont}/tabler-icons.min.css static/vendor/tabler-icons/
+            cp -r ${tablerIconsWebfont}/fonts static/vendor/tabler-icons/
 
             # Copy reveal.js for slides
             mkdir -p static/vendor/reveal.js
@@ -185,7 +190,7 @@
         siteWrapper = pkgs.writeShellScriptBin "site" ''
           mkdir -p static/vendor
           ln -sfn ${katexDist} static/vendor/katex
-          ln -sfn ${lucideFont} static/vendor/lucide
+          ln -sfn ${tablerIconsWebfont} static/vendor/tabler-icons
           ln -sfn ${revealJs}/dist static/vendor/reveal.js
           export KATEX_VERSION="${katexVersion}"
           export MERMAID_VERSION="${mermaidVersion}"
@@ -222,7 +227,7 @@
           shellHook = ''
               mkdir -p static/vendor
               ln -sfn ${katexDist} static/vendor/katex
-              ln -sfn ${lucideFont} static/vendor/lucide
+              ln -sfn ${tablerIconsWebfont} static/vendor/tabler-icons
             ln -sfn ${revealJs}/dist static/vendor/reveal.js
           '';
         };
