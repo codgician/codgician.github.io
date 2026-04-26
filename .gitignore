@@ -21,6 +21,9 @@ cabal.project.local~
 result
 .direnv/
 
+# Git worktrees
+.worktrees/
+
 # Hakyll
 _site/
 _cache/
@@ -32,6 +35,7 @@ static/vendor/
 # OpenCode (track skills/agents/commands, ignore runtime)
 .opencode/node_modules/
 .opencode/package.json
+.opencode/package-lock.json
 .opencode/bun.lock
 .opencode/.gitignore
 

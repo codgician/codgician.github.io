@@ -24,13 +24,13 @@ nix fmt                # Format all code
 ```
 .
 ├── src/                    # Haskell source
-│   ├── Site.hs             # Main Hakyll rules
+│   ├── Site.hs             # Thin composition root for Hakyll rules
 │   ├── Config.hs           # YAML config loader
 │   ├── Context.hs          # Template context fields
 │   ├── Paginate.hs         # Pagination support
 │   └── Compiler/           # Pandoc, KaTeX, Mermaid, Cache
 ├── content/                # Markdown content
-│   ├── posts/{slug}/       # Blog posts (index.en.md, index.zh.md)
+│   ├── posts/{slug}/       # Blog posts (index.{lang}.md, with fallback)
 │   ├── slides/{slug}/      # Reveal.js slides
 │   └── index.{lang}.md     # Homepage per language
 ├── templates/              # Hakyll HTML templates
@@ -52,12 +52,12 @@ nix fmt                # Format all code
 
 ### Non-Negotiable Constraints
 
-| Constraint            | Implication                                     |
-| --------------------- | ----------------------------------------------- |
-| **Bilingual (en/zh)** | Every content page needs both language versions |
-| **Minimalist**        | No unnecessary features, delete before adding   |
-| **Nix-managed**       | All dependencies via `flake.nix` only           |
-| **Build must pass**   | `nix build` is the single source of truth       |
+| Constraint            | Implication                                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Bilingual (en/zh)** | Every content item is reachable at every configured language URL; missing translations fall back to the content's native/canonical language |
+| **Minimalist**        | No unnecessary features, delete before adding                                                                                               |
+| **Nix-managed**       | All dependencies via `flake.nix` only                                                                                                       |
+| **Build must pass**   | `nix build` is the single source of truth                                                                                                   |
 
 ### Decision Table
 
@@ -81,6 +81,20 @@ nix fmt                # Format all code
 | `Maybe a`                | `fromJust`                    |
 | `Either e a`             | `error` (except env vars)     |
 | Explicit type signatures | Type inference only           |
+
+### Domain Types
+
+Use small domain types for core site concepts. Avoid passing naked `String` or
+`Text` for these concepts except at Hakyll, template, filesystem, and subprocess
+boundaries.
+
+| Concept           | Preferred representation              |
+| ----------------- | ------------------------------------- |
+| Language code     | `LangCode` newtype                    |
+| Content slug      | `Slug` newtype                        |
+| Content section   | `Section` sum type                    |
+| Localized content | `LocalizedRef` or equivalent record   |
+| Render toggles    | `RenderFeatures` or equivalent record |
 
 ### Import Style
 
@@ -115,6 +129,9 @@ let ctx = constField "custom" value  -- specific
 | `nub`                      | `nubOrd` (O(n log n))          |
 
 ### Existing Helpers
+
+These helpers exist today, but route/path semantics should move toward a
+centralized route module instead of ad-hoc parsing in `Site.hs` or `Feed.hs`.
 
 | Helper         | Purpose                        |
 | -------------- | ------------------------------ |
@@ -169,6 +186,15 @@ All colors via CSS variables for theming:
 | Feed         | `/:lang/feed.xml`          | `/zh/feed.xml`           |
 | Pagination   | `/:lang/:section/page/:n/` | `/en/posts/page/2/`      |
 
+### Route Ownership
+
+All public URL and output path construction must be centralized in route helpers
+or a route module. Rules, feeds, sitemap generation, pagination, contexts, and
+templates must not independently hand-build post or slide URLs.
+
+Malformed content identifiers must fail loudly with useful build errors. Never
+return placeholder slugs or routes such as `"unknown"`.
+
 ---
 
 ## Verification Protocol
@@ -184,6 +210,8 @@ All colors via CSS variables for theming:
 - Adding MVar/IORef for caching
 - Adding Haskell deps for tools Nix can provide
 - Caching `_cache/` directory in CI
+- Duplicating URL construction outside route helpers
+- Returning placeholder routes/slugs like `"unknown"`
 - "Clever" solutions to save build time
 - Keeping unused code "for future use"
 
