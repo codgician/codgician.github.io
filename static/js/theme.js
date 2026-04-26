@@ -17,7 +17,7 @@
     if (toggle) {
       const icon = toggle.querySelector("i");
       if (icon) {
-        icon.className = isDark ? "icon-sun" : "icon-moon";
+        icon.className = isDark ? "ti ti-sun" : "ti ti-moon";
       }
     }
   }
