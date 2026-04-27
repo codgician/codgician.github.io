@@ -9,8 +9,8 @@ math: true
 tikz: true
 theme: white
 highlight-style: pygments
-width: 1366
-height: 768
+width: 1440
+height: 900
 ---
 
 # From stack traces to trajectories
@@ -722,25 +722,25 @@ Pick the first step from which the agent does not recover, and label its cause.
 
 ```{.tikz .diagram-full}
 \tikzset{
-  bucket/.style={draw, rounded corners, minimum width=4.10cm, minimum height=0.66cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\small\bfseries},
-  body/.style={draw, rounded corners, minimum width=5.50cm, minimum height=0.66cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize},
-  example/.style={draw, rounded corners, minimum width=3.80cm, minimum height=0.66cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize},
+  bucket/.style={draw, rounded corners, minimum width=4.10cm, minimum height=0.52cm, inner xsep=4pt, inner ysep=2pt, align=center, font=\sffamily\small\bfseries},
+  body/.style={draw, rounded corners, minimum width=5.50cm, minimum height=0.52cm, inner xsep=4pt, inner ysep=2pt, align=center, font=\sffamily\scriptsize},
+  example/.style={draw, rounded corners, minimum width=3.80cm, minimum height=0.52cm, inner xsep=4pt, inner ysep=2pt, align=center, font=\sffamily\scriptsize},
   every node/.style={font=\sffamily\small},
   >=stealth
 }
-\node[font=\sffamily\small\bfseries, text=gray!70!black] at (0,2.85) {Bucket};
-\node[font=\sffamily\small\bfseries, text=gray!70!black] at (5.35,2.85) {What it is};
-\node[font=\sffamily\small\bfseries, text=gray!70!black] at (10.55,2.85) {Sub-failures};
+\node[font=\sffamily\scriptsize\bfseries, text=gray!70!black] at (0,2.18) {Bucket};
+\node[font=\sffamily\scriptsize\bfseries, text=gray!70!black] at (5.35,2.18) {What it is};
+\node[font=\sffamily\scriptsize\bfseries, text=gray!70!black] at (10.55,2.18) {Sub-failures};
 
-\node[bucket, fill=blue!8] (b1) at (0,1.9) {exploration};
-\node[body, fill=blue!4] (w1) at (5.35,1.9) {agent fails to gather all required info};
-\node[example, fill=blue!4] (e1) at (10.55,1.9) {state-space, tool-use};
+\node[bucket, fill=blue!8] (b1) at (0,1.45) {exploration};
+\node[body, fill=blue!4] (w1) at (5.35,1.45) {agent fails to gather all required info};
+\node[example, fill=blue!4] (e1) at (10.55,1.45) {state-space, tool-use};
 \draw[->, thick] (b1) -- (w1);
 \draw[->, thick] (w1) -- (e1);
 
-\node[bucket, fill=green!10] (b2) at (0,0.95) {exploitation};
-\node[body, fill=green!5] (w2) at (5.35,0.95) {agent mis-processes information it has};
-\node[example, fill=green!5] (e2) at (10.55,0.95) {tool-output, domain-rule};
+\node[bucket, fill=green!10] (b2) at (0,0.72) {exploitation};
+\node[body, fill=green!5] (w2) at (5.35,0.72) {agent mis-processes information it has};
+\node[example, fill=green!5] (e2) at (10.55,0.72) {tool-output, domain-rule};
 \draw[->, thick] (b2) -- (w2);
 \draw[->, thick] (w2) -- (e2);
 
@@ -778,7 +778,7 @@ Now that we have a label, we ask the harder question: *who, when, and why*. Fram
 - **Target:** Attribution looks for $t^\ast$, the earliest such step — typically far before the visible wrong answer. **In practice,** methods approximate $t^\ast$ with labels.
 
 ```{.tikz .diagram-full}
-\tikzset{traceStep/.style={draw, rounded corners, minimum width=1.65cm, minimum height=0.60cm, inner xsep=6pt, inner ysep=4pt, align=center, font=\sffamily\small}, every node/.style={font=\sffamily\small}, >=stealth}
+\tikzset{traceStep/.style={draw, rounded corners, minimum width=1.65cm, minimum height=0.52cm, inner xsep=5pt, inner ysep=3pt, align=center, font=\sffamily\small}, every node/.style={font=\sffamily\small}, >=stealth}
 \node[traceStep, fill=blue!8] (t1) at (0,0) {$T_{\leq 1}$};
 \node[traceStep, fill=blue!8] (t2) at (2.45,0) {$T_{\leq 2}$};
 \node[traceStep, fill=orange!18, very thick] (ts) at (4.9,0) {$T_{\leq t^\ast}$};
@@ -788,13 +788,13 @@ Now that we have a label, we ask the harder question: *who, when, and why*. Fram
 \draw[->, very thick] (t2) -- (ts);
 \draw[->, very thick] (ts) -- (t4);
 \draw[->, very thick] (t4) -- (tf);
-\node[traceStep, fill=green!10] (sp) at (7.35,1.30) {success path};
-\node[traceStep, fill=red!9]  (fb) at (10.4,-1.10) {failure basin};
+\node[traceStep, fill=green!10] (sp) at (7.35,1.00) {success path};
+\node[traceStep, fill=red!9]  (fb) at (10.4,-0.85) {failure basin};
 \draw[->, thick, green!50!black] (t2) to[out=60, in=180] (sp.west);
 \draw[->, thick, red!80!black]  (ts) to[out=-60, in=180] (fb.west);
-\draw[dashed, very thick, orange!90!black] (4.9,-1.55) -- (4.9,2.00);
-\node[font=\sffamily\scriptsize, align=center] at (4.9,2.30) {earliest inevitable step $t^\ast$};
-\node[font=\sffamily\scriptsize, align=center] at (9.8,1.05) {observed symptom};
+\draw[dashed, very thick, orange!90!black] (4.9,-1.20) -- (4.9,1.55);
+\node[font=\sffamily\scriptsize, align=center] at (4.9,1.82) {earliest inevitable step\\$t^\ast$};
+\node[font=\sffamily\scriptsize, align=center] at (9.8,0.78) {observed symptom};
 ```
 
 ::: { .notes }
