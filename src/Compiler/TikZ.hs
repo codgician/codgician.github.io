@@ -22,7 +22,7 @@ import System.IO.Temp (withSystemTempDirectory)
 import System.Process (CreateProcess (cwd), proc, readCreateProcessWithExitCode)
 
 tikzWrapperVersion :: Text
-tikzWrapperVersion = "standalone-v2"
+tikzWrapperVersion = "standalone-v3"
 
 getTikZVersion :: IO Text
 getTikZVersion = do
@@ -90,7 +90,7 @@ renderTikZDocument document = withSystemTempDirectory "tikz" $ \tmpDir -> do
   runTool tmpDir "latex" ["-interaction=nonstopmode", "-halt-on-error", "diagram.tex"]
   dviExists <- doesFileExist dviPath
   if dviExists
-    then runTool tmpDir "dvisvgm" ["--no-fonts", "--exact", "--output=diagram.svg", "diagram.dvi"]
+    then runTool tmpDir "dvisvgm" ["--no-fonts=1", "--exact", "--output=diagram.svg", "diagram.dvi"]
     else failWithContext "latex did not produce diagram.dvi" ""
   svg <- TIO.readFile svgPath
   pure $ wrapTikzSvg svg
