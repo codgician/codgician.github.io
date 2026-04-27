@@ -47,6 +47,12 @@ spec = describe "vendor icon assets" $ do
     components `shouldSatisfy` containing "-webkit-box-orient: vertical;"
     components `shouldSatisfy` containing "overflow: hidden;"
 
+  it "keeps the shared footer divider-free across pages" $ do
+    components <- readFile "static/scss/_components.scss"
+
+    components `shouldSatisfy` containing ".footer {"
+    components `shouldSatisfy` containing "border-top: none;"
+
 containing :: String -> String -> Bool
 containing needle haystack = needle `isInfixOf` haystack
 
