@@ -43,7 +43,7 @@ spec = describe "vendor icon assets" $ do
 
     components `shouldSatisfy` containing "&-subtitle"
     components `shouldSatisfy` containing "display: -webkit-box;"
-    components `shouldSatisfy` containing "-webkit-line-clamp: 2;"
+    components `shouldSatisfy` containing "line-clamp: 2;"
     components `shouldSatisfy` containing "-webkit-box-orient: vertical;"
     components `shouldSatisfy` containing "overflow: hidden;"
 
