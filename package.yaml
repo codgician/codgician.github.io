@@ -8,6 +8,7 @@ copyright: "2025 codgician"
 extra-source-files:
   - README.md
   - CHANGELOG.md
+  - static/scss/*.scss
 description: Static site generator for codgician.me
 ghc-options:
   - -Werror

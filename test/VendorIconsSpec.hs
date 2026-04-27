@@ -38,6 +38,15 @@ spec = describe "vendor icon assets" $ do
     theme `shouldSatisfy` containing "ti ti-sun"
     theme `shouldSatisfy` containing "ti ti-moon"
 
+  it "visually truncates slide subtitles in listing cards" $ do
+    components <- readFile "static/scss/_components.scss"
+
+    components `shouldSatisfy` containing "&-subtitle"
+    components `shouldSatisfy` containing "display: -webkit-box;"
+    components `shouldSatisfy` containing "-webkit-line-clamp: 2;"
+    components `shouldSatisfy` containing "-webkit-box-orient: vertical;"
+    components `shouldSatisfy` containing "overflow: hidden;"
+
 containing :: String -> String -> Bool
 containing needle haystack = needle `isInfixOf` haystack
 

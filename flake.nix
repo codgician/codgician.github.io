@@ -36,6 +36,7 @@
             ./app
             ./test
             ./templates
+            ./static/scss
             ./static/js
             ./config.yaml
             ./package.yaml
