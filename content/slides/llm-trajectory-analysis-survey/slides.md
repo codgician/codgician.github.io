@@ -184,8 +184,16 @@ Open with first principles: why do we even need a survey on agent debugging? Bec
 .reveal .mini-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.38em;
+  gap: 0.7em;
   align-items: stretch;
+}
+/* 2x2 layout when there are exactly 4 cards */
+.reveal .mini-grid:has(> .case:nth-child(4)):not(:has(> .case:nth-child(5))) {
+  grid-template-columns: repeat(2, 1fr);
+}
+/* 2-column layout when there are exactly 2 cards */
+.reveal .mini-grid:has(> .case:nth-child(2)):not(:has(> .case:nth-child(3))) {
+  grid-template-columns: repeat(2, 1fr);
 }
 .reveal .comparison-card,
 .reveal .case,
@@ -540,9 +548,7 @@ Sort failures by specification, inter-agent alignment, or verification gaps.
 
 Tie labels to violated constraints at the earliest unrecoverable step.
 ::::
-:::
 
-::: {.mini-grid}
 :::: {.case}
 **07 Aegis-Song: environment-shaped failures**
 
@@ -1834,19 +1840,19 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span>
 
-- **Background problem:** Final success/failure scores hide whether planning, execution, or response generation broke the run.
-- **Fundamental idea:** Classify failures by task phase and concrete cause.
-- **Takeaway:** Log phase-level traces and add feedback-aware replanning and early stop.
+- **Background problem:** Success rate hides which agent role failed when planner, code generator, executor, or final answer hand off work.
+- **Fundamental idea:** Inspect full run logs from 204 executions, label failures into 19 causes under planning, execution, and response-generation phases.
+- **Takeaway:** Store per-iteration prompts, code, outputs, and errors, then route repeated failures to replanning, local repair, or early stop.
 - **Paper:** [https://arxiv.org/abs/2508.13143](https://arxiv.org/abs/2508.13143)
-- **Code:** Not released
+- **Code:** [https://github.com/lurf21/AgentEvaluationFramework](https://github.com/lurf21/AgentEvaluationFramework)
 
 ## 02. Where LLM Agents Fail
 
 <span class="tag">Failure Taxonomy</span> <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Developers need both failure labels and a way to learn from failure traces.
-- **Fundamental idea:** Combine taxonomy, trace diagnosis, and learning-from-failure data.
-- **Takeaway:** Use traces to localize failures and turn them into training or repair signals.
+- **Background problem:** Early agent mistakes cascade, but prior failure studies label errors without tracing the root cause or enabling fixes.
+- **Fundamental idea:** AgentDebug labels each step/module, uses counterfactual tests to find the earliest failure-causing step, then re-rolls out with targeted feedback.
+- **Takeaway:** Debug failed agents from the first causal step, not every visible mistake; use AgentErrorBench-style annotations to test localization and recovery.
 - **Paper:** [https://arxiv.org/abs/2509.25370](https://arxiv.org/abs/2509.25370)
 - **Code:** [https://github.com/ulab-uiuc/AgentDebug](https://github.com/ulab-uiuc/AgentDebug)
 
@@ -1854,9 +1860,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span> <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Issue-localization evaluation needs labeled traces, not just outputs.
-- **Fundamental idea:** Build trace-reasoning and localization tasks with failure labels.
-- **Takeaway:** Use trace benchmarks to test both taxonomy and attribution methods.
+- **Background problem:** Agent evals can score final answers, but developers need span-level root causes inside huge structured traces.
+- **Fundamental idea:** Annotate OpenTelemetry traces from GAIA/SWE-Bench with error category, span location, evidence, impact, and quality scores.
+- **Takeaway:** Use TRAIL to test whether an evaluator debugs real agent runs, not just final answers or synthetic planning cases.
 - **Paper:** [https://arxiv.org/abs/2505.08638](https://arxiv.org/abs/2505.08638)
 - **Code:** [https://github.com/patronus-ai/trail-benchmark](https://github.com/patronus-ai/trail-benchmark)
 
@@ -1864,9 +1870,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span> <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Agent failure diagnosis needs unrecoverable-failure labels tied to execution evidence.
-- **Fundamental idea:** Use constraint and evidence logs to attribute failures.
-- **Takeaway:** Preserve rich logs so attribution can support repair.
+- **Background problem:** Terminal success hides the first unrecovered mistake; debugging needs step-level evidence, not just outcome labels.
+- **Fundamental idea:** Turn tool schemas, policies, and trajectory prefixes into guarded checks; log violations with evidence for each step.
+- **Takeaway:** Instrument agents so judges can trace "what constraint broke when" before deciding the unrecoverable root cause.
 - **Paper:** [https://arxiv.org/abs/2602.02475](https://arxiv.org/abs/2602.02475)
 - **Code:** [https://github.com/microsoft/AgentRx](https://github.com/microsoft/AgentRx)
 
@@ -1874,9 +1880,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span> <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Platform workflows fail at different lifecycle stages, not just at the end.
-- **Fundamental idea:** Annotate failures by stage, root cause, location, and repair strategy.
-- **Takeaway:** Lifecycle-aware labels make workflow debugging actionable.
+- **Background problem:** In platform agent workflows, visible errors often surface far from the causal node after prompts, tools, and control logic interact.
+- **Fundamental idea:** AgentFail labels 307 Dify/Coze failures by root location, cause level/category, propagation distance, and repair strategy.
+- **Takeaway:** Debug by proving the earliest decisive node, then apply cause-matched fixes; taxonomy plus location made repairs safer.
 - **Paper:** [https://arxiv.org/abs/2509.23735](https://arxiv.org/abs/2509.23735)
 - **Code:** [https://github.com/Jenna-Ma/JaWs-AgentFail](https://github.com/Jenna-Ma/JaWs-AgentFail)
 
@@ -1884,9 +1890,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span>
 
-- **Background problem:** Multi-agent failures are often caused by mismatched specs, coordination, or verification gaps.
-- **Fundamental idea:** Build a multi-agent failure taxonomy around those axes.
-- **Takeaway:** Diagnose failures by coordination class before changing models.
+- **Background problem:** MAS benchmark failures hide whether the root cause is system design, inter-agent misalignment, or task verification.
+- **Fundamental idea:** Derive MAST bottom-up from 150+ failed traces, yielding 14 failure modes across those three axes.
+- **Takeaway:** Label failed traces first; then fix workflow design, agent information flow, or verification instead of blindly swapping models.
 - **Paper:** [https://arxiv.org/abs/2503.13657](https://arxiv.org/abs/2503.13657)
 - **Code:** [https://github.com/multi-agent-systems-failure-taxonomy/MAST](https://github.com/multi-agent-systems-failure-taxonomy/MAST)
 
@@ -1894,9 +1900,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span> <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Agent environments introduce specific failure modes that need targeted fixes.
-- **Fundamental idea:** Map environment-specific failures to optimizations.
-- **Takeaway:** Improve the environment or interface, not only the agent policy.
+- **Background problem:** Agents fail differently across DB, filesystem, CRM, and medical environments: missing state, losing state, miscomputing outputs, violating rules, exhausting turns.
+- **Fundamental idea:** Treat tools as reliability infrastructure: expose lookahead/state, offload sorting/calculation/rule checks, and speculate common follow-up calls.
+- **Takeaway:** Don't only tune the agent; redesign tool responses so correct behavior becomes retrieval, validation, or bundled execution.
 - **Paper:** [https://arxiv.org/abs/2508.19504](https://arxiv.org/abs/2508.19504)
 - **Code:** Not released
 
@@ -1904,9 +1910,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Taxonomy</span>
 
-- **Background problem:** Agentic success and failure patterns were not well characterized qualitatively.
-- **Fundamental idea:** Categorize success and failure scenarios in agentic settings.
-- **Takeaway:** Use qualitative failure classes to guide debugging and evaluation.
+- **Background problem:** Aggregate agent scores hide why tool-using LLMs fail in enterprise-like workflows.
+- **Fundamental idea:** Manually code 900 KAMI traces across filesystem, text, CSV, and SQL tasks.
+- **Takeaway:** Require grounding, value verification, distractor control, and missing-entity discipline before trusting autonomous tool outputs.
 - **Paper:** [https://arxiv.org/abs/2512.07497](https://arxiv.org/abs/2512.07497)
 - **Code:** Not found
 
@@ -1914,9 +1920,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** In multi-agent systems, it is hard to tell which agent caused the failure.
-- **Fundamental idea:** Adapt spectrum-based suspiciousness to attribute blame.
-- **Takeaway:** Suspiciousness scoring can isolate the failing agent.
+- **Background problem:** A failed MAS log rarely reveals whether an agent action caused failure or only appears downstream.
+- **Fundamental idea:** Replay the task, cluster logs into agent-action-state triples, then rank triples with λ-decayed Kulczynski2 plus α/β/γ factors.
+- **Takeaway:** Use pass/fail replay spectra when failures recur; FAMAS is statistical attribution, not single-log LLM judging.
 - **Paper:** [https://arxiv.org/abs/2509.13782](https://arxiv.org/abs/2509.13782)
 - **Code:** Not found
 
@@ -1924,9 +1930,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span> <span class="tag">Trajectory Monitoring & Analysis Tools</span>
 
-- **Background problem:** Role-specialized pipelines need accountability for actions and artifacts.
-- **Fundamental idea:** Trace roles and artifacts through the pipeline.
-- **Takeaway:** Observability should support responsibility tracing, not just logging.
+- **Background problem:** Sequential agent pipelines hide where failures begin; final-output scoring cannot separate planner mistakes from executor or critic harm.
+- **Fundamental idea:** Record P/E/C answers, final answer, repair flags, harm flags, and earliest unrepaired error origin.
+- **Takeaway:** Design handoffs around computable accountability: each stage should expose whether it repaired, preserved, or damaged the prior state.
 - **Paper:** [https://arxiv.org/abs/2510.07614](https://arxiv.org/abs/2510.07614)
 - **Code:** Not found
 
@@ -1934,9 +1940,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Failure recognition models need reusable error representations and data.
-- **Fundamental idea:** Transfer condensed error knowledge for attribution.
-- **Takeaway:** Compact error features can improve recognition and dataset reuse.
+- **Background problem:** Multi-agent failures cascade through long logs; developers need the first bad agent-step, not just a failed-run label.
+- **Fundamental idea:** Distill past annotated failures into cached schemas: signatures, triggering context, propagation patterns, and detection heuristics.
+- **Takeaway:** Use embedding retrieval over schemas, not raw traces or fine-tuning, to guide an LLM's step-level failure attribution.
 - **Paper:** [https://arxiv.org/abs/2509.24088](https://arxiv.org/abs/2509.24088)
 - **Code:** Not found
 
@@ -1944,9 +1950,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Localizing the failure step in long multi-agent logs is hard; general LLMs lack the failure-mode expertise needed to point at the exact step.
-- **Fundamental idea:** Decouple attribution into two stages — first delineate a small _failure scope_ (a candidate set of steps), then localize within it. Two scope strategies are proposed: **Stepwise Scope Delineation** (iteratively expand the candidate set step-by-step until $|S|=N$) and **Expertise-Assisted Scope Delineation** (use Overstep + Loop heuristics to flag unauthorized actions and repeated commands).
-- **Takeaway:** On the Who&When benchmark, scope-then-localize lifts step-level accuracy by up to 24.27% over prior single-stage attribution baselines, especially on long hand-crafted logs.
+- **Background problem:** Exact failure-step attribution in long multi-agent logs overwhelms general LLMs, especially when failures appear late or require MAS-specific expertise.
+- **Fundamental idea:** First shrink the log to a small suspect scope, then localize; scopes come from stepwise expansion or Overstep/Loop expert heuristics.
+- **Takeaway:** On Who&When, SDBL raises step accuracy by up to 24.27 percentage points, showing scoped diagnosis beats one-shot attribution.
 - **Paper:** [https://ojs.aaai.org/index.php/AAAI/article/view/40594](https://ojs.aaai.org/index.php/AAAI/article/view/40594)
 - **Code:** [https://github.com/Wen-qiangLi/SDBL](https://github.com/Wen-qiangLi/SDBL)
 
@@ -1954,9 +1960,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Benchmarking which agent fails and when requires step-level labels.
-- **Fundamental idea:** Create an agent and step attribution benchmark with prompting baselines.
-- **Takeaway:** Evaluate both culprit agent and failure timing.
+- **Background problem:** Multi-agent failure attribution lacks ground truth: who is the responsible agent and exactly which step is the decisive error?
+- **Fundamental idea:** Curate 184 annotated tasks from 127 MAS runs over GAIA/AssistantBench; label decisive agent-step pairs with rationale.
+- **Takeaway:** Test full-context vs incremental judging — agent attribution differs from step attribution; one-pass prompting is not enough.
 - **Paper:** [https://arxiv.org/abs/2505.00212](https://arxiv.org/abs/2505.00212)
 - **Code:** [https://github.com/ag2ai/Agents_Failure_Attribution](https://github.com/ag2ai/Agents_Failure_Attribution)
 
@@ -1964,9 +1970,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Flat traces make it hard to see where responsibility lies.
-- **Fundamental idea:** Use hierarchical context and consensus-style reasoning for attribution.
-- **Takeaway:** Hierarchical reasoning can improve blame localization.
+- **Background problem:** Flat logs hide long-range error propagation; local windows miss causally relevant earlier turns.
+- **Fundamental idea:** Build four positional context layers, run specialist analyst personas, and aggregate agent/step votes with confidence weighting and disagreement checks.
+- **Takeaway:** Use compressed context plus voting when trace length matters; unlike CHIEF graphs or RAFFLES loops, ECHO is positional, not causal.
 - **Paper:** [https://arxiv.org/abs/2510.04886](https://arxiv.org/abs/2510.04886)
 - **Code:** Not found
 
@@ -1974,9 +1980,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Fault attribution needs iterative reasoning rather than one-shot guesses.
-- **Fundamental idea:** Use judge and evaluator loops to refine hypotheses.
-- **Takeaway:** Iterative attribution can converge on better fault localization.
+- **Background problem:** Single-pass judges miss decisive faults in long agent traces where early mistakes, symptoms, and recoverable errors blur together.
+- **Fundamental idea:** A Judge proposes a fault step; specialized Evaluators score fault, primacy, decisiveness, and log consistency, feeding memory into retries.
+- **Takeaway:** For trace debugging, use confidence-gated verifier loops, not one-shot attribution; stop when evaluators agree or max iterations expire.
 - **Paper:** [https://arxiv.org/abs/2509.06822](https://arxiv.org/abs/2509.06822)
 - **Code:** Not found
 
@@ -1984,9 +1990,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Critical-step attribution can be framed as a causal question over traces.
-- **Fundamental idea:** Use causal inference on multi-agent trajectories.
-- **Takeaway:** Causal framing helps identify the step that matters most.
+- **Background problem:** MAS failures often look downstream; log/data-flow analysis blames the final symptom, not the upstream bad decision.
+- **Fundamental idea:** Reverse data-flow into a performance-causality graph, then use Shapley, ACE, and counterfactual repairs to rank agents and steps.
+- **Takeaway:** Read for causal MAS debugging: strongest idea is performance causal inversion; evidence improves attribution but remains imperfect on hard traces.
 - **Paper:** [https://arxiv.org/abs/2509.08682](https://arxiv.org/abs/2509.08682)
 - **Code:** Not found
 
@@ -1994,19 +2000,19 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Attribution requires more than guessing from failure outcomes.
-- **Fundamental idea:** Abduct a hypothesis, act, then predict the result.
-- **Takeaway:** Intervention-guided reasoning makes attribution more reliable.
+- **Background problem:** Long agent logs hide the decisive error; "spot the bad step" judging confuses correlation with cause.
+- **Fundamental idea:** Prompt one judge to abduct a cause, propose a minimal fix, then simulate 3-5 counterfactual turns.
+- **Takeaway:** For trace debugging, test whether a step's corrected action would change failure into success; step numbers matter.
 - **Paper:** [https://arxiv.org/abs/2509.10401](https://arxiv.org/abs/2509.10401)
-- **Code:** Not found
+- **Code:** [https://github.com/ResearAI/A2P](https://github.com/ResearAI/A2P)
 
 ## 18. CHIEF
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Root causes are obscured when logs are flat and symptoms propagate.
-- **Fundamental idea:** Convert logs into hierarchical causal graphs.
-- **Takeaway:** Graphs help separate root cause from downstream symptoms.
+- **Background problem:** Flat agent logs hide whether failure began in planning, execution, data flow, or later symptom propagation.
+- **Fundamental idea:** Build subtask/agent/step graphs, synthesize checkable oracles, then backtrack to the first irreversible corrupted state.
+- **Takeaway:** Debuggable MAS need intermediate invariants, not just final-answer judges or after-the-fact trace summaries.
 - **Paper:** [https://arxiv.org/abs/2602.23701](https://arxiv.org/abs/2602.23701)
 - **Code:** [https://anonymous.4open.science/r/CHIEF-86B8](https://anonymous.4open.science/r/CHIEF-86B8)
 
@@ -2014,9 +2020,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Some failures are induced by specific agents or steps that need model support to detect.
-- **Fundamental idea:** Train a specialized tracer model.
-- **Takeaway:** Learned tracers can automate inducing-failure attribution.
+- **Background problem:** Prompting strong LLMs to blame failed agent traces gives poor step-level attribution, often below 10% on prior benchmarks.
+- **Fundamental idea:** Build TracerTraj with counterfactual replay and fault injection, then RL-train Qwen3-8B to output `agentID | stepID`.
+- **Takeaway:** Reliable agent debugging needs replay-derived root-cause labels; a small trained tracer can beat generic LLM judges.
 - **Paper:** [https://arxiv.org/abs/2509.03312](https://arxiv.org/abs/2509.03312)
 - **Code:** [https://github.com/bingreeky/AgenTracer](https://github.com/bingreeky/AgenTracer)
 
@@ -2024,9 +2030,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Long multi-turn search traces are hard to trace manually.
-- **Fundamental idea:** Guide tracing with graph structure.
-- **Takeaway:** Graph-guided tracing helps localize failures in long trajectories.
+- **Background problem:** Temporal trace attribution confuses late failure symptoms with earlier corrupted information sources in multi-agent deep search.
+- **Fundamental idea:** Build an Information Dependency Graph: nodes are produced information, edges are explicit citation/reliance links across agent turns.
+- **Takeaway:** Debug agents by tracing provenance paths, not timelines; target high-impact source nodes and dependency conflicts for realistic failure tests.
 - **Paper:** [https://arxiv.org/abs/2510.10581](https://arxiv.org/abs/2510.10581)
 - **Code:** Not found
 
@@ -2034,9 +2040,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Attribution models need data, but real failure traces are scarce.
-- **Fundamental idea:** Generate synthetic errors and attribution data.
-- **Takeaway:** Synthetic data can support training and baseline comparisons.
+- **Background problem:** Manual MAS failure labels are tiny, so attribution models lack enough agent/error-mode pairs to learn root-cause patterns.
+- **Fundamental idea:** Start from successful trajectories, inject MAST-style faults via prompt injection or response corruption, then keep failed runs as labeled counterfactuals.
+- **Takeaway:** Aegis turns debugging data into controlled perturbation: 9,533 failures train Qwen/DCL/GRPO models and benchmark agent-error attribution.
 - **Paper:** [https://arxiv.org/abs/2509.14295](https://arxiv.org/abs/2509.14295)
 - **Code:** [https://kfq20.github.io/AEGIS-Website/](https://kfq20.github.io/AEGIS-Website/)
 
@@ -2044,9 +2050,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span> <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Debugging needs intervention, not only observation.
-- **Fundamental idea:** Test causal hypotheses through interventions and use outcomes for repair.
-- **Takeaway:** Intervention-driven debugging can guide recovery decisions.
+- **Background problem:** Single blame steps break down when failed agent runs contain multiple re-plans, branches, and independently repairable mistakes.
+- **Fundamental idea:** Segment by re-plan trials, edit the suspected message or plan, then replay from that point with prior context preserved.
+- **Takeaway:** Treat attribution as executable evidence: success validates it, faithful failure refutes it, blocked execution exposes missing agent capabilities.
 - **Paper:** [https://arxiv.org/abs/2512.06749](https://arxiv.org/abs/2512.06749)
 - **Code:** [https://aka.ms/DoVer](https://aka.ms/DoVer)
 
@@ -2054,9 +2060,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Failure Attribution</span> <span class="tag">Datasets & Benchmarks</span>
 
-- **Background problem:** Partial-observability benchmarks hide key evidence needed for attribution.
-- **Fundamental idea:** Provide complete traces and reproducible environments.
-- **Takeaway:** Full observability makes benchmark comparisons more trustworthy.
+- **Background problem:** Output-only attribution hides prompts, task context, tool logs, and environment state, making the decisive failure step ambiguous.
+- **Fundamental idea:** TraceElephant packages 220 annotated failures as JSON step records plus runnable MAS environments for replay and counterfactual checks.
+- **Takeaway:** Log agent inputs and tool interactions, not just outputs; full traces lift step attribution to 30.3%, dynamic replay to 33.3%.
 - **Paper:** [https://openreview.net/forum?id=kLLYJ6Bm7n](https://openreview.net/forum?id=kLLYJ6Bm7n)
 - **Code:** [https://github.com/TraceElephant/TraceElephant](https://github.com/TraceElephant/TraceElephant)
 
@@ -2064,9 +2070,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Reliable agents often need joint improvement of workflow structure and configuration.
-- **Fundamental idea:** Use trajectory feedback to edit graphs and tune settings.
-- **Takeaway:** Optimize both topology and parameters from failures.
+- **Background problem:** Prompt tuning cannot fix agents missing tools, state, validators, or routing.
+- **Fundamental idea:** Alternate config tuning with local graph edits, guided by scores and reflective trace feedback.
+- **Takeaway:** Treat agent failures as architecture signals: add the missing node, then retune its settings.
 - **Paper:** [https://arxiv.org/abs/2509.04642](https://arxiv.org/abs/2509.04642)
 - **Code:** [https://github.com/relai-ai/relai-sdk](https://github.com/relai-ai/relai-sdk)
 
@@ -2074,9 +2080,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Workflow failures should feed back into workflow redesign.
-- **Fundamental idea:** Refine graphs from failure evidence.
-- **Takeaway:** Failure-driven refinement can improve reliability iteratively.
+- **Background problem:** Scalar workflow scores collapse rich failure traces, so global search like MaAS/AFlow misses recurring structural error modes.
+- **Fundamental idea:** CE-Graph clusters counterexamples by failing node and error semantics, then verifies `RevisePrompt`, `InsertNode`, or `DeleteNode` graph edits.
+- **Takeaway:** Optimize agent workflows by reducing dense failure modes, not by blindly searching for higher aggregate benchmark scores.
 - **Paper:** [https://arxiv.org/abs/2510.10035](https://arxiv.org/abs/2510.10035)
 - **Code:** Not found
 
@@ -2084,9 +2090,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Instructions do not all matter equally during agent execution.
-- **Fundamental idea:** Shape instruction weights from trajectory experience.
-- **Takeaway:** Emphasize useful instructions and downweight harmful ones.
+- **Background problem:** RAG is transient and fine-tuning is heavy; agents need durable domain learning without changing model weights.
+- **Fundamental idea:** After sessions, reflect on traces and ratings to edit instructions, preferences, and tools under gated rollback.
+- **Takeaway:** Treat system prompts as versioned pseudo-weights: persist only feedback-proven rules, not every retrieved fact.
 - **Paper:** [https://arxiv.org/abs/2509.00251](https://arxiv.org/abs/2509.00251)
 - **Code:** Not found
 
@@ -2094,9 +2100,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Prompting should evolve from how trajectories actually perform.
-- **Fundamental idea:** Iteratively evolve prompts using feedback and outcomes.
-- **Takeaway:** Prompt evolution can outperform static prompting.
+- **Background problem:** Agents often see the right context, but static prompts do not teach them how to react to it.
+- **Fundamental idea:** Synthesize trace-based guidelines, then route them into tactical or persistent system-prompt memory.
+- **Takeaway:** For agents, evolve per-role prompts online; do not just append failures to chat history.
 - **Paper:** [https://arxiv.org/abs/2512.15374](https://arxiv.org/abs/2512.15374)
 - **Code:** [https://github.com/JarvisPei/SCOPE](https://github.com/JarvisPei/SCOPE)
 
@@ -2104,9 +2110,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Agent improvement needs a release-engineering mindset.
-- **Fundamental idea:** Treat agents as versions with evaluations and releases.
-- **Takeaway:** Manage agent change like software delivery, not ad hoc tweaking.
+- **Background problem:** Self-improving agents can raise averages while hiding regressions across versions.
+- **Fundamental idea:** Run traces, label symptoms blindly, script diagnoses, then promote one RC using pass→fail / fail→pass gates.
+- **Takeaway:** Build agent improvement as CI: auditable diffs, single version line, regression-first release decisions.
 - **Paper:** [https://arxiv.org/abs/2601.04620](https://arxiv.org/abs/2601.04620)
 - **Code:** Not found
 
@@ -2114,19 +2120,19 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Domain agents should be rebuilt from accumulated experience.
-- **Fundamental idea:** Compile traces into better agents, tools, and workflows.
-- **Takeaway:** Experience-driven reconstruction can improve domain specialization.
+- **Background problem:** Creating domain agents needs evidence richer than final pass/fail scores.
+- **Fundamental idea:** Inspect trajectories, verifier logs, artifacts, and environments to edit scaffold components.
+- **Takeaway:** ReCreate outputs generalized prompts, workflows, tools, and memory—not tuned model weights.
 - **Paper:** [https://arxiv.org/abs/2601.11100](https://arxiv.org/abs/2601.11100)
-- **Code:** Not found
+- **Code:** [https://github.com/zz-haooo/ReCreate](https://github.com/zz-haooo/ReCreate)
 
 ## 30. AgentDiet
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Long trajectories waste tokens with redundant context.
-- **Fundamental idea:** Compact stale or redundant trajectory content.
-- **Takeaway:** Reduce context cost without losing success.
+- **Background problem:** Agent tool traces accumulate useless, repeated, and expired tokens that get resent every later step.
+- **Fundamental idea:** Use a cheap reflection LLM to rewrite one delayed long step within a small sliding context window.
+- **Takeaway:** Reduce cost empirically, not by guarantee: protect success with delay, thresholds, structure preservation, and pass-rate/step-count checks.
 - **Paper:** [https://arxiv.org/abs/2509.23586](https://arxiv.org/abs/2509.23586)
 - **Code:** Not found
 
@@ -2134,9 +2140,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Multi-agent systems waste work when supervision is absent at runtime.
-- **Fundamental idea:** Filter and intervene on interactions online.
-- **Takeaway:** Runtime supervision can reduce errors and waste.
+- **Background problem:** Multi-agent runs fail or waste tokens through errors, loops, and bloated tool observations during execution.
+- **Fundamental idea:** Intercept each ActionStep with cheap heuristics, then replace observations, append guidance, or run verification.
+- **Takeaway:** Runtime supervision works best as gated process control, not always-on monitoring or post-hoc debugging.
 - **Paper:** [https://arxiv.org/abs/2510.26585](https://arxiv.org/abs/2510.26585)
 - **Code:** [https://github.com/LINs-lab/SupervisorAgent](https://github.com/LINs-lab/SupervisorAgent)
 
@@ -2144,9 +2150,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span>
 
-- **Background problem:** Production agent systems need observability beyond application logs.
-- **Fundamental idea:** Use eBPF-style boundary tracing to correlate intent with system effects.
-- **Takeaway:** Low-level observability helps connect LLM actions to process, file, and network behavior.
+- **Background problem:** Framework logs miss shell escapes; syscall monitors miss the LLM intent behind file, process, and network effects.
+- **Fundamental idea:** Attach eBPF uprobes to TLS reads/writes and kernel probes to syscalls, then correlate by lineage, timing, and argument matches.
+- **Takeaway:** For coding agents, observability must follow descendant processes, not just tool calls, to catch prompt injection and exfiltration.
 - **Paper:** [https://arxiv.org/abs/2508.02736](https://arxiv.org/abs/2508.02736)
 - **Code:** [https://github.com/eunomia-bpf/agentsight](https://github.com/eunomia-bpf/agentsight)
 
@@ -2154,9 +2160,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span> <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** AgentOps needs an end-to-end lifecycle for monitoring and optimization.
-- **Fundamental idea:** Connect monitoring, analysis, root-cause analysis, and optimization.
-- **Takeaway:** Operationalize agent improvement as a loop.
+- **Background problem:** Deployed agents are nondeterministic, stateful systems; traditional logs and dashboards miss planning, memory, tool, and coordination failures.
+- **Fundamental idea:** Define AgentOps as observe behavior, collect metrics, detect issues, identify root causes, recommend fixes, and automate runtime operations.
+- **Takeaway:** Treat agent reliability as production operations: instrument trajectories, compare healthy/failing traces, and close safe feedback loops with automated remediation.
 - **Paper:** [https://arxiv.org/abs/2507.11277](https://arxiv.org/abs/2507.11277)
 - **Code:** Not found
 
@@ -2164,9 +2170,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span> <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Users need tooling to inspect trajectories and support diagnosis.
-- **Fundamental idea:** Provide an open trajectory-diagnosis toolkit.
-- **Takeaway:** Diagnosis tooling should support attribution workflows directly.
+- **Background problem:** Trajectory replays show what happened, but rarely score how agents explore, plan, read observations, or verify progress.
+- **Fundamental idea:** Score trajectories on five agentic competencies, then expose patterns through CLI output, dashboard plots, word clouds, and navigation timelines.
+- **Takeaway:** Debugging tools should turn raw trajectories into selectable behavioral signals that support diagnosis and training-data filtering.
 - **Paper:** [https://aclanthology.org/2025.emnlp-demos.15/](https://aclanthology.org/2025.emnlp-demos.15/)
 - **Code:** [https://github.com/oootttyyy/AgentDiagnose](https://github.com/oootttyyy/AgentDiagnose)
 
@@ -2174,9 +2180,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span>
 
-- **Background problem:** Trajectories are hard to understand without interactive visualization.
-- **Fundamental idea:** Visualize trajectories and collect user feedback.
-- **Takeaway:** Visual review makes behavior inspection practical.
+- **Background problem:** Raw agent trajectories mix prompts, reasoning, tool calls, and observations, making human oversight difficult.
+- **Fundamental idea:** Convert JSON traces via formatter plugins into linear TAO turns, with optional raw-context view.
+- **Takeaway:** Start debugging UIs with TAO step inspection and per-thought/action positive-negative feedback.
 - **Paper:** [https://ojs.aaai.org/index.php/AAAI/article/view/35350](https://ojs.aaai.org/index.php/AAAI/article/view/35350)
 - **Code:** Not found
 
@@ -2184,9 +2190,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span> <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Multi-agent debugging needs runtime control, not only postmortems.
-- **Fundamental idea:** Let users inspect, rewind, edit, and steer executions.
-- **Takeaway:** Interactive steering turns debugging into an operational task.
+- **Background problem:** Multi-agent failures live inside stateful message queues; log viewers cannot test "what if this message changed?"
+- **Fundamental idea:** Checkpoint each agent before messages, then restore, edit one message, and fork a replay branch.
+- **Takeaway:** Best for counterfactual steering; study users mostly added specificity, simplified tasks, or changed plans.
 - **Paper:** [https://arxiv.org/abs/2503.02068](https://arxiv.org/abs/2503.02068)
 - **Code:** [https://github.com/microsoft/agdebugger](https://github.com/microsoft/agdebugger)
 
@@ -2194,9 +2200,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span> <span class="tag">Failure Attribution</span> <span class="tag">System Enhancement & Optimization</span>
 
-- **Background problem:** Explainability should help both identify and correct MAS failures.
-- **Fundamental idea:** Visualize workflows, support annotations, and connect explanations to correction.
-- **Takeaway:** XAI is most useful when tied to fix actions.
+- **Background problem:** Multi-agent failures are hard for mixed-expertise users to locate, attribute, and correct from raw logs.
+- **Fundamental idea:** Convert CrewAI logs into a live flowchart; attach human feedback; use an LLM judge to score task outputs.
+- **Takeaway:** Explanations matter when they identify a failing node and feed directly into prompt/config edits and reruns.
 - **Paper:** [https://arxiv.org/abs/2512.17896](https://arxiv.org/abs/2512.17896)
 - **Code:** Not found
 
@@ -2204,9 +2210,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span>
 
-- **Background problem:** Full traces can overwhelm humans during diagnosis.
-- **Fundamental idea:** Compress traces into layered summaries with drill-down.
-- **Takeaway:** Summary-first navigation can preserve detail while improving usability.
+- **Background problem:** Chronological multi-agent logs hide plan failures, skipped actions, and stalled progress across verbose agent/tool exchanges.
+- **Fundamental idea:** Use natural-language probes to organize traces into activity, action, and operation layers for drill-down diagnosis.
+- **Takeaway:** Debugging agents needs task-structured trace views: plan updates first, action outcomes next, raw logs last.
 - **Paper:** [https://arxiv.org/abs/2602.05446](https://arxiv.org/abs/2602.05446)
 - **Code:** Not found
 
@@ -2214,9 +2220,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span> <span class="tag">Failure Taxonomy</span>
 
-- **Background problem:** Software-engineering agents exhibit recurring thought-action-result patterns and anti-patterns.
-- **Fundamental idea:** Empirically study TAR trajectories.
-- **Takeaway:** Trajectory patterns reveal common failure modes for software-engineering agents.
+- **Background problem:** SE agents leave TAR logs, but failures hide in repeated actions, untested fixes, ignored results, and thought-action mismatches.
+- **Fundamental idea:** Normalize 120 RepairAgent, AutoCodeRover, and OpenHands trajectories; categorize actions, mine 4-grams, and open-code semantic TAR relations.
+- **Takeaway:** Successful agents balance explore/fix/test; robust agents should flag repetition, fix-without-test, premature termination, and result-insensitive next actions.
 - **Paper:** [https://arxiv.org/abs/2506.18824](https://arxiv.org/abs/2506.18824)
 - **Code:** [https://github.com/sola-st/llm-agents-study](https://github.com/sola-st/llm-agents-study)
 
@@ -2224,9 +2230,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Datasets & Benchmarks</span> <span class="tag">Trajectory Monitoring & Analysis Tools</span>
 
-- **Background problem:** Multi-agent evaluation needs both reliability tasks and observability structure.
-- **Fundamental idea:** Provide evaluation tasks plus an observability schema.
-- **Takeaway:** Benchmarks should measure reliability and diagnosability together.
+- **Background problem:** Final-answer scores miss MAS runtime variance, silent failures, and architecture-driven cost.
+- **Fundamental idea:** Run 12 heterogeneous MAS examples under one config, telemetry, and post-processing interface.
+- **Takeaway:** Benchmark agent architectures as systems: trace calls, retries, tokens, latency, failures, and stability.
 - **Paper:** [https://arxiv.org/abs/2601.00481](https://arxiv.org/abs/2601.00481)
 - **Code:** [https://github.com/sands-lab/maestro](https://github.com/sands-lab/maestro)
 
@@ -2234,9 +2240,9 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span> <span class="tag">Failure Attribution</span>
 
-- **Background problem:** Unsafe or anomalous action sequences should be detected as they happen.
-- **Fundamental idea:** Monitor action sequences online for anomalies.
-- **Takeaway:** Real-time detection can catch risky trajectories early.
+- **Background problem:** Agent plans can be wrong for the task or structurally incoherent, and LLM judges are too slow for runtime screening.
+- **Fundamental idea:** Train a Siamese GRU autoencoder on task/trajectory pairs, combining contrastive alignment with sequence reconstruction anomaly signals.
+- **Takeaway:** Use learned trajectory guards for fast pre-execution checks; escalate uncertain or long-horizon cases to heavier judges.
 - **Paper:** [https://arxiv.org/abs/2601.00516](https://arxiv.org/abs/2601.00516)
 - **Code:** Not found
 
@@ -2244,8 +2250,8 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 
 <span class="tag">Trajectory Monitoring & Analysis Tools</span>
 
-- **Background problem:** XAI tools need to connect features to concrete agent actions.
-- **Fundamental idea:** Generate trace-grounded explanation packets and rubrics.
-- **Takeaway:** Feature-level explanation becomes more useful when tied to action traces.
+- **Background problem:** Feature attribution explains one prediction, but tool agents fail across state, action, observation trajectories.
+- **Fundamental idea:** Package each run as a Minimal Explanation Packet: trace evidence plus rubric flags for intent, tools, state, recovery.
+- **Takeaway:** Use SHAP for aggregate rubric importance; use trace rubrics to locate the failed step or violated constraint.
 - **Paper:** [https://arxiv.org/abs/2602.06841](https://arxiv.org/abs/2602.06841)
 - **Code:** [https://github.com/VectorInstitute/unified-xai-evaluation-framework](https://github.com/VectorInstitute/unified-xai-evaluation-framework)
