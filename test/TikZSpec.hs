@@ -8,10 +8,21 @@ import Test.Hspec
 
 spec :: Spec
 spec = describe "Compiler.TikZ" $ do
-  describe "tikzDocument" $
+  describe "tikzDocument" $ do
     it "wraps a TikZ picture in a standalone LaTeX document" $
       T.unpack (tikzDocument "\\draw (0,0) -- (1,1);")
         `shouldContain` "\\begin{tikzpicture}"
+
+    it "pins sf-family to a single design size to keep glyphs consistent" $ do
+      let doc = T.unpack (tikzDocument "\\draw (0,0) -- (1,1);")
+      doc `shouldContain` "\\usepackage{lmodern}"
+      doc `shouldContain` "\\DeclareFontShape{T1}{lmssone}{m}{n}{<-> ec-lmss10}{}"
+      doc `shouldContain` "\\renewcommand{\\sfdefault}{lmssone}"
+
+    it "switches math into sans-serif so it harmonizes with text labels" $ do
+      let doc = T.unpack (tikzDocument "\\node {$x$};")
+      doc `shouldContain` "\\usepackage{sansmath}"
+      doc `shouldContain` "\\sansmath"
 
   describe "tikzCacheInput" $
     it "includes the LaTeX wrapper so wrapper changes invalidate cached SVGs" $

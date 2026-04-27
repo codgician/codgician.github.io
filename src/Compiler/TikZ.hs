@@ -22,7 +22,7 @@ import System.IO.Temp (withSystemTempDirectory)
 import System.Process (CreateProcess (cwd), proc, readCreateProcessWithExitCode)
 
 tikzWrapperVersion :: Text
-tikzWrapperVersion = "standalone-v1"
+tikzWrapperVersion = "standalone-v2"
 
 getTikZVersion :: IO Text
 getTikZVersion = do
@@ -35,8 +35,16 @@ tikzDocument :: Text -> Text
 tikzDocument content =
   T.unlines
     [ "\\documentclass[tikz,border=2pt]{standalone}",
+      "\\usepackage[T1]{fontenc}",
+      "\\usepackage{lmodern}",
+      "\\usepackage{sansmath}",
       "\\usepackage{tikz}",
+      "\\DeclareFontFamily{T1}{lmssone}{}",
+      "\\DeclareFontShape{T1}{lmssone}{m}{n}{<-> ec-lmss10}{}",
+      "\\renewcommand{\\sfdefault}{lmssone}",
+      "\\sansmath",
       "\\begin{document}",
+      "\\sffamily",
       "\\begin{tikzpicture}",
       content,
       "\\end{tikzpicture}",
