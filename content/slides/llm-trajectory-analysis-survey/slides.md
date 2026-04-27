@@ -212,11 +212,13 @@ Open with first principles: why do we even need a survey on agent debugging? Bec
   display: inline-block;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 0.08em 0.35em;
-  margin: 0.06em;
-  font-size: 0.42em;
-  color: var(--muted);
-  background: white;
+  padding: 0.18em 0.65em;
+  margin: 0.10em 0.12em;
+  font-size: 0.62em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: var(--panel);
 }
 .reveal .card {
   background: var(--panel);
@@ -387,8 +389,8 @@ Diagnosis can only use what was preserved at run time. Whatever the trace omits 
 \node[smallbox, fill=gray!10] at (5.4,-0.15) {latent reasoning\\policy};
 \node[smallbox, fill=gray!10] at (8.1,-0.15) {external API\\state};
 \node[smallbox, fill=gray!10] at (10.8,-0.15) {environment\\state};
-\draw[dashed, thick] (-1.30,0.95) rectangle (14.80,1.85);
-\node[font=\sffamily\scriptsize, anchor=west, fill=white, inner sep=2pt] at (-1.20,1.85) {observable trace};
+\draw[dashed, thick] (-1.55,0.50) rectangle (15.05,2.30);
+\node[font=\sffamily\scriptsize, anchor=west, fill=white, inner sep=2pt] at (-1.45,2.30) {observable trace};
 \node[font=\sffamily\scriptsize, anchor=west, text=gray!70!black] at (-1.20,-0.72) {omitted or latent context changes what attribution can prove};
 ```
 
@@ -596,16 +598,16 @@ Three exemplars, one for each useful taxonomy stance. Lu = chronological/phase v
 ```{.tikz .diagram-full}
 \tikzset{axis/.style={draw, rounded corners, minimum width=2.9cm, minimum height=0.58cm, inner xsep=7pt, inner ysep=4pt, align=center, font=\sffamily\small}, trace/.style={draw, rounded corners, minimum width=1.9cm, minimum height=0.46cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize}, every node/.style={font=\sffamily\small}, >=stealth}
 \node[trace, fill=gray!10] (a) at (0,1.1) {agent A};
-\node[trace, fill=gray!10] (b) at (2.1,1.1) {agent B};
-\node[trace, fill=gray!10] (v) at (4.2,1.1) {verifier};
+\node[trace, fill=gray!10] (b) at (3.25,1.1) {agent B};
+\node[trace, fill=gray!10] (v) at (6.5,1.1) {verifier};
 \draw[->, thick] (a) -- (b);
 \draw[->, thick] (b) -- (v);
-\node[axis, fill=blue!8] at (0,-0.35) {system design};
-\node[axis, fill=orange!12] at (3.25,-0.35) {inter-agent alignment};
-\node[axis, fill=green!10] at (6.5,-0.35) {task verification};
-\draw[->, thick] (1.0,0.78) -- (0,-0.02);
-\draw[->, thick] (2.1,0.78) -- (3.25,-0.02);
-\draw[->, thick] (4.2,0.78) -- (6.5,-0.02);
+\node[axis, fill=blue!8] (ax1) at (0,-0.35) {system design};
+\node[axis, fill=orange!12] (ax2) at (3.25,-0.35) {inter-agent alignment};
+\node[axis, fill=green!10] (ax3) at (6.5,-0.35) {task verification};
+\draw[->, thick] (a) -- (ax1);
+\draw[->, thick] (b) -- (ax2);
+\draw[->, thick] (v) -- (ax3);
 \node[font=\sffamily\scriptsize, align=center, text=gray!70!black] at (3.25,-1.15) {MAST asks whether failure is caused by specification, coordination, or verification};
 ```
 
@@ -793,7 +795,7 @@ Now that we have a label, we ask the harder question: *who, when, and why*. Fram
 \draw[->, thick, green!50!black] (t2) to[out=60, in=180] (sp.west);
 \draw[->, thick, red!80!black]  (ts) to[out=-60, in=180] (fb.west);
 \draw[dashed, very thick, orange!90!black] (4.9,-1.20) -- (4.9,1.55);
-\node[font=\sffamily\scriptsize, align=center] at (4.9,1.82) {earliest inevitable step\\$t^\ast$};
+\node[font=\sffamily\scriptsize, align=center] at (4.9,1.82) {earliest inevitable step $t^\ast$};
 \node[font=\sffamily\scriptsize, align=center] at (9.8,0.78) {observed symptom};
 ```
 
@@ -1018,19 +1020,19 @@ Filter candidates along three axes: scope, propagation, persistence.
   stage/.style={draw, rounded corners, minimum width=3.6cm, minimum height=1.15cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt},
   io/.style={draw, rounded corners, dashed, minimum width=2.3cm, minimum height=0.85cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt, text=black!75},
   flow/.style={->, >=stealth, thick, line width=0.55pt},
-  edgelbl/.style={font=\sffamily\scriptsize, fill=white, inner sep=2pt, text=black!60}
+  edgelbl/.style={font=\sffamily\scriptsize, fill=white, inner sep=2pt, text=black!60, align=center}
 }
-\node[io] (sess) at (-4.95,0) {Failed\\Session Log};
+\node[io] (sess) at (0,1.85) {Failed\\Session Log};
 \node[stage, fill=blue!8] (s1) at (0,0)
   {1. Trial Segmentation\\[1pt]\scriptsize cut at re-plan steps,\\\scriptsize one hypothesis per span};
 \node[stage, fill=orange!10] (s2) at (5.6,0)
   {2. Hypothesise + Intervene\\[1pt]\scriptsize suspected step + rationale,\\\scriptsize edit orchestrator plan};
 \node[stage, fill=red!8] (s3) at (11.2,0)
   {3. Replay + Verify\\[1pt]\scriptsize re-run from checkpoint,\\\scriptsize outcome + milestone check};
-\node[io] (out) at (16.15,0) {Validated /\\Partial / Refuted /\\Inconclusive};
+\node[io] (out) at (11.2,-1.85) {Validated /\\Partial / Refuted /\\Inconclusive};
 \draw[flow] (sess) -- (s1);
-\draw[flow] (s1) -- node[edgelbl, above, inner sep=1pt] {Trials} (s2);
-\draw[flow] (s2) -- node[edgelbl, above, inner sep=1pt] {Intervention} (s3);
+\draw[flow] (s1) -- node[edgelbl, above] {Trials} (s2);
+\draw[flow] (s2) -- node[edgelbl, above] {Intervention} (s3);
 \draw[flow] (s3) -- (out);
 ```
 
@@ -1235,19 +1237,19 @@ Two exemplars from opposite ends of the maturity gradient. AgentSight = passive 
   stage/.style={draw, rounded corners, minimum width=3.6cm, minimum height=1.15cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt},
   io/.style={draw, rounded corners, dashed, minimum width=2.3cm, minimum height=0.85cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt, text=black!75},
   flow/.style={->, >=stealth, thick, line width=0.55pt},
-  edgelbl/.style={font=\sffamily\scriptsize, fill=white, inner sep=2pt, text=black!60}
+  edgelbl/.style={font=\sffamily\scriptsize, fill=white, inner sep=2pt, text=black!60, align=center}
 }
-\node[io] (run) at (-3.0,0) {Running\\Multi-Agent System};
+\node[io] (run) at (0,1.85) {Running\\Multi-Agent System};
 \node[stage, fill=blue!8] (s1) at (0,0)
   {1. Inspect + Steer\\[1pt]\scriptsize live history,\\\scriptsize pause / play / step / send};
-\node[stage, fill=orange!10] (s2) at (4.2,0)
+\node[stage, fill=orange!10] (s2) at (5.6,0)
   {2. Reset + Edit\\[1pt]\scriptsize per-step checkpoints,\\\scriptsize edit message, fork session};
-\node[stage, fill=red!8] (s3) at (8.4,0)
+\node[stage, fill=red!8] (s3) at (11.2,0)
   {3. Overview Compare\\[1pt]\scriptsize branched timeline,\\\scriptsize original vs counterfactual};
-\node[io] (out) at (11.7,0) {Branched Sessions\\for Comparison};
+\node[io] (out) at (11.2,-1.85) {Branched Sessions\\for Comparison};
 \draw[flow] (run) -- (s1);
-\draw[flow] (s1) -- node[edgelbl, above, inner sep=1pt] {Inspectable history} (s2);
-\draw[flow] (s2) -- node[edgelbl, above, inner sep=1pt] {Forked session} (s3);
+\draw[flow] (s1) -- node[edgelbl, above] {Inspectable\\history} (s2);
+\draw[flow] (s2) -- node[edgelbl, above] {Forked\\session} (s3);
 \draw[flow] (s3) -- (out);
 ```
 
@@ -1956,7 +1958,7 @@ End on first principles. Frame this as a closing reframe for the audience: pass/
 - **Fundamental idea:** Create an agent and step attribution benchmark with prompting baselines.
 - **Takeaway:** Evaluate both culprit agent and failure timing.
 - **Paper:** [https://arxiv.org/abs/2505.00212](https://arxiv.org/abs/2505.00212)
-- **Code:** [https://github.com/mingyin1/Agents_Failure_Attribution](https://github.com/mingyin1/Agents_Failure_Attribution)
+- **Code:** [https://github.com/ag2ai/Agents_Failure_Attribution](https://github.com/ag2ai/Agents_Failure_Attribution)
 
 ## 14. ECHO
 
