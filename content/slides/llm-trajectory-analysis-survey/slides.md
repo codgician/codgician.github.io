@@ -565,7 +565,7 @@ Three exemplars, one for each useful taxonomy stance. Lu = chronological/phase v
 - **Developer takeaway:** Add phase boundaries to traces before building dashboards or evaluators.
 
 ```{.tikz .diagram-full}
-\tikzset{phase/.style={draw, rounded corners, minimum width=2.45cm, minimum height=0.58cm, inner xsep=7pt, inner ysep=4pt, align=center, font=\sffamily\small}, label/.style={font=\sffamily\scriptsize, align=center}, every node/.style={font=\sffamily\small}, >=stealth}
+\tikzset{phase/.style={draw, rounded corners, minimum width=2.45cm, minimum height=0.58cm, text height=1.5ex, text depth=.25ex, inner xsep=7pt, inner ysep=4pt, align=center, font=\sffamily\small}, label/.style={font=\sffamily\scriptsize, align=center}, every node/.style={font=\sffamily\small}, >=stealth}
 \node[phase, fill=blue!8] (p) at (0,0) {planning};
 \node[phase, fill=green!10] (e) at (3.0,0) {execution};
 \node[phase, fill=orange!12] (r) at (6.0,0) {response};
@@ -889,15 +889,15 @@ Three attribution exemplars, picked to span analytical depth. Who&When: defines 
 - **Developer takeaway:** Store stable agent and step identifiers; without them, "who failed" and "when it became unrecoverable" cannot be benchmarked or audited.
 
 ```{.tikz .diagram-full}
-\tikzset{tracebox/.style={draw, rounded corners, minimum width=1.35cm, minimum height=0.50cm, inner xsep=5pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize}, label/.style={draw, rounded corners, minimum width=2.45cm, minimum height=0.55cm, inner xsep=6pt, inner ysep=4pt, align=center, font=\sffamily\small}, every node/.style={font=\sffamily\small}, >=stealth}
-\node[tracebox, fill=blue!8] (a1) at (0,0.7) {A:t1};
-\node[tracebox, fill=blue!8] (b2) at (1.8,0.7) {B:t2};
-\node[tracebox, fill=red!10, very thick] (a3) at (3.6,0.7) {A:t3};
-\node[tracebox, fill=gray!10] (b4) at (5.4,0.7) {B:t4};
+\tikzset{traceStep/.style={draw, rounded corners, minimum width=1.35cm, minimum height=0.50cm, text height=1.45ex, text depth=.25ex, inner xsep=5pt, inner ysep=3pt, align=center}, tracebox/.style={traceStep, font=\sffamily\scriptsize}, label/.style={traceStep, minimum width=2.45cm, inner xsep=6pt, inner ysep=4pt, font=\sffamily\scriptsize}, every node/.style={font=\sffamily\scriptsize}, >=stealth}
+\node[tracebox, fill=blue!8] (a1) at (0,0.7) {$A{:}t_1$};
+\node[tracebox, fill=blue!8] (b2) at (1.8,0.7) {$B{:}t_2$};
+\node[tracebox, fill=red!10, very thick] (a3) at (3.6,0.7) {$A{:}t_3$};
+\node[tracebox, fill=gray!10] (b4) at (5.4,0.7) {$B{:}t_4$};
 \node[tracebox, fill=red!8] (out) at (7.2,0.7) {fail};
 \foreach \x/\y in {a1/b2,b2/a3,a3/b4,b4/out} {\draw[->, thick] (\x) -- (\y);}
-\node[label, fill=orange!12] (who) at (2.55,-0.65) {who: agent A};
-\node[label, fill=orange!12] (when) at (5.15,-0.65) {when: step 3};
+\node[label, fill=orange!12] (who) at (2.55,-0.65) {who: agent $A$};
+\node[label, fill=orange!12] (when) at (5.15,-0.65) {when: step $3$};
 \draw[->, thick] (a3) -- (who);
 \draw[->, thick] (a3) -- (when);
 \node[font=\sffamily\scriptsize, text=gray!70!black] at (3.65,1.38) {label target = agent-step pair, not just failed output};
