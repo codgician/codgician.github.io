@@ -345,7 +345,7 @@ Agent system $M = \{a_1, \ldots, a_N\}$ executes a task $\tau$ in discrete steps
 % h_{t-1} fans out into g, phi, and u
 \draw[flow] (hprev.north east) -- (g.west);
 \draw[flow] (hprev.south east) -- (phi.west);
-\draw[flow] (hprev.north) .. controls (3.0,2.55) and (12.8,2.55) .. (u.north);
+\draw[flow] (hprev.north) .. controls (2.1,3.05) and (12.8,3.05) .. (u.north);
 % g produces a(t); phi produces x_t
 \draw[flow] (g.east) -- (a.west);
 \draw[flow] (phi.east) -- (x.west);
@@ -933,14 +933,14 @@ Three attribution exemplars, picked to span analytical depth. Who&When: defines 
   flow/.style={->, >=stealth, thick, line width=0.55pt},
   edgelbl/.style={font=\sffamily\scriptsize, fill=white, inner sep=2pt, text=black!60}
 }
-\node[io] (traj) at (-3.0,0) {Agent\\Trajectory};
+\node[io] (traj) at (-4.0,0) {Agent\\Trajectory};
 \node[stage, fill=blue!8] (s1) at (0,0)
   {1. Causal Graph Construction\\[1pt]\scriptsize OTAR parsing,\\\scriptsize subtask / agent / step edges};
-\node[stage, fill=orange!10] (s2) at (6.0,0.95)
+\node[stage, fill=orange!10] (s2) at (5.8,1.10)
   {2. Oracle-Guided Backtracking\\[1pt]\scriptsize oracle synthesis,\\\scriptsize subtask, agent, step};
-\node[stage, fill=red!8] (s3) at (6.0,-0.95)
+\node[stage, fill=red!8] (s3) at (5.8,-1.10)
   {3. Counterfactual Attribution\\[1pt]\scriptsize local, planning-control,\\\scriptsize data-flow, deviation};
-\node[io] (out) at (9.2,-0.95) {Failure Agent\\+ Failure Step};
+\node[io] (out) at (9.8,-1.10) {Failure Agent\\+ Failure Step};
 \draw[flow] (traj) -- (s1);
 \draw[flow] (s1.north east) -- node[edgelbl, sloped, above, inner sep=1pt] {Causal Graph} (s2.west);
 \draw[flow] (s2.south) -- node[edgelbl, right=2pt] {Failure Candidates} (s3.north);
@@ -1371,31 +1371,31 @@ Three enhancement families the survey identifies, by where the edit lands.
 
 ```{.tikz .diagram-full}
 \tikzset{
-  perspective/.style={draw, rounded corners, minimum width=4.10cm, minimum height=0.66cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\small\bfseries},
-  meaning/.style={draw, rounded corners, minimum width=4.85cm, minimum height=0.66cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize},
-  example/.style={draw, rounded corners, minimum width=4.85cm, minimum height=0.66cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize},
+  perspective/.style={draw, rounded corners, minimum width=3.50cm, minimum height=0.82cm, text width=3.15cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\small\bfseries},
+  meaning/.style={draw, rounded corners, minimum width=4.20cm, minimum height=0.90cm, text width=3.85cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize},
+  example/.style={draw, rounded corners, minimum width=4.00cm, minimum height=0.90cm, text width=3.65cm, inner xsep=6pt, inner ysep=3pt, align=center, font=\sffamily\scriptsize},
   every node/.style={font=\sffamily\small},
   >=stealth
 }
-\node[font=\sffamily\small\bfseries, text=gray!70!black] at (0,2.85) {Name};
-\node[font=\sffamily\small\bfseries, text=gray!70!black] at (5.20,2.85) {What it is};
-\node[font=\sffamily\small\bfseries, text=gray!70!black] at (10.55,2.85) {Examples};
+\node[font=\sffamily\small\bfseries, text=gray!70!black] at (0,2.95) {Name};
+\node[font=\sffamily\small\bfseries, text=gray!70!black] at (4.85,2.95) {What it is};
+\node[font=\sffamily\small\bfseries, text=gray!70!black] at (10.00,2.95) {Examples};
 
-\node[perspective, fill=blue!8] (n1) at (0,1.9) {structural and workflow};
-\node[meaning, fill=blue!4] (w1) at (5.20,1.9) {edit environment, graph, topology, system rules};
-\node[example, fill=blue!4] (e1) at (10.55,1.9) {Aegis-Song, Maestro};
+\node[perspective, fill=blue!8] (n1) at (0,1.85) {structural and\\workflow};
+\node[meaning, fill=blue!4] (w1) at (4.85,1.85) {edit environment, graph,\\topology, system rules};
+\node[example, fill=blue!4] (e1) at (10.00,1.85) {Aegis-Song,\\Maestro};
 \draw[->, thick] (n1) -- (w1);
 \draw[->, thick] (w1) -- (e1);
 
-\node[perspective, fill=green!10] (n2) at (0,0.95) {agent internal};
-\node[meaning, fill=green!5] (w2) at (5.20,0.95) {edit prompts, policies, context, scaffolds};
-\node[example, fill=green!5] (e2) at (10.55,0.95) {ReCreate, AgentDevel};
+\node[perspective, fill=green!10] (n2) at (0,0.65) {agent\\internal};
+\node[meaning, fill=green!5] (w2) at (4.85,0.65) {edit prompts, policies,\\context, scaffolds};
+\node[example, fill=green!5] (e2) at (10.00,0.65) {ReCreate,\\AgentDevel};
 \draw[->, thick] (n2) -- (w2);
 \draw[->, thick] (w2) -- (e2);
 
-\node[perspective, fill=orange!12] (n3) at (0,0) {runtime and supervisory};
-\node[meaning, fill=orange!5] (w3) at (5.20,0) {add live supervision or reduce runtime interaction state};
-\node[example, fill=orange!5] (e3) at (10.55,0) {SupervisorAgent (supervision); AgentDiet (compression)};
+\node[perspective, fill=orange!12] (n3) at (0,-0.55) {runtime and\\supervisory};
+\node[meaning, fill=orange!5] (w3) at (4.85,-0.55) {add live supervision\\or reduce runtime\\interaction state};
+\node[example, fill=orange!5] (e3) at (10.00,-0.55) {SupervisorAgent\\(supervision);\\AgentDiet\\(compression)};
 \draw[->, thick] (n3) -- (w3);
 \draw[->, thick] (w3) -- (e3);
 ```
