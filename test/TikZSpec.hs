@@ -19,10 +19,11 @@ spec = describe "Compiler.TikZ" $ do
       doc `shouldContain` "\\DeclareFontShape{T1}{lmssone}{m}{n}{<-> ec-lmss10}{}"
       doc `shouldContain` "\\renewcommand{\\sfdefault}{lmssone}"
 
-    it "switches math into sans-serif so it harmonizes with text labels" $ do
+    it "keeps math in the default math font while text labels remain sans-serif" $ do
       let doc = T.unpack (tikzDocument "\\node {$x$};")
-      doc `shouldContain` "\\usepackage{sansmath}"
-      doc `shouldContain` "\\sansmath"
+      doc `shouldContain` "\\sffamily"
+      doc `shouldNotContain` "\\usepackage{sansmath}"
+      doc `shouldNotContain` "\\sansmath"
 
   describe "tikzCacheInput" $
     it "includes the LaTeX wrapper so wrapper changes invalidate cached SVGs" $
