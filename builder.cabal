@@ -26,8 +26,11 @@ source-repository head
 
 library
   exposed-modules:
-      Compiler.Cache
+      Compiler.ArtifactCache
+      Compiler.HakyllRecovery
       Compiler.KaTeX
+      Compiler.RenderContext
+      Compiler.RenderEnvironment
       Compiler.Mermaid
       Compiler.Pandoc
       Compiler.TikZ
@@ -56,6 +59,7 @@ library
       aeson
     , base >=4.7 && <5
     , base16-bytestring
+    , bytestring
     , containers
     , cryptohash-sha256
     , directory
@@ -81,16 +85,21 @@ executable site
   build-depends:
       base >=4.7 && <5
     , builder
-    , directory
   default-language: Haskell2010
 
 test-suite builder-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      ArtifactCacheSpec
       ConfigSpec
+      HakyllRecoverySpec
+      KaTeXSpec
       MetadataSpec
+      MermaidSpec
       PaginateSpec
+      PandocSpec
+      RenderEnvironmentSpec
       RoutesSpec
       TikZSpec
       VendorIconsSpec
@@ -102,8 +111,13 @@ test-suite builder-test
       aeson
     , base >=4.7 && <5
     , builder
+    , bytestring
     , containers
+    , directory
+    , filepath
     , hakyll >=4.16
     , hspec
+    , pandoc-types >=1.23
+    , temporary
     , text
   default-language: Haskell2010

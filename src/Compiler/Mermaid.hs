@@ -1,77 +1,98 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Compiler.Mermaid
-  ( renderMermaidDual,
-    cachedMermaidDual,
+  ( MermaidSource (..),
+    mermaidArtifactRendererFor,
   )
 where
 
-import Compiler.Cache (CacheConfig (..), cachedRender)
+import Compiler.ArtifactCache
+  ( ArtifactRenderer (..),
+    CacheInput (..),
+    RecipeOption (..),
+    RecipeVersion (..),
+    RendererId,
+    RendererRecipe (..),
+    ToolVersion,
+    mkRendererId,
+  )
+import Compiler.RenderEnvironment (RenderConfigFile (..))
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import System.Environment (lookupEnv)
 import System.FilePath ((</>))
 import System.IO.Temp (withSystemTempDirectory)
 import System.Process (callProcess)
 
--- | Get Mermaid version from environment (required for cache key)
-getMermaidVersion :: IO Text
-getMermaidVersion = do
-  ver <- lookupEnv "MERMAID_VERSION"
-  case ver of
-    Just v -> pure $ T.pack v
-    Nothing -> error "MERMAID_VERSION environment variable is not set"
+newtype MermaidSource = MermaidSource Text deriving (Eq, Show)
 
--- | Get puppeteer config path from environment
-getPuppeteerConfig :: IO (Maybe String)
-getPuppeteerConfig = lookupEnv "PUPPETEER_CONFIG"
+mermaidRecipeVersion :: RecipeVersion
+mermaidRecipeVersion = RecipeVersion "mermaid-recipe-v1"
 
--- | Get mermaid config path from environment
-getMermaidConfig :: IO (Maybe String)
-getMermaidConfig = lookupEnv "MERMAID_CONFIG"
+mermaidRendererId :: RendererId
+mermaidRendererId =
+  case mkRendererId "mermaid" of
+    Right rendererId -> rendererId
+    Left err -> error $ "Invalid built-in Mermaid renderer ID: " <> show err
+
+configRecipeOptions :: Maybe RenderConfigFile -> Text -> [RecipeOption]
+configRecipeOptions Nothing _ = []
+configRecipeOptions (Just (RenderConfigFile path digest)) name =
+  [RecipeOption $ name <> ":" <> T.pack path <> ":" <> digest]
+
+mermaidArtifactRendererFor :: ToolVersion -> Maybe RenderConfigFile -> Maybe RenderConfigFile -> ArtifactRenderer MermaidSource
+mermaidArtifactRendererFor toolVersion puppeteerCfg mermaidCfg =
+  ArtifactRenderer
+    { artifactRecipe =
+        RendererRecipe
+          { recipeId = mermaidRendererId,
+            recipeToolVersion = toolVersion,
+            recipeVersion = mermaidRecipeVersion,
+            recipeOptions =
+              [RecipeOption "dual-theme"]
+                ++ configRecipeOptions puppeteerCfg "puppeteer"
+                ++ configRecipeOptions mermaidCfg "mermaid"
+          },
+      artifactCacheInput = \(MermaidSource src) -> CacheInput src,
+      artifactRender = renderMermaidDualFor puppeteerCfg mermaidCfg
+    }
 
 -- | Render Mermaid diagram to SVG with specified theme
-renderMermaidTheme :: Text -> Text -> IO Text
-renderMermaidTheme theme content = withSystemTempDirectory "mermaid" $ \tmpDir -> do
-  let inputFile = tmpDir </> "input.mmd"
-      outputFile = tmpDir </> "output.svg"
-  TIO.writeFile inputFile content
-  puppeteerConfig <- getPuppeteerConfig
-  mermaidConfig <- getMermaidConfig
-  let baseArgs =
-        [ "-i",
-          inputFile,
-          "-o",
-          outputFile,
-          "-t",
-          T.unpack theme,
-          "-b",
-          "transparent"
-        ]
-      -- Add puppeteer config if set
-      withPuppeteer xs = case puppeteerConfig of
-        Just cfg -> "-p" : cfg : xs
-        Nothing -> xs
-      -- Add mermaid config if set
-      withMermaid xs = case mermaidConfig of
-        Just cfg -> "-c" : cfg : xs
-        Nothing -> xs
-      args = withPuppeteer $ withMermaid baseArgs
-  callProcess "mmdc" args
-  TIO.readFile outputFile
+renderMermaidTheme :: Maybe RenderConfigFile -> Maybe RenderConfigFile -> Text -> MermaidSource -> IO Text
+renderMermaidTheme puppeteerCfg mermaidCfg theme (MermaidSource content) =
+  withSystemTempDirectory "mermaid" $ \tmpDir -> do
+    let inputFile = tmpDir </> "input.mmd"
+        outputFile = tmpDir </> "output.svg"
+    TIO.writeFile inputFile content
+    let baseArgs =
+          [ "-i",
+            inputFile,
+            "-o",
+            outputFile,
+            "-t",
+            T.unpack theme,
+            "-b",
+            "transparent"
+          ]
+        withPuppeteer xs = case puppeteerCfg of
+          Just cfg -> "-p" : configPath cfg : xs
+          Nothing -> xs
+        withMermaid xs = case mermaidCfg of
+          Just cfg -> "-c" : configPath cfg : xs
+          Nothing -> xs
+        args = withPuppeteer $ withMermaid baseArgs
+    callProcess "mmdc" args
+    TIO.readFile outputFile
 
 -- | Render both light and dark theme SVGs, wrapped for CSS toggling
--- Each SVG gets a unique ID prefix to avoid style conflicts
-renderMermaidDual :: Text -> IO Text
-renderMermaidDual content = do
-  lightSvg <- renderMermaidTheme "default" content
-  darkSvg <- renderMermaidTheme "dark" content
+renderMermaidDualFor :: Maybe RenderConfigFile -> Maybe RenderConfigFile -> MermaidSource -> IO Text
+renderMermaidDualFor puppeteerCfg mermaidCfg src = do
+  lightSvg <- renderMermaidTheme puppeteerCfg mermaidCfg "default" src
+  darkSvg <- renderMermaidTheme puppeteerCfg mermaidCfg "dark" src
   let lightSvg' = T.replace "my-svg" "mermaid-svg-light" lightSvg
       darkSvg' = T.replace "my-svg" "mermaid-svg-dark" darkSvg
   pure $ wrapDualSvg lightSvg' darkSvg'
 
--- | Wrap two SVGs with CSS classes for theme toggling
 wrapDualSvg :: Text -> Text -> Text
 wrapDualSvg lightSvg darkSvg =
   T.concat
@@ -82,17 +103,3 @@ wrapDualSvg lightSvg darkSvg =
       darkSvg,
       "</div>"
     ]
-
--- | Cached dual-theme Mermaid rendering
-cachedMermaidDual :: Text -> Text -> IO Text
-cachedMermaidDual filterVer content = do
-  mermaidVer <- getMermaidVersion
-  let cfg =
-        CacheConfig
-          { cacheDir = "_artifacts/mermaid",
-            toolName = "mermaid",
-            toolVersion = mermaidVer,
-            toolOptions = "dual-theme",
-            filterVersion = filterVer
-          }
-  cachedRender cfg content renderMermaidDual

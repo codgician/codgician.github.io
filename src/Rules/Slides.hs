@@ -11,9 +11,10 @@ module Rules.Slides
 where
 
 import Compiler.Pandoc (slideCompiler)
+import Compiler.RenderContext (defaultPandocRenderContext)
 import Config (Language (..), SiteConfig (..), slidesPerPage)
-import Content.Metadata (metadataBool)
-import Content.Types (LangCode, Section (..), langCodeString)
+import Content.Metadata (featuresFromMetadata)
+import Content.Types (LangCode, RenderFeatures (..), Section (..), langCodeString)
 import Context
   ( allLangsCtx,
     baseCtx,
@@ -58,9 +59,13 @@ slidePages cfg = match "content/slides/*/slides.md" $
       compile $ do
         ident <- getUnderlying
         meta <- getMetadata ident
-        let enableMath = metadataBool "math" meta
-            enableTikZ = metadataBool "tikz" meta
-        slideCompiler enableMath enableTikZ
+        let features =
+              (featuresFromMetadata meta)
+                { renderMermaid = False,
+                  renderToc = False
+                }
+        renderCtx <- unsafeCompiler $ defaultPandocRenderContext features
+        slideCompiler renderCtx
           >>= saveSnapshot "content"
           >>= loadAndApplyTemplate "templates/slide.html" defaultContext
           >>= relativizeUrls

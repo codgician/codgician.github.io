@@ -28,7 +28,10 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
-    - Compiler.Cache
+    - Compiler.ArtifactCache
+    - Compiler.HakyllRecovery
+    - Compiler.RenderContext
+    - Compiler.RenderEnvironment
     - Compiler.KaTeX
     - Compiler.Mermaid
     - Compiler.Pandoc
@@ -65,6 +68,7 @@ library:
     - containers
     - cryptohash-sha256
     - base16-bytestring
+    - bytestring
     - temporary
 executables:
   site:
@@ -77,7 +81,6 @@ executables:
     dependencies:
       - base >= 4.7 && < 5
       - builder
-      - directory
 tests:
   builder-test:
     main: Spec.hs
@@ -94,3 +97,8 @@ tests:
       - containers
       - aeson
       - text
+      - bytestring
+      - directory
+      - filepath
+      - pandoc-types >= 1.23
+      - temporary

@@ -4,46 +4,40 @@ module Compiler.Pandoc
   ( customPandocCompiler,
     customPandocCompilerWithToc,
     slideCompiler,
+    transformWithRenderers,
   )
 where
 
-import Compiler.KaTeX (cachedKaTeX)
-import Compiler.Mermaid (cachedMermaidDual)
-import Compiler.TikZ (cachedTikZ)
+import Compiler.RenderContext
 import Compiler.Toc (generateToc)
+import Content.Types (RenderFeatures (..))
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Version as V
 import Hakyll
-import qualified Paths_builder as Meta
 import Skylighting (breezeDark)
 import Text.Pandoc
 import Text.Pandoc.Walk (walkM)
 import Text.Read (readMaybe)
 
--- | Get filter version from Cabal
-filterVersion :: Text
-filterVersion = T.pack $ V.showVersion Meta.version
-
--- | Custom Pandoc compiler with KaTeX and Mermaid transforms
-customPandocCompiler :: Bool -> Bool -> Bool -> Compiler (Item String)
-customPandocCompiler enableMath enableMermaid enableTikZ =
+-- | Custom Pandoc compiler with injected render context
+customPandocCompiler :: PandocRenderContext -> Compiler (Item String)
+customPandocCompiler renderCtx =
   pandocCompilerWithTransformM
     defaultHakyllReaderOptions
     defaultHakyllWriterOptions
-    (transform enableMath enableMermaid enableTikZ)
+    (transform renderCtx)
 
 -- | Custom Pandoc compiler that also returns TOC HTML
 -- Returns (body, Maybe tocHtml)
-customPandocCompilerWithToc :: Bool -> Bool -> Bool -> Compiler (Item String, Maybe String)
-customPandocCompilerWithToc enableMath enableMermaid enableTikZ = do
+customPandocCompilerWithToc :: PandocRenderContext -> Compiler (Item String, Maybe String)
+customPandocCompilerWithToc renderCtx = do
   -- Read and parse the document
   body <- getResourceBody
   pandocDoc <- readPandocWith defaultHakyllReaderOptions body
 
   -- Transform the AST (math, mermaid)
-  pandocDoc' <- transform enableMath enableMermaid enableTikZ (itemBody pandocDoc)
+  pandocDoc' <- transform renderCtx (itemBody pandocDoc)
 
   -- Generate TOC before writing
   let tocHtml = T.unpack <$> generateToc pandocDoc'
@@ -54,8 +48,8 @@ customPandocCompilerWithToc enableMath enableMermaid enableTikZ = do
   pure (htmlItem, tocHtml)
 
 -- | Slide compiler using Pandoc's reveal.js writer
-slideCompiler :: Bool -> Bool -> Compiler (Item String)
-slideCompiler enableMath enableTikZ = do
+slideCompiler :: PandocRenderContext -> Compiler (Item String)
+slideCompiler renderCtx = do
   metadata <- getUnderlying >>= getMetadata
   let slideLevel = fromMaybe 2 $ lookupString "slide-level" metadata >>= readMaybe
 
@@ -69,8 +63,8 @@ slideCompiler enableMath enableTikZ = do
       Left err -> fail $ "Pandoc read failed: " <> show err
       Right doc -> pure doc
 
-  -- Apply math transform
-  pandocDoc' <- transform enableMath False enableTikZ pandocDoc
+  -- Apply transforms
+  pandocDoc' <- transform renderCtx pandocDoc
 
   -- Write to reveal.js format with title slide template
   let writerOpts = slideWriterOptions slideLevel
@@ -145,37 +139,41 @@ slideWriterOptions slideLevel =
             ]
     }
 
--- | Transform Pandoc AST
-transform :: Bool -> Bool -> Bool -> Pandoc -> Compiler Pandoc
-transform enableMath enableMermaid enableTikZ doc = unsafeCompiler $ do
-  doc' <- if enableMath then walkM transformMath doc else pure doc
-  doc'' <- if enableMermaid then walkM transformMermaid doc' else pure doc'
-  if enableTikZ then walkM transformTikZ doc'' else pure doc''
+-- | Transform Pandoc AST via Hakyll Compiler (wraps IO transform)
+transform :: PandocRenderContext -> Pandoc -> Compiler Pandoc
+transform renderCtx = unsafeCompiler . transformWithRenderers renderCtx
+
+-- | Transform Pandoc AST using injected renderers (pure IO, testable)
+transformWithRenderers :: PandocRenderContext -> Pandoc -> IO Pandoc
+transformWithRenderers renderCtx doc = do
+  doc' <- if renderMath features then walkM (transformMath renderers) doc else pure doc
+  doc'' <- if renderMermaid features then walkM (transformMermaid renderers) doc' else pure doc'
+  if renderTikZ features then walkM (transformTikZ renderers) doc'' else pure doc''
+  where
+    features = pandocRenderFeatures renderCtx
+    renderers = pandocRenderers renderCtx
 
 -- | Transform Math to rendered HTML
-transformMath :: Inline -> IO Inline
-transformMath (Math mathType content) = do
-  let displayMode = case mathType of
-        DisplayMath -> True
-        InlineMath -> False
-  rendered <- cachedKaTeX filterVersion displayMode content
+transformMath :: PandocRenderers -> Inline -> IO Inline
+transformMath renderers (Math mathType content) = do
+  rendered <- pandocMathHtml renderers mathType content
   pure $ RawInline (Format "html") rendered
-transformMath x = pure x
+transformMath _ x = pure x
 
 -- | Transform Mermaid code blocks to SVG (dual theme: light + dark)
-transformMermaid :: Block -> IO Block
-transformMermaid (CodeBlock (_, classes, _) content)
+transformMermaid :: PandocRenderers -> Block -> IO Block
+transformMermaid renderers (CodeBlock (_, classes, _) content)
   | "mermaid" `elem` classes = do
-      html <- cachedMermaidDual filterVersion content
+      html <- pandocMermaidHtml renderers content
       pure $
         RawBlock (Format "html") $
           "<div class=\"mermaid\">" <> html <> "</div>"
-transformMermaid x = pure x
+transformMermaid _ x = pure x
 
 -- | Transform TikZ code blocks to inline SVG.
-transformTikZ :: Block -> IO Block
-transformTikZ (CodeBlock (_, classes, _) content)
+transformTikZ :: PandocRenderers -> Block -> IO Block
+transformTikZ renderers (CodeBlock (_, classes, _) content)
   | "tikz" `elem` classes = do
-      html <- cachedTikZ filterVersion content
+      html <- pandocTikZHtml renderers content
       pure $ RawBlock (Format "html") html
-transformTikZ x = pure x
+transformTikZ _ x = pure x

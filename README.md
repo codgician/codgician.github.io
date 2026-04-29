@@ -118,9 +118,10 @@ Your content here...
 
 ### Cache corruption error
 
-If you see an error like
+If Hakyll reports an error like
 `Data.Binary.Get.runGet at position X: not enough bytes` during `watch` mode,
-run:
+the site builder cleans Hakyll's build state and retries once automatically. If
+the retry still fails, run:
 
 ```bash
 nix run . -- clean
@@ -128,8 +129,9 @@ nix run . -- clean
 
 This is a [known Hakyll behavior](https://github.com/jaspervdj/hakyll/pull/876)
 that can occur when the build process is interrupted mid-write (e.g., Ctrl+C at
-an unlucky moment) or after template changes. The `clean` command removes the
-`_cache/` directory and resolves the issue.
+an unlucky moment) or after template changes. The `clean` command removes Hakyll
+build state. It does not need to remove `_artifacts`, which is the project-owned
+content-addressed renderer cache.
 
 # License
 

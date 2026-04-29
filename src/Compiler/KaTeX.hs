@@ -1,26 +1,54 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Compiler.KaTeX
-  ( renderKaTeX,
-    cachedKaTeX,
+  ( KaTeXInput (..),
+    katexArtifactRendererFor,
+    renderKaTeX,
   )
 where
 
-import Compiler.Cache (CacheConfig (..), cachedRender)
+import Compiler.ArtifactCache
+  ( ArtifactRenderer (..),
+    CacheInput (..),
+    RecipeVersion (..),
+    RendererId,
+    RendererRecipe (..),
+    ToolVersion,
+    mkRendererId,
+  )
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
-import System.Environment (lookupEnv)
-import System.IO (hClose, hFlush)
-import System.Process
+import System.Exit (ExitCode (..))
+import System.Process (proc, readCreateProcessWithExitCode)
+import Text.Pandoc.Definition (MathType (..))
 
--- | Get KaTeX version from environment (required for cache key)
-getKaTeXVersion :: IO Text
-getKaTeXVersion = do
-  ver <- lookupEnv "KATEX_VERSION"
-  case ver of
-    Just v -> pure $ T.pack v
-    Nothing -> error "KATEX_VERSION environment variable is not set"
+data KaTeXInput = KaTeXInput MathType Text deriving (Eq, Show)
+
+katexRecipeVersion :: RecipeVersion
+katexRecipeVersion = RecipeVersion "katex-recipe-v1"
+
+katexRendererId :: RendererId
+katexRendererId =
+  case mkRendererId "katex" of
+    Right rendererId -> rendererId
+    Left err -> error $ "Invalid built-in KaTeX renderer ID: " <> show err
+
+katexArtifactRendererFor :: ToolVersion -> ArtifactRenderer KaTeXInput
+katexArtifactRendererFor toolVersion =
+  ArtifactRenderer
+    { artifactRecipe =
+        RendererRecipe
+          { recipeId = katexRendererId,
+            recipeToolVersion = toolVersion,
+            recipeVersion = katexRecipeVersion,
+            recipeOptions = []
+          },
+      artifactCacheInput = \(KaTeXInput mathType content) ->
+        let mode = if mathType == DisplayMath then "display" else "inline"
+         in CacheInput $ mode <> "\n" <> content,
+      artifactRender = \(KaTeXInput mathType content) ->
+        renderKaTeX (mathType == DisplayMath) content
+    }
 
 -- | Render LaTeX to HTML using KaTeX CLI
 renderKaTeX :: Bool -> Text -> IO Text
@@ -28,29 +56,16 @@ renderKaTeX displayMode content = do
   let args =
         ["--strict", "--trust"]
           ++ ["--display-mode" | displayMode]
-  (Just stdin', Just stdout', _, ph) <-
-    createProcess
-      (proc "katex" args)
-        { std_in = CreatePipe,
-          std_out = CreatePipe
-        }
-  TIO.hPutStr stdin' content
-  hFlush stdin'
-  hClose stdin'
-  result <- TIO.hGetContents stdout'
-  _ <- waitForProcess ph
-  pure result
-
--- | Cached KaTeX rendering
-cachedKaTeX :: Text -> Bool -> Text -> IO Text
-cachedKaTeX filterVer displayMode content = do
-  katexVer <- getKaTeXVersion
-  let cfg =
-        CacheConfig
-          { cacheDir = "_artifacts/katex",
-            toolName = "katex",
-            toolVersion = katexVer,
-            toolOptions = if displayMode then "--display-mode" else "",
-            filterVersion = filterVer
-          }
-  cachedRender cfg content (renderKaTeX displayMode)
+  (exitCode, stdoutText, stderrText) <- readCreateProcessWithExitCode (proc "katex" args) (T.unpack content)
+  case exitCode of
+    ExitSuccess -> pure $ T.pack stdoutText
+    ExitFailure code ->
+      fail $
+        unlines
+          [ "katex failed with exit code " <> show code,
+            "command: " <> unwords ("katex" : args),
+            "stdout:",
+            stdoutText,
+            "stderr:",
+            stderrText
+          ]

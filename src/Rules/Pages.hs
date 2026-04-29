@@ -13,9 +13,10 @@ module Rules.Pages
 where
 
 import Compiler.Pandoc (customPandocCompiler)
+import Compiler.RenderContext (defaultPandocRenderContext)
 import Config (Language (..), SiteConfig (..), langCodes)
 import Content.Fallback (preferredLangOrder)
-import Content.Metadata (metadataBool, templateFromMetadata)
+import Content.Metadata (featuresFromMetadata, templateFromMetadata)
 import Content.Types (LangCode, langCodeString, nubOrd)
 import Context
   ( AvailableLang (..),
@@ -89,12 +90,11 @@ standalonePages cfg = do
         segments <- routeOrFail $ pageSegmentsFromIdentifier ident
         langsCtx' <- nestedPageLangsCtx cfg lang ident segments
         meta <- getMetadata ident
-        let enableMath = metadataBool "math" meta
-            enableMermaid = metadataBool "mermaid" meta
-            enableTikZ = metadataBool "tikz" meta
+        let features = featuresFromMetadata meta
             tpl = templateFromMetadata meta
             ctx = langsCtx' <> pageCtx cfg lang tpl
-        customPandocCompiler enableMath enableMermaid enableTikZ
+        renderCtx <- unsafeCompiler $ defaultPandocRenderContext features
+        customPandocCompiler renderCtx
           >>= saveSnapshot "content"
           >>= loadAndApplyTemplate (fromFilePath $ "templates/" <> tpl <> ".html") ctx
           >>= loadAndApplyTemplate "templates/default.html" ctx

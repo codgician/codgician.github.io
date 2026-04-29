@@ -28,7 +28,7 @@ nix fmt                # Format all code
 │   ├── Config.hs           # YAML config loader
 │   ├── Context.hs          # Template context fields
 │   ├── Paginate.hs         # Pagination support
-│   └── Compiler/           # Pandoc, KaTeX, Mermaid, Cache
+│   └── Compiler/           # Pandoc rendering, external renderers, artifact cache
 ├── content/                # Markdown content
 │   ├── posts/{slug}/       # Blog posts (index.{lang}.md, with fallback)
 │   ├── slides/{slug}/      # Reveal.js slides
