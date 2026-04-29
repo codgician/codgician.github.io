@@ -317,14 +317,12 @@ Build the argument step by step. A pass/fail eval compresses every intermediate 
 Agent system $M = \{a_1, \ldots, a_N\}$ executes a task $\tau$ in discrete steps. At step $t$: select $a(t)=g(h_{t-1})$ → form input $x_t=\phi(h_{t-1})$ → run agent $y_t=\pi_{a(t)}(x_t)$ → update context $h_t=u(h_{t-1},a(t),x_t,y_t)$ → emit observable $o_t$.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
-  every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
-  state/.style={draw, rounded corners, fill=blue!8, minimum width=2.4cm, minimum height=1.05cm, inner xsep=7pt, inner ysep=5pt, align=center, line width=0.5pt},
-  data/.style={draw, rounded corners, fill=gray!10, minimum width=2.2cm, minimum height=0.95cm, inner xsep=6pt, inner ysep=4pt, align=center, line width=0.5pt},
-  obs/.style={draw, rounded corners, dashed, fill=orange!10, minimum width=2.4cm, minimum height=0.95cm, inner xsep=6pt, inner ysep=4pt, align=center, line width=0.5pt},
-  op/.style={draw, circle, fill=green!12, minimum size=0.75cm, inner sep=1pt, font=\sffamily\footnotesize\bfseries, line width=0.5pt},
+  every node/.style={inner sep=0pt},
+  state/.style={draw, rounded corners, fill=blue!8, minimum width=2.4cm, minimum height=1.05cm, inner xsep=7pt, inner ysep=5pt, align=center, font=\sffamily\footnotesize, line width=0.5pt},
+  data/.style={draw, rounded corners, fill=gray!10, minimum width=2.2cm, minimum height=0.95cm, inner xsep=6pt, inner ysep=4pt, align=center, font=\sffamily\footnotesize, line width=0.5pt},
+  obs/.style={draw, rounded corners, dashed, fill=orange!10, minimum width=2.4cm, minimum height=0.95cm, inner xsep=6pt, inner ysep=4pt, align=center, font=\sffamily\footnotesize, line width=0.5pt},
+  op/.style={draw, circle, fill=green!12, minimum size=0.75cm, inner sep=1pt, font=\footnotesize, line width=0.5pt},
   flow/.style={->, >=stealth, thick, line width=0.55pt}
 }
 % Source state on the left
@@ -634,8 +632,6 @@ Three exemplars, one for each useful taxonomy stance. Lu = chronological/phase v
 - **Developer takeaway:** Convert informal "agent rules" into checkable constraints; labels become useful when they explain why no later step could recover.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   stage/.style={draw, rounded corners, minimum width=3.6cm, minimum height=1.15cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt},
@@ -786,18 +782,18 @@ Now that we have a label, we ask the harder question: *who, when, and why*. Fram
 - **Target:** Attribution looks for $t^\ast$, the earliest such step — typically far before the visible wrong answer. **In practice,** methods approximate $t^\ast$ with labels.
 
 ```{.tikz .diagram-full}
-\tikzset{traceStep/.style={draw, rounded corners, minimum width=1.65cm, minimum height=0.52cm, inner xsep=5pt, inner ysep=3pt, align=center, font=\sffamily\small}, every node/.style={font=\sffamily\small}, >=stealth}
-\node[traceStep, fill=blue!8] (t1) at (0,0) {$T_{\leq 1}$};
-\node[traceStep, fill=blue!8] (t2) at (2.45,0) {$T_{\leq 2}$};
-\node[traceStep, fill=orange!18, very thick] (ts) at (4.9,0) {$T_{\leq t^\ast}$};
-\node[traceStep, fill=red!9] (t4) at (7.35,0) {$T_{\leq 4}$};
-\node[traceStep, fill=red!12] (tf) at (9.8,0) {wrong answer};
+\tikzset{traceStep/.style={draw, rounded corners, minimum width=1.65cm, minimum height=0.52cm, inner xsep=5pt, inner ysep=3pt, align=center}, traceMath/.style={traceStep, font=\small}, traceText/.style={traceStep, font=\sffamily\small}, >=stealth}
+\node[traceMath, fill=blue!8] (t1) at (0,0) {$T_{\leq 1}$};
+\node[traceMath, fill=blue!8] (t2) at (2.45,0) {$T_{\leq 2}$};
+\node[traceMath, fill=orange!18, very thick] (ts) at (4.9,0) {$T_{\leq t^\ast}$};
+\node[traceMath, fill=red!9] (t4) at (7.35,0) {$T_{\leq 4}$};
+\node[traceText, fill=red!12] (tf) at (9.8,0) {wrong answer};
 \draw[->, very thick] (t1) -- (t2);
 \draw[->, very thick] (t2) -- (ts);
 \draw[->, very thick] (ts) -- (t4);
 \draw[->, very thick] (t4) -- (tf);
-\node[traceStep, fill=green!10] (sp) at (7.35,1.00) {success path};
-\node[traceStep, fill=red!9]  (fb) at (10.4,-0.85) {failure basin};
+\node[traceText, fill=green!10] (sp) at (7.35,1.00) {success path};
+\node[traceText, fill=red!9]  (fb) at (10.4,-0.85) {failure basin};
 \draw[->, thick, green!50!black] (t2) to[out=60, in=180] (sp.west);
 \draw[->, thick, red!80!black]  (ts) to[out=-60, in=180] (fb.west);
 \draw[dashed, very thick, orange!90!black] (4.9,-1.20) -- (4.9,1.55);
@@ -924,8 +920,6 @@ Three attribution exemplars, picked to span analytical depth. Who&When: defines 
 - **Developer takeaway:** Preserve edges, not just events. Propagation paths explain why the visible bad step may be a downstream symptom.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   stage/.style={draw, rounded corners, minimum width=3.6cm, minimum height=1.15cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt},
@@ -1019,8 +1013,6 @@ Filter candidates along three axes: scope, propagation, persistence.
 - **Developer takeaway:** Build replay hooks early; causal confidence improves when suspected failures can be validated, refuted, or marked inconclusive.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   stage/.style={draw, rounded corners, minimum width=3.6cm, minimum height=1.15cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt},
@@ -1236,8 +1228,6 @@ Two exemplars from opposite ends of the maturity gradient. AgentSight = passive 
 - **Developer takeaway:** Debugging tools should make counterfactual inspection cheap; a developer should test whether changing one message changes downstream behavior.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   stage/.style={draw, rounded corners, minimum width=3.6cm, minimum height=1.15cm, inner xsep=4pt, inner ysep=3pt, align=center, line width=0.5pt},
@@ -1469,8 +1459,6 @@ Two exemplars chosen to span the family. Maestro = structural/workflow repair vi
 - **Developer takeaway:** Put supervision at interaction boundaries: approve, guide, correct observations, or run verification before errors become irreversible.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   box/.style={draw, rounded corners, minimum width=2.85cm, minimum height=0.85cm, inner xsep=5pt, inner ysep=4pt, align=center, line width=0.5pt},
@@ -1565,8 +1553,6 @@ Last layer in the chain. The point is not to celebrate leaderboards but to ask: 
 ## What benchmark design optimizes for
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   box/.style={draw, rounded corners, minimum width=3.0cm, minimum height=1.05cm, inner xsep=5pt, inner ysep=4pt, align=center, line width=0.5pt},
@@ -1683,8 +1669,6 @@ These three benchmarks span the maturity gradient. Who&When = the canonical attr
 - **Developer takeaway:** Evaluate attribution under the observability conditions developers actually have; partial traces can understate achievable diagnosis.
 
 ```{.tikz .diagram-full}
-\renewcommand{\familydefault}{\sfdefault}
-\normalfont
 \tikzset{
   every node/.style={font=\sffamily\footnotesize, inner sep=0pt},
   box/.style={draw, rounded corners, minimum width=2.85cm, minimum height=0.85cm, inner xsep=5pt, inner ysep=4pt, align=center, line width=0.5pt},
