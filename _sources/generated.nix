@@ -6,20 +6,20 @@
   dockerTools,
 }:
 {
-  tabler-icons-webfont = {
-    pname = "tabler-icons-webfont";
-    version = "3.41.1";
-    src = fetchurl {
-      url = "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.41.1.tgz";
-      sha256 = "sha256-fzvzyJqWq6SAk7kG/QHrE5uxEhpf9oqEmA0BJ/va9OE=";
-    };
-  };
   reveal-js = {
     pname = "reveal-js";
     version = "6.0.1";
     src = fetchurl {
       url = "https://registry.npmjs.org/reveal.js/-/reveal.js-6.0.1.tgz";
       sha256 = "sha256-ejvFCWxDW4k/10iP9ETBwcIy4eaYe23mhpbnBkN9Ck8=";
+    };
+  };
+  tabler-icons-webfont = {
+    pname = "tabler-icons-webfont";
+    version = "3.41.1";
+    src = fetchurl {
+      url = "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.41.1.tgz";
+      sha256 = "sha256-fzvzyJqWq6SAk7kG/QHrE5uxEhpf9oqEmA0BJ/va9OE=";
     };
   };
 }
