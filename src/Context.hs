@@ -14,6 +14,7 @@
 module Context
   ( -- * Core contexts
     baseCtx,
+    baseCtxWithActive,
 
     -- * Page-specific contexts
     homeCtx,
@@ -37,13 +38,16 @@ module Context
     yearGroupsCtx,
 
     -- * Navigation helpers
+    activeNavUrl,
     navTitle,
+    yearStartFlags,
 
     -- * Utilities
     toItem,
 
     -- * Types
     AvailableLang (..),
+    PostListEntry (..),
     YearGroup (..),
   )
 where
@@ -52,6 +56,7 @@ import Config
 import Content.Metadata (metadataStringList)
 import Content.Types (LangCode (..), langCodeString)
 import Data.List (intercalate)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Hakyll
 import Routes (postSlugFromIdentifier, postUrl, routeOrFail)
@@ -68,10 +73,16 @@ data AvailableLang = AvailableLang
     alActive :: Bool
   }
 
+-- | Post list item with render-time decoration flags.
+data PostListEntry = PostListEntry
+  { plePost :: Item String,
+    pleYearStart :: Bool
+  }
+
 -- | Year group for post archives
 data YearGroup = YearGroup
   { ygYear :: String,
-    ygPosts :: [Item String]
+    ygPosts :: [Item PostListEntry]
   }
 
 -- ============================================================================
@@ -81,13 +92,17 @@ data YearGroup = YearGroup
 -- | Minimal base context with essential site-wide fields.
 -- Includes: siteTitle, copyright, license, authorName, lang, navigation, defaultContext
 baseCtx :: SiteConfig -> LangCode -> Context String
-baseCtx cfg lang =
+baseCtx cfg lang = baseCtxWithActive cfg lang Nothing
+
+-- | Base context with an optional current path for server-rendered navigation state.
+baseCtxWithActive :: SiteConfig -> LangCode -> Maybe T.Text -> Context String
+baseCtxWithActive cfg lang currentPath =
   constField "siteTitle" (trans $ title $ site cfg)
     <> constField "copyright" (trans $ Config.copyright $ site cfg)
     <> licenseCtx (license $ site cfg)
     <> constField "authorName" (T.unpack $ Config.name $ author cfg)
     <> langCtx lang
-    <> navCtx cfg lang
+    <> navCtx cfg lang currentPath
     <> defaultContext
   where
     trans = transStr (languages cfg) lang
@@ -135,7 +150,7 @@ postMetaCtx =
        in pure $ show minutes <> " min read"
 
 -- | Common date fields used by posts and list items
-dateCtx :: Context String
+dateCtx :: Context a
 dateCtx =
   dateField "date" "%B %e, %Y"
     <> dateField "dateShort" "%b %d"
@@ -183,18 +198,24 @@ tagsFieldFromMeta lang meta =
 
 -- | Full post context (tags + base + post metadata)
 postCtx :: SiteConfig -> LangCode -> Context String
-postCtx cfg lang = postTagsField lang <> baseCtx cfg lang <> postMetaCtx
+postCtx cfg lang = postTagsField lang <> baseCtxWithActive cfg lang (Just "posts/") <> postMetaCtx
 
 -- | Page context, specialised by page slug (e.g. about page adds friends list)
 pageCtx :: SiteConfig -> LangCode -> String -> Context String
-pageCtx cfg lang "about" = baseCtx cfg lang <> friendsCtx cfg
+pageCtx cfg lang "about" = baseCtxWithActive cfg lang (Just "about/") <> friendsCtx cfg
 pageCtx cfg lang _ = baseCtx cfg lang
 
 -- | Lightweight context for post list items (url, tagsStr, date)
-postListItemCtx :: LangCode -> Context String
-postListItemCtx lang = field "url" makeUrl <> field "tagsStr" getTagsStr <> dateCtx <> defaultContext
+postListItemCtx :: LangCode -> Context PostListEntry
+postListItemCtx lang =
+  field "url" makeUrl
+    <> field "title" getTitle
+    <> field "tagsStr" getTagsStr
+    <> boolField "yearStart" (pleYearStart . itemBody)
+    <> dateCtx
   where
     makeUrl item = routeOrFail $ postUrl lang <$> postSlugFromIdentifier (itemIdentifier item)
+    getTitle item = fromMaybe "" <$> getMetadataField (itemIdentifier item) "title"
     getTagsStr item = do
       meta <- getMetadata (itemIdentifier item)
       pure $ intercalate "," $ metadataStringList "tags" meta
@@ -228,14 +249,15 @@ availableLangsCtx langs =
 -- ============================================================================
 
 -- | Navigation links context
-navCtx :: SiteConfig -> LangCode -> Context String
-navCtx cfg lang =
+navCtx :: SiteConfig -> LangCode -> Maybe T.Text -> Context String
+navCtx cfg lang currentPath =
   listField "navigation" itemCtx (pure $ map toItem $ navigation cfg)
   where
     itemCtx =
       field "name" (pure . trans . navLabel . itemBody)
         <> field "url" (pure . T.unpack . navUrl . itemBody)
         <> constField "lang" (langCodeString lang) -- Include lang in each nav item for template access
+        <> boolField "active" (activeNavUrl currentPath . navUrl . itemBody)
     trans = transStr (languages cfg) lang
 
 -- | Social links context
@@ -260,7 +282,7 @@ friendsCtx cfg =
         <> field "url" (pure . T.unpack . friendUrl . itemBody)
 
 -- | Year groups context for post archives
-yearGroupsCtx :: Context String -> Context YearGroup
+yearGroupsCtx :: Context PostListEntry -> Context YearGroup
 yearGroupsCtx postCtx' =
   field "year" (pure . ygYear . itemBody)
     <> listFieldWith "posts" postCtx' (pure . ygPosts . itemBody)
@@ -268,6 +290,20 @@ yearGroupsCtx postCtx' =
 -- ============================================================================
 -- Navigation Helpers
 -- ============================================================================
+
+-- | Check whether a configured navigation URL matches the current content path.
+activeNavUrl :: Maybe T.Text -> T.Text -> Bool
+activeNavUrl Nothing _ = False
+activeNavUrl (Just currentPath) navUrl' =
+  not (T.null navUrl') && navUrl' `T.isPrefixOf` currentPath
+
+-- | Mark the first item of every non-initial group for server-rendered spacing.
+yearStartFlags :: [[a]] -> [[Bool]]
+yearStartFlags = zipWith flagsForGroup [0 :: Int ..]
+  where
+    flagsForGroup 0 xs = replicate (length xs) False
+    flagsForGroup _ [] = []
+    flagsForGroup _ (_ : xs) = True : replicate (length xs) False
 
 -- | Get the navigation title for a URL (falls back to URL text if not found)
 navTitle :: SiteConfig -> LangCode -> T.Text -> String

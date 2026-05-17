@@ -2,7 +2,7 @@
   <a href="/$lang$/" class="nav-logo">$siteTitle$</a>
   <ul class="nav-links">
     $for(navigation)$
-    <li><a href="/$lang$/$url$">$name$</a></li>
+    <li><a href="/$lang$/$url$"$if(active)$ class="active"$endif$>$name$</a></li>
     $endfor$
   </ul>
   $partial("templates/partials/actions.html")$

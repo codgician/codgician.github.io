@@ -360,7 +360,7 @@
   if (initialTag) {
     filterByTag(initialTag);
   }
-  // No else needed: inline script in template already set year-start classes
+  // No else needed: template rendering already set initial year-start classes
 
   const initialYear = getYearFromHash();
   if (initialYear) {

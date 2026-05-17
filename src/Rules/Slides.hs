@@ -17,7 +17,7 @@ import Content.Metadata (featuresFromMetadata)
 import Content.Types (LangCode, RenderFeatures (..), Section (..), langCodeString)
 import Context
   ( allLangsCtx,
-    baseCtx,
+    baseCtxWithActive,
     navTitle,
   )
 import Control.Monad (forM_)
@@ -96,7 +96,7 @@ slideList cfg = do
                   <> listField "slides" slideCtx (pure slides)
                   <> paginationCtx paginate pageNum
                   <> allLangsCtx cfg lc (`sectionIndexUrl` Slides)
-                  <> baseCtx cfg lc
+                  <> baseCtxWithActive cfg lc (Just "slides/")
           makeItem ""
             >>= loadAndApplyTemplate "templates/slide-list.html" ctx
             >>= loadAndApplyTemplate "templates/default.html" ctx

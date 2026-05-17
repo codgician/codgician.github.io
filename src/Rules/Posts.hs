@@ -14,15 +14,17 @@ import Content.Fallback (preferredLangOrder)
 import Content.Metadata (featuresFromMetadata, metadataBool)
 import Content.Types (LangCode (..), RenderFeatures (..), Section (..), Slug (..), langCodeString, nubOrd, slugString)
 import Context
-  ( YearGroup (..),
+  ( PostListEntry (..),
+    YearGroup (..),
     allLangsCtx,
-    baseCtx,
+    baseCtxWithActive,
     navTitle,
     postCtx,
     postListItemCtx,
     tagsFieldFromMeta,
     toItem,
     tocCtx,
+    yearStartFlags,
     yearGroupsCtx,
   )
 import Control.Monad (forM_, unless)
@@ -178,7 +180,7 @@ postList cfg = do
                 constField "title" (navTitle cfg lc (T.pack "posts/"))
                   <> listField "yearGroups" (yearGroupsCtx $ postListItemCtx lc) (pure $ map toItem yearGroups)
                   <> allLangsCtx cfg lc (`sectionIndexUrl` Posts)
-                  <> baseCtx cfg lc
+                  <> baseCtxWithActive cfg lc (Just "posts/")
           makeItem ""
             >>= loadAndApplyTemplate "templates/post-list.html" ctx
             >>= relativizeUrls
@@ -220,10 +222,14 @@ groupByYear posts = do
           pure (formatTime defaultTimeLocale "%Y" time, p)
       )
       posts
+  let grouped = groupBy (\a b -> fst a == fst b) $ sortBy (comparing (Down . fst)) tagged
+      flagGroups = yearStartFlags grouped
   pure
-    [ YearGroup y (map snd ps)
-    | ps@((y, _) : _) <- groupBy (\a b -> fst a == fst b) $ sortBy (comparing (Down . fst)) tagged
+    [ YearGroup y (zipWith postListEntry flags (map snd ps))
+    | (ps@((y, _) : _), flags) <- zip grouped flagGroups
     ]
+  where
+    postListEntry flag post = Item (itemIdentifier post) (PostListEntry post flag)
 
 -- ============================================================================
 -- Internal: metadata helpers

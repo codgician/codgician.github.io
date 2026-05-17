@@ -55,9 +55,35 @@
         # google-chrome derivation can fail to chmod the .app bundle under the
         # Nix daemon sandbox.
         browser = if pkgs.stdenv.isDarwin then pkgs.playwright-driver.browsers else pkgs.chromium;
+        playwrightChromiumExecutable = pkgs.runCommand "playwright-chromium-executable" { } ''
+          chromium_dirs=("${browser}"/chromium-*)
+          if [ ! -d "''${chromium_dirs[0]}" ]; then
+            echo "No Playwright Chromium directory found under ${browser}" >&2
+            exit 1
+          fi
+
+          chrome_dirs=("''${chromium_dirs[0]}"/chrome-mac*)
+          if [ ! -d "''${chrome_dirs[0]}" ]; then
+            echo "No Playwright macOS Chrome directory found under ''${chromium_dirs[0]}" >&2
+            exit 1
+          fi
+
+          executable="''${chrome_dirs[0]}/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+          if [ ! -x "$executable" ]; then
+            echo "Playwright Chromium executable not found: $executable" >&2
+            exit 1
+          fi
+
+          mkdir -p "$out/bin"
+          cat > "$out/bin/chromium" <<EOF
+          #!${pkgs.runtimeShell}
+          exec "$executable" "\$@"
+          EOF
+          chmod +x "$out/bin/chromium"
+        '';
         browserPath =
           if pkgs.stdenv.isDarwin then
-            "${browser}/chromium-1208/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+            "${playwrightChromiumExecutable}/bin/chromium"
           else
             "${lib.getExe browser}";
 

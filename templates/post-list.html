@@ -22,7 +22,7 @@
       <ul class="timeline-posts">
         $for(yearGroups)$
         $for(posts)$
-        <li class="timeline-post" data-year="$dateYear$" data-tags="$tagsStr$">
+        <li class="timeline-post$if(yearStart)$ timeline-post--year-start$endif$" data-year="$dateYear$" data-tags="$tagsStr$">
           <a href="$url$">
             <span class="timeline-post-title">$title$</span>
             <span class="timeline-post-date">$dateShort$</span>
@@ -31,18 +31,6 @@
         $endfor$
         $endfor$
       </ul>
-      <script>
-        // Inline: apply year-start classes before first paint to prevent layout shift
-        (function() {
-          var lastYear = null;
-          document.querySelectorAll('.timeline-post').forEach(function(post, i) {
-            if (i > 0 && post.dataset.year !== lastYear) {
-              post.classList.add('timeline-post--year-start');
-            }
-            lastYear = post.dataset.year;
-          });
-        })();
-      </script>
     </div>
   </div>
   $partial("templates/partials/footer.html")$

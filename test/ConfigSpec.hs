@@ -3,8 +3,10 @@
 module ConfigSpec (spec) where
 
 import Config
+import Context (activeNavUrl, yearStartFlags)
 import Content.Types (LangCode (..))
 import qualified Data.Map.Strict as Map
+import qualified Data.Text as T
 import Test.Hspec
 
 spec :: Spec
@@ -60,6 +62,26 @@ spec = describe "Config" $ do
 
     it "returns default 12 when not configured" $
       slidesPerPage minimalConfig `shouldBe` 12
+
+  describe "activeNavUrl" $ do
+    it "marks matching section navigation as active" $ do
+      activeNavUrl (Just "posts/hello-world/") "posts/" `shouldBe` True
+      activeNavUrl (Just "slides/") "slides/" `shouldBe` True
+
+    it "does not mark unrelated navigation as active" $ do
+      activeNavUrl (Just "posts/hello-world/") "slides/" `shouldBe` False
+      activeNavUrl (Just "about/") "posts/" `shouldBe` False
+
+    it "does not mark navigation active without a current path" $
+      activeNavUrl Nothing "posts/" `shouldBe` False
+
+  describe "yearStartFlags" $ do
+    it "marks the first post of every non-initial year group" $
+      yearStartFlags [["2026-a", "2026-b"], ["2025-a"], ["2024-a", "2024-b"] :: [T.Text]]
+        `shouldBe` [[False, False], [True], [True, False]]
+
+    it "handles empty groups without adding flags" $
+      yearStartFlags [[1, 2], [], [3 :: Int]] `shouldBe` [[False, False], [], [True]]
 
 -- | Minimal config for testing
 minimalConfig :: SiteConfig

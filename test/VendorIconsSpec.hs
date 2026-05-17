@@ -53,6 +53,17 @@ spec = describe "vendor icon assets" $ do
     components `shouldSatisfy` containing ".footer {"
     components `shouldSatisfy` containing "border-top: none;"
 
+  it "keeps converted timeline decoration out of inline JavaScript" $ do
+    postList <- readFile "templates/post-list.html"
+
+    postList `shouldSatisfy` notContaining "document.querySelectorAll('.timeline-post')"
+    postList `shouldSatisfy` notContaining "post.classList.add('timeline-post--year-start')"
+
+  it "renders active navigation from template context" $ do
+    nav <- readFile "templates/partials/nav.html"
+
+    nav `shouldSatisfy` containing "$if(active)$ class=\"active\"$endif$"
+
 containing :: String -> String -> Bool
 containing needle haystack = needle `isInfixOf` haystack
 
