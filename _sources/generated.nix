@@ -16,10 +16,10 @@
   };
   tabler-icons-webfont = {
     pname = "tabler-icons-webfont";
-    version = "3.44.0";
+    version = "3.45.0";
     src = fetchurl {
-      url = "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.44.0.tgz";
-      sha256 = "sha256-BF0YahFpEk1tBXH38s+s7YWbNqCBHobH4YHR8tT0MbI=";
+      url = "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.45.0.tgz";
+      sha256 = "sha256-bPZUrR6DLu5fntX9BHbdfjiPCyIH46HFddCgV7/xrxU=";
     };
   };
 }

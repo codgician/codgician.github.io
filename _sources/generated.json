@@ -23,10 +23,10 @@
         "pinned": false,
         "src": {
             "name": null,
-            "sha256": "sha256-BF0YahFpEk1tBXH38s+s7YWbNqCBHobH4YHR8tT0MbI=",
+            "sha256": "sha256-bPZUrR6DLu5fntX9BHbdfjiPCyIH46HFddCgV7/xrxU=",
             "type": "url",
-            "url": "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.44.0.tgz"
+            "url": "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.45.0.tgz"
         },
-        "version": "3.44.0"
+        "version": "3.45.0"
     }
 }
