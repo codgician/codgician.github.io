@@ -8,10 +8,10 @@
 {
   reveal-js = {
     pname = "reveal-js";
-    version = "6.0.1";
+    version = "6.0.2";
     src = fetchurl {
-      url = "https://registry.npmjs.org/reveal.js/-/reveal.js-6.0.1.tgz";
-      sha256 = "sha256-ejvFCWxDW4k/10iP9ETBwcIy4eaYe23mhpbnBkN9Ck8=";
+      url = "https://registry.npmjs.org/reveal.js/-/reveal.js-6.0.2.tgz";
+      sha256 = "sha256-Lwwgv7AkR6GYoevoqMCXpUN9A1yqOPKCC/S6iHo+rJE=";
     };
   };
   tabler-icons-webfont = {
